@@ -1,0 +1,184 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,100..1000&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&family=Roboto+Flex:opsz,wght@8..144,100..1000&display=swap');
+
+@import "tailwindcss";
+
+
+/* Gunakan @layer components untuk membuat kelas komponen kustom */
+@layer components {
+  /* buat header */
+  .kostumkita-top {
+    @apply fixed top-0 left-0 w-full bg-blue-800 text-white text-center py-2 text-sm z-50;
+  }
+  /* KostumKita main */
+  .kostumkita-main {
+    @apply mt-10 pt-6;
+  }
+  /* Styling untuk navbar */
+  .navbar {
+    @apply bg-blue-800 shadow-lg;
+  }
+
+  /* Kontainer untuk membatasi lebar dan memberi padding */
+  .navbar-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Konten di dalam navbar (logo, link, tombol) */
+  .navbar-content {
+    @apply flex items-center justify-between h-16;
+  }
+
+  /* Logo */
+  .logo {
+    @apply text-white text-2xl font-bold flex-shrink-0;
+  }
+
+  /* Wrapper untuk menu desktop (hanya tampil di layar besar) */
+  .desktop-menu {
+    @apply hidden md:block;
+  }
+  
+  .nav-links-container {
+    @apply ml-10 flex items-baseline space-x-4;
+  }
+
+  /* Styling dasar untuk setiap link di desktop */
+  .nav-link {
+    @apply text-gray-300 px-3 py-2 rounded-md text-sm font-medium;
+  }
+  
+  /* Styling saat link di-hover */
+  .nav-link:hover {
+    @apply bg-blue-900 text-white;
+  }
+
+  /* Styling untuk link yang sedang aktif */
+  .nav-link.active {
+    @apply font-bold bg-blue-600 shadow text-white;
+  }
+
+  /* Styling khusus untuk tombol "Masuk" dan "Buat Akun" */
+  .nav-link-masuk-buatakun {
+    @apply text-[hsl(0,0%,100%)] hover:bg-blue-700 px-3 py-2 rounded-md text-sm font-medium;
+  }
+  .nav-link-masuk-buatakun:hover {
+    @apply bg-blue-900;
+  }
+  .nav-link-masuk-buatakun:active {
+    @apply bg-blue-900 text-white;
+  }
+
+  /* Wrapper untuk tombol hamburger (hanya tampil di layar kecil) */
+  .mobile-menu-container {
+    @apply -mr-2 flex md:hidden;
+  }
+  
+  .mobile-menu-button {
+    @apply bg-gray-800 inline-flex items-center justify-center p-2 rounded-md text-gray-400;
+  }
+  
+  .mobile-menu-button:hover {
+    @apply text-white bg-gray-700;
+  }
+
+  .mobile-menu-button:focus {
+    @apply outline-none ring-2 ring-offset-2 ring-offset-gray-800 ring-white;
+  }
+
+  .hamburger-icon {
+    @apply block h-6 w-6;
+  }
+
+  .close-icon {
+    @apply hidden h-6 w-6;
+  }
+  
+  /* Menu dropdown untuk mobile (tersembunyi secara default) */
+  .mobile-menu {
+    @apply md:hidden;
+  }
+
+  .mobile-menu-links {
+    @apply px-2 pt-2 pb-3 space-y-1 sm:px-3;
+  }
+  
+  /* Styling untuk link di menu mobile */
+  .mobile-nav-link {
+    @apply text-gray-300 block px-3 py-2 rounded-md text-base font-medium;
+  }
+
+  .mobile-nav-link:hover {
+    @apply bg-blue-900;
+  }
+
+  .mobile-nav-link.active {
+    @apply bg-blue-900 text-white;
+  }
+
+  /* ------------------------------------------------------------------------------------------------------------------------------ */
+
+    /* product card */
+     /* Styling untuk layout grid produk */
+  .product-grid {
+    @apply grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 p-8 px-12;
+  }
+  /* ------------------------------------------------------------------------------------------------------------------------------ */
+
+  /* Styling untuk satu kartu produk */
+  .product-card {
+  @apply bg-white border border-gray-200 rounded-xl shadow-md overflow-hidden flex flex-col h-full px-5;
+
+  @apply transition-all duration-400;
+  
+  @apply hover:scale-105 hover:shadow-xl hover:border-blue-500;
+  }
+
+  .product-image {
+    @apply w-full h-48 object-cover;
+  }
+
+  .product-info {
+    @apply p-5 flex flex-col flex-grow;
+  }
+
+  .product-name {
+    @apply text-xl font-bold tracking-tight text-gray-900;
+  }
+
+  .product-description {
+    @apply flex text-gray-600 text-sm mt-2 mb-4 ;
+    @apply overflow-hidden;
+    @apply text-ellipsis;
+    @apply line-clamp-2; 
+  }
+  
+  .product-price {
+    @apply text-2xl font-bold text-gray-900 mt-auto; /* mt-auto mendorong harga ke bawah */
+  }
+
+  .product-button {
+    @apply mt-4 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 
+    focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm pr-14 py-2.5 grid grid-cols-2 items-center justify-items-center;
+  }
+
+/* ------------------------------------------------------------------------------------------------------------------------------ */
+  /* Styling untuk search bar di navbar */
+  .search-bar {
+    @apply text-sm text-white placeholder-white pl-3 py-3 pr-6 bg-blue-700 rounded-l-2xl;
+    @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500;
+    @apply transition-all duration-300 ease-in-out;
+  }
+  .search-bar:focus {
+    @apply bg-blue-700 shadow-lg;
+  }
+
+  /* Tambahkan style untuk tombol */
+  .search-button {
+    @apply p-3 bg-blue-600 text-white rounded-r-2xl;
+    @apply hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500;
+  }
+
+
+  /* ------------------------------------------------------------------------------------------------------------------------------ */
+}
