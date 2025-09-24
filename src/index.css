@@ -12,7 +12,7 @@
   }
   /* KostumKita main */
   .kostumkita-main {
-    @apply mt-10 pt-6;
+    @apply mt-4 pt-6;
   }
   /* Styling untuk navbar */
   .navbar {
@@ -55,7 +55,7 @@
 
   /* Styling untuk link yang sedang aktif */
   .nav-link.active {
-    @apply font-bold bg-blue-600 shadow text-white;
+    @apply font-bold bg-blue-600 shadow ;
   }
 
   /* Styling khusus untuk tombol "Masuk" dan "Buat Akun" */
@@ -165,7 +165,7 @@
 /* ------------------------------------------------------------------------------------------------------------------------------ */
   /* Styling untuk search bar di navbar */
   .search-bar {
-    @apply text-sm text-white placeholder-white pl-3 py-3 pr-6 bg-blue-700 rounded-l-2xl;
+    @apply text-sm text-white placeholder-gray-300 pl-3 py-2.5 pr-6 bg-blue-700 rounded-l-2xl;
     @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500;
     @apply transition-all duration-300 ease-in-out;
   }
@@ -173,12 +173,55 @@
     @apply bg-blue-700 shadow-lg;
   }
 
-  /* Tambahkan style untuk tombol */
   .search-button {
-    @apply p-3 bg-blue-600 text-white rounded-r-2xl;
+    @apply p-2.5 bg-blue-600 text-white rounded-r-2xl;
     @apply hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500;
   }
 
 
   /* ------------------------------------------------------------------------------------------------------------------------------ */
+   .kategori-section {
+      @apply bg-white py-12 sm:py-16;
+    }
+
+    .kategori-container {
+      @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+    }
+
+    .kategori-title {
+      @apply text-center text-3xl font-bold tracking-tight text-gray-900 mb-10;
+    }
+
+    /* Grid untuk menampung semua item kategori */
+    .kategori-grid {
+      @apply grid grid-cols-4 sm:grid-cols-4 md:grid-cols-8 gap-x-4 gap-y-8;
+    }
+
+    /* Styling untuk satu item kategori (ikon + teks) */
+    .kategori-item {
+      @apply flex flex-col items-center text-center cursor-pointer;
+    }
+
+    /* Lingkaran yang membungkus ikon */
+    .kategori-icon-wrapper {
+      @apply w-16 h-16 sm:w-20 sm:h-20 bg-gray-100 rounded-full flex items-center justify-center border-2 border-transparent;
+      @apply transition-all duration-300 ease-in-out;
+      /* Efek saat .kategori-item di-hover */
+      @apply group-hover:bg-blue-600 group-hover:shadow-lg group-hover:scale-110;
+    }
+
+    /* Ikon di dalam lingkaran */
+    .kategori-icon {
+      @apply w-8 h-8 sm:w-10 sm:h-10 text-gray-600;
+      @apply transition-colors duration-300 ease-in-out;
+      /* Efek saat .kategori-item di-hover */
+      @apply group-hover:text-white;
+    }
+
+    /* Teks nama kategori di bawah ikon */
+    .kategori-name {
+      @apply mt-3 text-sm font-medium text-gray-800;
+    }
+    /* ------------------------------------------------------------------------------------------------------------------------------ */
+    
 }

@@ -1,5 +1,5 @@
 // src/components/ProductCard.tsx
-import ProductButton from './Product_Button';
+import ProductButton from './Comp_Product_Button';
 import {Icon} from '@iconify/react';
 
 type ProductProps = {

@@ -38,7 +38,7 @@ const reviewsData = [
 
 const Comp_Reviews: React.FC = () => {
   return (
-    <div className="bg-gray-900 py-16 sm:py-24">
+    <div className="bg-blue-900 py-16 sm:py-24">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         {/* Judul Section */}
         <div className="mx-auto max-w-2xl text-center">

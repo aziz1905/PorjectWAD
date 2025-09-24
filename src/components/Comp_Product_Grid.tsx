@@ -1,4 +1,4 @@
-import ProductCard from './Product_Card';
+import ProductCard from './Comp_Product_Card';
 
 export default function ProductGrid() {
   // Example products array; replace with your actual data source as needed

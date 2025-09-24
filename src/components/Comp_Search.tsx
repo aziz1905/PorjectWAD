@@ -10,7 +10,7 @@ export default function Search() {
     <div className="flex items-center">
     
     <div
-      className="rounded-2xl bg-blue-900 relative flex w-full max-w-lg "
+      className="relative flex items-center w-full max-w-lg bg-blue-700 rounded-2xl"
       onClick={() => {
         inputRef.current?.focus();
       }}
@@ -20,11 +20,11 @@ export default function Search() {
         ref={inputRef}
         type="text"
         placeholder="Cari kostum..."
-        className="search-bar flex-1 "
+        className="search-bar w-full"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
         />
-      <button aria-label="search" className="cursor-pointer">
+      <button aria-label="search" className="search-button">
         <Icon icon="mdi:magnify" className="text-white text-2xl mx-2.5" />
       </button>
     </div>
