@@ -2,11 +2,11 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 // Import komponen Layout dan semua halaman
 import Layout from './components/Layout';
-import Beranda from './pages/Beranda';
-import Tentang from './pages/Tentang';
-import Pesanan from './pages/Pesanan';
-import Masuk from './pages/Masuk';
-import BuatAkun from './pages/BuatAkun';
+import Beranda from './Pages/Beranda';
+import Tentang from './Pages/Tentang';
+import Pesanan from './Pages/Pesanan';
+import Masuk from './Pages/Masuk';
+import BuatAkun from './Pages/BuatAkun';
 
 // Anda bisa membuat halaman Masuk dan BuatAkun nanti
 // import Masuk from './pages/Masuk'; 
