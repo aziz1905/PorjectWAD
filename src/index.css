@@ -12,7 +12,7 @@
   }
   /* KostumKita main */
   .kostumkita-main {
-    @apply mt-10 pt-6;
+    @apply mt-4 pt-6;
   }
   /* Styling untuk navbar */
   .navbar {
@@ -55,7 +55,7 @@
 
   /* Styling untuk link yang sedang aktif */
   .nav-link.active {
-    @apply font-bold bg-blue-600 shadow text-white;
+    @apply font-bold bg-blue-600 shadow ;
   }
 
   /* Styling khusus untuk tombol "Masuk" dan "Buat Akun" */
@@ -159,13 +159,13 @@
 
   .product-button {
     @apply mt-4 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 
-    focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm pr-14 py-2.5 grid grid-cols-2 items-center justify-items-center;
+    focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm flex justify-center p-3;
   }
 
 /* ------------------------------------------------------------------------------------------------------------------------------ */
   /* Styling untuk search bar di navbar */
   .search-bar {
-    @apply text-sm text-white placeholder-white pl-3 py-3 pr-6 bg-blue-700 rounded-l-2xl;
+    @apply text-sm text-white placeholder-gray-300 pl-3 py-2.5 pr-6 bg-blue-700 rounded-l-2xl;
     @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500;
     @apply transition-all duration-300 ease-in-out;
   }
@@ -173,12 +173,250 @@
     @apply bg-blue-700 shadow-lg;
   }
 
-  /* Tambahkan style untuk tombol */
   .search-button {
-    @apply p-3 bg-blue-600 text-white rounded-r-2xl;
+    @apply p-2.5 bg-blue-600 text-white rounded-r-2xl;
     @apply hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500;
   }
 
 
   /* ------------------------------------------------------------------------------------------------------------------------------ */
+   .kategori-section {
+      @apply bg-white py-12 sm:py-16;
+    }
+
+    .kategori-container {
+      @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+    }
+
+    .kategori-title {
+      @apply text-center text-3xl font-bold tracking-tight text-gray-900 mb-10;
+    }
+
+    /* Grid untuk menampung semua item kategori */
+    .kategori-grid {
+      @apply grid grid-cols-4 sm:grid-cols-4 md:grid-cols-8 gap-x-4 gap-y-8;
+    }
+
+    /* Styling untuk satu item kategori (ikon + teks) */
+    .kategori-item {
+      @apply flex flex-col items-center text-center cursor-pointer;
+    }
+
+    /* Lingkaran yang membungkus ikon */
+    .kategori-icon-wrapper {
+      @apply w-16 h-16 sm:w-20 sm:h-20 bg-gray-100 rounded-full flex items-center justify-center border-2 border-transparent;
+      @apply transition-all duration-300 ease-in-out;
+      /* Efek saat .kategori-item di-hover */
+      @apply group-hover:bg-blue-600 group-hover:shadow-lg group-hover:scale-110;
+    }
+
+    /* Ikon di dalam lingkaran */
+    .kategori-icon {
+      @apply w-8 h-8 sm:w-10 sm:h-10 text-gray-600;
+      @apply transition-colors duration-300 ease-in-out;
+      /* Efek saat .kategori-item di-hover */
+      @apply group-hover:text-white;
+    }
+
+    /* Teks nama kategori di bawah ikon */
+    .kategori-name {
+      @apply mt-3 text-sm font-medium text-gray-800;
+    }
+    /* ------------------------------------------------------------------------------------------------------------------------------ */
+    .tentang-container {
+     @apply py-10;
+    }
+
+   .tentang-header {
+     @apply grid md:grid-cols-2 gap-10 items-center bg-blue-800 px-35 py-10 shadow-md;
+     }
+  
+  .tentang-header-content {
+    @apply text-left;
+    }
+  .tentang_header-title {
+    }
+   .tentang-header-image {
+    @apply bg-gray-200 rounded-lg h-64 flex items-center justify-center;
+    }
+  
+  .tentang-section {
+    @apply mt-20 ;
+    }
+
+  .section-title {
+    @apply text-3xl font-bold text-center text-gray-900 mb-12;
+    }
+
+  .card-title {
+    @apply text-xl font-bold text-gray-800;
+    }
+
+  .card-text {
+    @apply text-gray-600;
+    }
+  
+  /* Styling untuk Cara Kerja */
+  .cara-kerja-grid {
+    @apply grid md:grid-cols-3 gap-8;
+  }
+
+  .cara-kerja-card {
+    @apply bg-white p-6 rounded-lg shadow-md flex  items-start space-x-4;
+  }
+
+  .cara-kerja-number {
+    @apply text-2xl font-bold text-blue-600 bg-blue-100 rounded-full flex-shrink-0 flex items-center justify-center h-10 w-10;
+  }
+
+  /* Styling untuk Layanan */
+  .layanan-grid {
+    @apply grid grid-cols-2 md:grid-cols-2 gap-6 px-20;
+  }
+
+  .layanan-item {
+    @apply flex flex-col items-center text-center p-4 bg-white rounded-lg shadow transition-transform duration-300;
+    @apply hover:scale-105 hover:shadow-xl;
+  }
+
+  .layanan-icon {
+    @apply w-12 h-12 text-blue-600 mb-2;
+  }
+  
+  /* Styling untuk Visi & Misi */
+  .visi-misi-grid {
+    @apply grid md:grid-cols-2 gap-8;
+  }
+
+  .visi-misi-card {
+    @apply bg-blue-50 p-8 rounded-lg border border-blue-200;
+  }
+
+  /* ------------------------------------------------------------------------------------------------------------------------------ */
+
+  .pesanan-bg {
+    @apply bg-gray-100 py-12;
+  }
+
+  .pesanan-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  
+  .pesanan-header {
+    @apply hidden md:grid grid-cols-5 items-center bg-white p-4 rounded-t-lg shadow text-gray-600 font-bold;
+  }
+  .pesanan-header > span { @apply text-center; }
+  /* Make the "Produk" column take up more space and align left */
+  .pesanan-header > span:nth-child(2) { @apply text-left col-span-1; }
+
+
+  .pesanan-items-list {
+    @apply space-y-4 md:mt-0;
+  }
+
+  .pesanan-item {
+    @apply grid md:grid-cols-5 items-center bg-white p-4 shadow rounded-lg gap-4;
+  }
+  
+  /* Responsive view for mobile */
+  @media (max-width: 767px) {
+    .pesanan-item {
+      @apply grid-cols-1;
+    }
+  }
+
+  .pesanan-checkbox {
+    @apply h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500;
+  }
+
+  .pesanan-item-image {
+    @apply w-24 h-16 object-cover rounded-md mx-4;
+  }
+  
+  .pesanan-item-name {
+    @apply font-semibold;
+  }
+  
+  .pesanan-item p {
+    @apply text-center text-gray-800;
+  }
+
+  /* Quantity Control */
+  .quantity-control {
+    @apply flex items-center justify-center border border-gray-300 rounded-md;
+  }
+  .quantity-control button {
+    @apply px-3 py-1 bg-gray-200 text-lg font-bold;
+    @apply hover:bg-gray-300;
+  }
+  .quantity-control button:first-child { @apply rounded-l-md; }
+  .quantity-control button:last-child { @apply rounded-r-md; }
+  .quantity-control input {
+    @apply w-12 text-center border-none bg-white focus:ring-0;
+  }
+  
+  /* Summary Box */
+  .pesanan-summary {
+    @apply bg-white p-6 rounded-lg shadow-lg mt-8 sticky bottom-4 z-10;
+  }
+  
+  .summary-content {
+    @apply max-w-md ml-auto flex flex-col items-end;
+  }
+  
+  .summary-total {
+    @apply flex items-baseline justify-between w-full my-4;
+  }
+  
+  .checkout-button {
+    @apply w-full bg-blue-600 text-white font-bold py-3 px-6 rounded-lg shadow-md;
+    @apply hover:bg-blue-700 transition-colors duration-300;
+  }
+
+/* ------------------------------------------------------------------------------------------------------------------------------ */
+  .login-bg {
+    @apply bg-gray-100 min-h-screen flex items-center justify-center;
+  }
+  .login-container {
+    @apply bg-white p-8 rounded-lg shadow-lg w-full max-w-md;
+  }
+  .login-card {
+    @apply mb-6;
+  }
+  .login-title {
+    @apply text-2xl font-bold mb-6 text-center text-gray-800;
+  }
+  .login-subtitle {
+    @apply text-gray-600 mb-6 text-center;
+  }
+  .form-group {
+    @apply mb-4;
+  }
+  .input-icon {
+    @apply absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 h-10 w-7 mr-2;
+  }
+  .form-group {
+    @apply w-full px-7 border border-none rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500;
+  }
+  .form-label {
+    @apply block text-gray-700 mb-2;
+  }
+  .form-input {
+    @apply w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500;
+  }
+  .form-input:focus {
+    @apply border-blue-500;
+  }
+  
+  
+
+ /* ------------------------------------------------------------------------------------------------------------------------------ */
+
+
+  /* MarginContentFor-X */
+  .margin-side-content{
+    @apply mx-auto max-w-7xl px-6 lg:px-8;
+
+  
+  }
 }
