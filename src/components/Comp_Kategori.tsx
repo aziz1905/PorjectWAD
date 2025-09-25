@@ -3,8 +3,8 @@ import { Icon } from '@iconify/react';
 
 // Anda bisa mengganti data ini dengan data dari API di kemudian hari
 const categories = [
-  { name: 'Superhero', icon: 'game-icons:bat-mask' },
   { name: 'Princess', icon: 'mdi:crown-outline' },
+  { name: 'Superhero', icon: 'game-icons:bat-mask' },
   { name: 'Horor', icon: 'mdi:ghost-outline' },
   { name: 'Tradisional', icon: 'mdi:drama-masks' },
   { name: 'Profesi', icon: 'mdi:briefcase-outline' },

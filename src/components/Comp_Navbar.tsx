@@ -1,6 +1,7 @@
 import SearchNav from "./Comp_Search";
 import { useState } from 'react';
-import { NavLink } from 'react-router-dom'; // Import NavLink
+import { NavLink } from 'react-router-dom';
+import { Icon } from '@iconify/react';
 
 const CompNavbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -21,7 +22,7 @@ const CompNavbar = () => {
         <div className="navbar-content">
           
           <NavLink to="/" className="logo">
-            <p className="font-extrabold">KostumKita</p>
+            <p className="font-extrabold">KostumKita.</p>
           </NavLink>
 
           <div> 
@@ -35,9 +36,9 @@ const CompNavbar = () => {
               <NavLink to="/tentang" className="nav-link" style={({ isActive }) => isActive ? activeLinkStyle : undefined}>Tentang</NavLink>
               <NavLink to="/pesanan" className="nav-link" style={({ isActive }) => isActive ? activeLinkStyle : undefined}>Pesanan</NavLink>
               <div>
-                <NavLink to="/masuk" className="nav-link-masuk-buatakun">Masuk</NavLink>
+                <NavLink to="/masuk" className="nav-link-masuk-buatakun" style={({ isActive }) => isActive ? activeLinkStyle : undefined}>Masuk</NavLink>
                 <span className="text-white mx-2">|</span>
-                <NavLink to="/buat-akun" className='nav-link-masuk-buatakun bg-blue'>Buat Akun</NavLink>
+                <NavLink to="/buat-akun" className='nav-link-masuk-buatakun bg-blue' style={({ isActive }) => isActive ? activeLinkStyle : undefined}>Buat Akun</NavLink>
               </div>
             </div>
           </div>
@@ -61,8 +62,8 @@ const CompNavbar = () => {
       <div className={`mobile-menu ${isOpen ? '' : 'hidden'}`} id="mobile-menu">
         <div className="mobile-menu-links">
           <SearchNav/>
-          <NavLink to="/masuk" className="mobile-nav-link" onClick={toggleMenu}>Masuk</NavLink>
-          <NavLink to="/buat-akun" className='mobile-nav-link' onClick={toggleMenu}>Buat Akun</NavLink>
+          <NavLink to="/masuk" className="mobile-nav-link" style={({ isActive }) => isActive ? activeLinkStyle : undefined} onClick={toggleMenu}>Masuk</NavLink>
+          <NavLink to="/buat-akun" className='mobile-nav-link'style={({ isActive }) => isActive ? activeLinkStyle : undefined} onClick={toggleMenu}>Buat Akun</NavLink>
           <NavLink to="/" className="mobile-nav-link" style={({ isActive }) => isActive ? activeLinkStyle : undefined} onClick={toggleMenu}>Beranda</NavLink>
           <NavLink to="/tentang" className="mobile-nav-link" style={({ isActive }) => isActive ? activeLinkStyle : undefined} onClick={toggleMenu}>Tentang</NavLink>
           <NavLink to="/pesanan" className="mobile-nav-link" style={({ isActive }) => isActive ? activeLinkStyle : undefined} onClick={toggleMenu}>Pesanan</NavLink>

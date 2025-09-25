@@ -5,6 +5,8 @@ import Layout from './components/Layout';
 import Beranda from './pages/Beranda';
 import Tentang from './pages/Tentang';
 import Pesanan from './pages/Pesanan';
+import Masuk from './pages/Masuk';
+import BuatAkun from './pages/BuatAkun';
 
 // Anda bisa membuat halaman Masuk dan BuatAkun nanti
 // import Masuk from './pages/Masuk'; 
@@ -21,6 +23,8 @@ function App() {
           <Route index element={<Beranda />} />
           <Route path="tentang" element={<Tentang />} />
           <Route path="pesanan" element={<Pesanan />} />
+          <Route path="masuk" element={<Masuk />} />
+          <Route path="buat-akun" element={<BuatAkun />} />
 
           {/* Anda bisa menambahkan rute untuk Masuk dan Buat Akun di sini */}
           {/* <Route path="masuk" element={<Masuk />} /> */}
