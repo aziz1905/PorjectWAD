@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import PesananButton  from'../components/Comp_Button.tsx';
 import { Icon } from '@iconify/react';
 
 // Tipe data untuk setiap item di keranjang
@@ -127,9 +128,11 @@ const Pesanan = () => {
               <span>Total</span>
               <span className="text-2xl font-bold text-blue-600">{formatRupiah(totalPrice)}</span>
             </div>
-            <button className="checkout-button">
-              Sewa Sekarang ({cartItems.filter(item => item.selected).length})
-            </button>
+            <PesananButton
+              buttonType="p_pesanSekarang"
+              logoChild={<Icon icon="mdi:login" className="text-white text-2xl" />}
+              fontChild={`Sewa Sekarang (${cartItems.filter(item => item.selected).length})`}
+            />
           </div>
         </div>
 

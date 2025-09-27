@@ -7,16 +7,17 @@ import { em } from 'framer-motion/client';
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+app.use(cors());
 app.use(express.json());
 
 
-/*const pool = new Pool({
-  user: 'db_admin',
-  host: 'localhost',
-  database: 'university_db',
-  password: 'mypassword',
-  port: 5433,
-});*/
+// const pool = new Pool({
+//   user: 'db_admin',
+//   host: 'localhost',
+//   database: 'university_db',
+//   password: 'mypassword',
+//   port: 5433,
+// });
 
 const products = [
     {
@@ -143,39 +144,67 @@ app.get('/api/products', (req, res) => {
     res.status(200).json(products);
 });
 
+// Mendapatkan satu produk berdasarkan ID
+app.get('/api/products/:id', (req, res) => {
+    const { id } = req.params;
+    const product = products.find(p => p.id === id);
+
+    if (product) {
+        res.status(200).json(product);
+    } else {
+        res.status(404).json({ message: 'Produk tidak ditemukan' });
+    }
+});
+
+
+
+// Mendaftarkan user baru
+app.post('/api/buatakun', (req, res) => {
+    // 3. Ambil data dari body request
+    const { fullName, email, password } = req.body;
+
+    // Validasi sederhana
+    if (!fullName || !email || !password) {
+        return res.status(400).json({ message: 'Semua kolom harus diisi!' });
+    }
+
+    // Cek apakah email sudah terdaftar
+    const userExists = users.find(u => u.email === email);
+    if (userExists) {
+        return res.status(409).json({ message: 'Email sudah terdaftar!' });
+    }
+    
+    // Buat user baru
+    const newUser = {
+        id: users.length + 1, // Cara sederhana untuk membuat ID baru
+        fullName,
+        email,
+        password // Ingat: hash password ini di aplikasi nyata!
+    };
+
+    users.push(newUser);
+    console.log('User baru ditambahkan:', newUser);
+    console.log('Semua user:', users);
+    
+    // Kirim response sukses
+    res.status(201).json({ message: 'User berhasil dibuat!', user: newUser });
+});
+
+// Login user
+app.post('/api/login', (req, res) => {
+  const { email, password } = req.body;
+  const user = users.find(u => u.email === email);
+  
+  if(user && user.password === password) { // Cek password (sementara)
+   // Jangan kirim password ke frontend!
+    const { password: _, ...userWithoutPassword } = user;
+    res.status(200).json({ message: 'Login berhasil!', user: userWithoutPassword });
+  } else {
+   res.status(401).json({ message: 'Email atau password salah!' });
+  }
+});
+
 
 app.listen(PORT, () => {
-  console.log(`http://localhost:${PORT}`);
-});
-
-
-const users = [
-  {
-    id: 1,
-    fullName: 'Husnul Farhan',
-    email: 'husnul@example.com',
-    password: 'hashed_password_1' // Kata sandi harus selalu di-hash!
-  },
-  {
-    id: 2,
-    fullName: 'Aziz R.',
-    email: 'aziz@example.com',
-    password: 'hashed_password_2'
-  }
-];
-
-app.post('/api/buatakun', (req, res) => {
-  users.push(newUser);
-  res.status(201).json({message : 'User Berhasil dibuat!', user : newUser})
-});
-
-app.post('/api/login', (req, res) => {
-  const {email , password} = req.body;
-  const user = users.find( u => u.email === email);
-  
-  if(user && user.password === password){
-    res.status(200).json({message : 'User Ditemukan!', user : user});
-  } else {
-    res.status(401).json({message : 'Email atau password salah!'});
-  }
+ console.log(`Server berjalan di http://localhost:${PORT}`);
 });

@@ -64,9 +64,13 @@ const Masuk = () => {
               </Link>
             </div>
 
-            <div className='flex item-center justify-center pb-4 flex-grow '>
-              <Button className="w-full" logoChild={<Icon icon="mdi:login" className="text-white text-2xl" />}
+            <div className='flex item-center justify-center pb-4 flex-grow w-full'>
+              <Button buttonType="p_masuk" logoChild={<Icon icon="mdi:login" className="text-white text-2xl" />}
               fontChild="Masuk"
+              onClick={(e: React.MouseEvent) => {
+              e.preventDefault(); 
+              <Link to="/"> </Link>
+            }}
               />
             </div>
           </form>

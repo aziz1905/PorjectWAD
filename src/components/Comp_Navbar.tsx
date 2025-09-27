@@ -21,7 +21,7 @@ const CompNavbar = () => {
       <div className="navbar-container">
         <div className="navbar-content">
           
-          <NavLink to="/" className="logo">
+          <NavLink to="/beranda" className="logo">
             <p className="font-extrabold">KostumKita.</p>
           </NavLink>
 
@@ -31,10 +31,13 @@ const CompNavbar = () => {
 
           <div className="desktop-menu">
             <div className="nav-links-container">
-              {/* Ganti <a> dengan NavLink dan href dengan to */}
-              <NavLink to="/" className="nav-link" style={({ isActive }) => isActive ? activeLinkStyle : undefined}>Beranda</NavLink>
+              <NavLink to="/beranda" className="nav-link" style={({ isActive }) => isActive ? activeLinkStyle : undefined}>Beranda</NavLink>
               <NavLink to="/tentang" className="nav-link" style={({ isActive }) => isActive ? activeLinkStyle : undefined}>Tentang</NavLink>
-              <NavLink to="/pesanan" className="nav-link" style={({ isActive }) => isActive ? activeLinkStyle : undefined}>Pesanan</NavLink>
+              <NavLink to="/masuk" className="nav-link-masuk-buatakun" style={({ isActive }) => isActive ? activeLinkStyle : undefined}
+              onClick={()=>{
+                alert("anda perlu login!")
+              }}
+              >Pesanan</NavLink>
               <div>
                 <NavLink to="/masuk" className="nav-link-masuk-buatakun" style={({ isActive }) => isActive ? activeLinkStyle : undefined}>Masuk</NavLink>
                 <span className="text-white mx-2">|</span>
@@ -66,7 +69,7 @@ const CompNavbar = () => {
           <NavLink to="/buat-akun" className='mobile-nav-link'style={({ isActive }) => isActive ? activeLinkStyle : undefined} onClick={toggleMenu}>Buat Akun</NavLink>
           <NavLink to="/" className="mobile-nav-link" style={({ isActive }) => isActive ? activeLinkStyle : undefined} onClick={toggleMenu}>Beranda</NavLink>
           <NavLink to="/tentang" className="mobile-nav-link" style={({ isActive }) => isActive ? activeLinkStyle : undefined} onClick={toggleMenu}>Tentang</NavLink>
-          <NavLink to="/pesanan" className="mobile-nav-link" style={({ isActive }) => isActive ? activeLinkStyle : undefined} onClick={toggleMenu}>Pesanan</NavLink>
+          <NavLink to="/masuk" className="mobile-nav-link" style={({ isActive }) => isActive ? activeLinkStyle : undefined} onClick={toggleMenu}>Pesanan</NavLink>
         </div>
       </div>
     </nav>

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Icon } from '@iconify/react';
+import BuatAkunButton from '../components/Comp_Button.tsx';
 import { Link } from 'react-router-dom';
 
 const BuatAkun = () => {
@@ -96,10 +97,15 @@ const BuatAkun = () => {
               </div>
             </div>
 
-            <div>
-              <button type="submit" className="submit-button">
-                Buat Akun
-              </button>
+            <div className="my-8 flex justify-center">
+              <BuatAkunButton  
+               buttonType="p_masuk" logoChild={<Icon icon="mdi:account-card" className="text-white text-2xl" />}
+                fontChild="Registrasi"
+              onClick={(e: React.MouseEvent) => {
+                e.preventDefault(); 
+                <Link to="/"> </Link>
+                }}
+              />
             </div>
           </form>
 
