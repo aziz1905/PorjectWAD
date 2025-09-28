@@ -1,6 +1,5 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-
-// Import komponen Layout dan semua halaman
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { useState } from 'react';
 import Layout from './components/Layout';
 import Beranda from './Pages/Beranda';
 import Tentang from './Pages/Tentang';
@@ -8,31 +7,54 @@ import Pesanan from './Pages/Pesanan';
 import Masuk from './Pages/Masuk';
 import BuatAkun from './Pages/BuatAkun';
 import DetailProduk from './Pages/DetailProduk';
-
+import { User } from './types';
+import { dummyUsers } from './data/Users';
 
 function App() {
+  // ✅ State untuk menyimpan data user yang sedang login
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+
+  // ✅ Fungsi untuk menangani proses login
+  const handleLogin = (email: string, password: string): boolean => {
+    const user = dummyUsers.find(u => u.email === email && u.password === password);
+    if (user) {
+      // Jangan simpan password di state
+      const { password: _, ...userData } = user; 
+      setCurrentUser(userData);
+      return true; // Login berhasil
+    }
+    return false; // Login gagal
+  };
+
+  // ✅ Fungsi untuk menangani proses logout
+  const handleLogout = () => {
+    setCurrentUser(null);
+  };
+  
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Layout />}>
-          
-          {/* Rute-rute anak yang akan dirender di dalam <Outlet> */}
-          <Route index element={<Beranda />} />
-          <Route path="beranda" element={<Beranda/>} />
+        {/* ✅ Kirim state dan fungsi ke komponen Layout */}
+        <Route 
+          path="/" 
+          element={<Layout user={currentUser} onLogout={handleLogout} />}
+        >
+          <Route index element={<Navigate replace to="beranda" />} />
+          <Route path="beranda" element={<Beranda />} />
           <Route path="tentang" element={<Tentang />} />
           <Route path="pesanan" element={<Pesanan />} />
-          <Route path="masuk" element={<Masuk />} />
+          
+          {/* ✅ Kirim fungsi onLogin ke halaman Masuk */}
+          <Route path="masuk" element={<Masuk onLogin={handleLogin} />} />
+          
           <Route path="buat-akun" element={<BuatAkun />} />
-          <Route path="detail-produk" element={<DetailProduk />}/>
+          <Route path="detail-produk/:id" element={<DetailProduk />}/>
 
-
-          {/* Rute untuk halaman tidak ditemukan */}
           <Route path="*" element={
             <div className="flex items-center justify-center h-96">
               <h1 className="text-4xl font-bold text-blue-800">404: Halaman Tidak Ditemukan</h1>
             </div>
           } />
-
         </Route>
       </Routes>
     </BrowserRouter>

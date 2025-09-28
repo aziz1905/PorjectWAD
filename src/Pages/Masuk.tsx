@@ -1,17 +1,33 @@
 import React, { useState } from 'react';
 import { Icon } from '@iconify/react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Button from '../components/Comp_Button';
 
-const Masuk = () => {
+// ✅ Tipe data untuk props
+interface MasukProps {
+  onLogin: (email: string, password: string) => boolean;
+}
+
+const Masuk = ({ onLogin }: MasukProps) => { // ✅ Terima props onLogin
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const navigate = useNavigate(); // ✅ Hook untuk navigasi/redirect
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Tambahkan logika untuk handle login di sini
-    console.log({ email, password });
-    alert('Login Coba: ' + email);
+    setError(''); // Hapus error sebelumnya
+
+    // ✅ Panggil fungsi onLogin yang dikirim dari App.tsx
+    const loginSuccess = onLogin(email, password);
+
+    if (loginSuccess) {
+      // ✅ Jika berhasil, arahkan ke halaman beranda
+      navigate('/beranda');
+    } else {
+      // ✅ Jika gagal, tampilkan pesan error
+      setError('Email atau kata sandi salah!');
+    }
   };
 
   return (
@@ -40,7 +56,7 @@ const Masuk = () => {
               </div>
             </div>
 
-            <div className="form-group">
+           <div className="form-group">
               <label htmlFor="password" className="form-label">Kata Sandi</label>
               <div className="relative">
                 <Icon icon="mdi:lock-outline" className="input-icon" />
@@ -57,6 +73,9 @@ const Masuk = () => {
                 />
               </div>
             </div>
+
+            {/* ✅ Tampilkan pesan error jika ada */}
+            {error && <p className="text-red-500 text-sm text-center">{error}</p>}
             
             <div className="flex items-center justify-end">
               <Link to="#" className="form-link">
@@ -65,12 +84,10 @@ const Masuk = () => {
             </div>
 
             <div className='flex item-center justify-center pb-4 flex-grow w-full'>
+              {/* ✅ Ganti onClick dengan type="submit" agar form ter-submit */}
               <Button buttonType="p_masuk" logoChild={<Icon icon="mdi:login" className="text-white text-2xl" />}
-              fontChild="Masuk"
-              onClick={(e: React.MouseEvent) => {
-              e.preventDefault(); 
-              <Link to="/"> </Link>
-            }}
+                fontChild="Masuk"
+                type="submit" // Penting!
               />
             </div>
           </form>

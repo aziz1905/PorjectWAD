@@ -72,11 +72,11 @@ const ProductCard = ({
         </p>
         <div className="mt-3">
           <ProductButton
-            buttonType="sewaSekarang"
+            buttonType="masukanKeranjang"
             logoChild={
               <Icon icon="mdi:cart-plus" className="text-white text-2xl" />
             }
-            fontChild="Sewa Sekarang"
+            fontChild=""
             onClick={(e: React.MouseEvent) => {
               e.preventDefault(); 
               alert(`Menambahkan ${name} ke keranjang`);

@@ -6,13 +6,11 @@ import ProductCard from "../components/Comp_Product_Card.tsx";
 
 const DetailProduk = () => {
     const { id } = useParams<{ id: string }>(); 
-    // ✅ Tipe data langsung menggunakan "Product"
     const [product, setProduct] = useState<Product | null>(null);
     const [quantity, setQuantity] = useState(1);
     const [selectedSize, setSelectedSize] = useState<string>('');
 
     useEffect(() => {
-        // ✅ Tipe data langsung menggunakan "Product"
         const foundProduct = Products.find((p: Product) => p.id === id);
         setProduct(foundProduct || null);
         if (foundProduct && foundProduct.sizes.length > 0) {

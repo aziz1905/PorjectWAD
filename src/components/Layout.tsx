@@ -1,14 +1,22 @@
-import React from 'react';
 import { Outlet } from 'react-router-dom';
 import CompNavbar from './Comp_Navbar';
 import CompFooter from './Comp_Footer';
 
-const Layout = () => {
+// ✅ PERBAIKAN: Ubah path import ke file types.ts
+import { User } from '../types';
+
+interface LayoutProps {
+  user: User | null;
+  onLogout: () => void;
+}
+
+const Layout = ({ user, onLogout }: LayoutProps) => {
   return (
-    <div className="bg-gray-50 min-h-screen">
+    <div >
       <header className="kostumkita-top">
-        <CompNavbar />
+      <CompNavbar user={user} onLogout={onLogout} />
       </header>
+      
       
       <main className="kostumkita-main">
         <Outlet />
@@ -20,3 +28,5 @@ const Layout = () => {
 };
 
 export default Layout;
+
+

@@ -13,12 +13,12 @@ export default function ProductButton({ buttonType, logoChild, fontChild, onClic
   // This function correctly determines the CSS classes based on buttonType.
   const getButtonClass = () => {
     let specificClass = '';
-    if (buttonType === "sewaSekarang") {
-      specificClass = "py-3 px-10 items-start mr-35";
+    if (buttonType === "masukanKeranjang") {
+      specificClass = "py-3 px-10 items-start mr-30";
     } else if (buttonType === "p_masuk") {
       specificClass = "px-20 py-3";
     } else if (buttonType === "p_pesanSekarang") {
-      specificClass = "p-20";
+      specificClass = "px-20 py-3";
     }
     return `product-button ${specificClass}`;
   };
