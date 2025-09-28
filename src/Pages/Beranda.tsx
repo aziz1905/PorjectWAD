@@ -1,4 +1,3 @@
-import React from 'react';
 import HeroProduct from '../components/Comp_Hero_Beranda';
 import ProductId from '../components/Comp_Product_Grid';
 import Reviews from '../components/Comp_Review';

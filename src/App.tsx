@@ -9,19 +9,16 @@ import Masuk from './Pages/Masuk';
 import BuatAkun from './Pages/BuatAkun';
 import DetailProduk from './Pages/DetailProduk';
 
-// Anda bisa membuat halaman Masuk dan BuatAkun nanti
-// import Masuk from './pages/Masuk'; 
-// import BuatAkun from './pages/BuatAkun';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Semua halaman akan menggunakan komponen Layout sebagai bungkusnya */}
         <Route path="/" element={<Layout />}>
           
           {/* Rute-rute anak yang akan dirender di dalam <Outlet> */}
           <Route index element={<Beranda />} />
+          <Route path="beranda" element={<Beranda/>} />
           <Route path="tentang" element={<Tentang />} />
           <Route path="pesanan" element={<Pesanan />} />
           <Route path="masuk" element={<Masuk />} />

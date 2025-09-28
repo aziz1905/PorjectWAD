@@ -1,4 +1,3 @@
-import React from 'react';
 import { Icon } from '@iconify/react';
 
 // Anda bisa mengganti data ini dengan data dari API di kemudian hari
