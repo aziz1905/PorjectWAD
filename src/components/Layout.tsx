@@ -2,7 +2,7 @@ import { Outlet } from 'react-router-dom';
 import CompNavbar from './Comp_Navbar';
 import CompFooter from './Comp_Footer';
 
-// ✅ PERBAIKAN: Ubah path import ke file types.ts
+
 import { User } from '../types';
 
 interface LayoutProps {

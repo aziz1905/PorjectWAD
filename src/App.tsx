@@ -1,5 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useState } from 'react';
+import { User } from './types';
+import { dummyUsers } from './data/Users';
 import Layout from './components/Layout';
 import Beranda from './Pages/Beranda';
 import Tentang from './Pages/Tentang';
@@ -7,8 +9,9 @@ import Pesanan from './Pages/Pesanan';
 import Masuk from './Pages/Masuk';
 import BuatAkun from './Pages/BuatAkun';
 import DetailProduk from './Pages/DetailProduk';
-import { User } from './types';
-import { dummyUsers } from './data/Users';
+import Keranjang from './Pages/pesanan/Keranjang';
+import Pengiriman from './Pages/pesanan/Pengiriman';
+import Histori from './Pages/pesanan/Histori';
 
 function App() {
   // ✅ State untuk menyimpan data user yang sedang login
@@ -42,11 +45,13 @@ function App() {
           <Route index element={<Navigate replace to="beranda" />} />
           <Route path="beranda" element={<Beranda />} />
           <Route path="tentang" element={<Tentang />} />
-          <Route path="pesanan" element={<Pesanan />} />
-          
-          {/* ✅ Kirim fungsi onLogin ke halaman Masuk */}
+          <Route path="pesanan" element={<Pesanan />}>
+            <Route index element={<Navigate to="keranjang" replace />} />
+            <Route path="keranjang" element={<Keranjang />} />
+            <Route path="pengiriman" element={<Pengiriman />} />
+            <Route path="histori" element={<Histori />} />
+          </Route> 
           <Route path="masuk" element={<Masuk onLogin={handleLogin} />} />
-          
           <Route path="buat-akun" element={<BuatAkun />} />
           <Route path="detail-produk/:id" element={<DetailProduk />}/>
 
