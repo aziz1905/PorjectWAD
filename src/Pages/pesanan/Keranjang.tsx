@@ -2,15 +2,15 @@ import React, { useState, useEffect } from 'react';
 import PesananButton from '../../components/Comp_Button.tsx';
 import { Icon } from '@iconify/react';
 import Products from '../../data/Produk.ts';
-import { Product } from '../../types.ts';     
+import { Product } from '../../types.ts';
 
+// Tipe data untuk item di keranjang, gabungan dari Product + properti keranjang
 type CartItem = Product & {
   quantity: number;
   selected: boolean;
 };
 
-// ✅ Buat data keranjang dummy dari data Produk.ts
-// Kita ambil 4 produk pertama dan tambahkan properti 'quantity' dan 'selected'
+// Ambil 4 produk pertama sebagai data dummy untuk keranjang
 const initialCartItems: CartItem[] = Products.slice(0, 4).map(product => ({
   ...product,
   quantity: 1,
@@ -30,6 +30,7 @@ const Keranjang = () => {
   const [cartItems, setCartItems] = useState<CartItem[]>(initialCartItems);
   const [totalPrice, setTotalPrice] = useState(0);
 
+  // Hitung ulang total harga setiap kali ada perubahan pada cartItems
   useEffect(() => {
     const newTotal = cartItems.reduce((sum, item) => {
       if (item.selected) {
@@ -40,17 +41,19 @@ const Keranjang = () => {
     setTotalPrice(newTotal);
   }, [cartItems]);
 
-  // ✅ Sesuaikan tipe ID menjadi string jika di data Produk.ts ID-nya string
+  // ✅ PERBAIKAN: Fungsi-fungsi event handler dirapikan
+  // Fungsi untuk mengubah kuantitas
   const handleQuantityChange = (id: string, amount: number) => {
     setCartItems(currentItems =>
       currentItems.map(item =>
         item.id === id
-          ? { ...item, quantity: Math.max(1, item.quantity + amount) }
+          ? { ...item, quantity: Math.max(1, item.quantity + amount) } // Kuantitas minimal 1
           : item
       )
     );
   };
 
+  // Fungsi untuk mengubah status terpilih (selected)
   const handleSelectChange = (id: string) => {
     setCartItems(currentItems =>
       currentItems.map(item =>
@@ -59,6 +62,7 @@ const Keranjang = () => {
     );
   };
 
+  // Fungsi untuk memilih/batal memilih semua item
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { checked } = event.target;
     setCartItems(currentItems =>
@@ -66,13 +70,27 @@ const Keranjang = () => {
     );
   };
   
-  const allSelected = cartItems.every(item => item.selected);
+  // Cek apakah semua item sudah terpilih untuk status checkbox "Pilih Semua"
+  const allSelected = cartItems.length > 0 && cartItems.every(item => item.selected);
 
   return (
-    <> {/* Menggunakan Fragment karena div terluar sudah ada di Pesanan.tsx */}
+    <>
       {/* Header Tabel */}
       <div className="pesanan-header">
-        {/* ... (Konten header tidak berubah) ... */}
+        {/* ✅ DITAMBAHKAN: Bagian header "Pilih Semua" */}
+        <div className="flex items-center">
+          <input
+            type="checkbox"
+            className="pesanan-checkbox"
+            checked={allSelected}
+            onChange={handleSelectAll}
+          />
+          <label>Pilih Semua</label>
+        </div>
+        <span>Produk</span>
+        <span>Harga Sewa</span>
+        <span>Jumlah Sewa</span>
+        <span>Total Harga</span>
       </div>
 
       {/* Daftar Item */}
@@ -86,7 +104,6 @@ const Keranjang = () => {
                 checked={item.selected}
                 onChange={() => handleSelectChange(item.id)}
               />
-              {/* ✅ Gunakan imageUrl dari data produk */}
               <img src={item.imageUrl} alt={item.name} className="pesanan-item-image" />
               <p className="pesanan-item-name">{item.name}</p>
             </div>
@@ -103,7 +120,19 @@ const Keranjang = () => {
       
       {/* Ringkasan & Checkout */}
       <div className="pesanan-summary">
-        {/* ... (Konten summary tidak berubah) ... */}
+        {/* ✅ DITAMBAHKAN: Bagian ringkasan sewa */}
+        <div className="summary-content">
+          <h3 className="text-xl font-bold">Ringkasan Sewa</h3>
+          <div className="summary-total">
+            <span>Total</span>
+            <span className="text-2xl font-bold text-blue-600">{formatRupiah(totalPrice)}</span>
+          </div>
+          <PesananButton
+            buttonType="p_pesanSekarang"
+            logoChild={<Icon icon="mdi:login" className="text-white text-2xl" />}
+            fontChild={`Sewa Sekarang (${cartItems.filter(item => item.selected).length})`}
+          />
+        </div>
       </div>
     </>
   );
