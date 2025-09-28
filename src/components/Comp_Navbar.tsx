@@ -37,7 +37,13 @@ const CompNavbar = ({ user, onLogout }: NavbarProps) => { // ✅ Terima props
               <NavLink to="/beranda" className="nav-link" style={({ isActive }) => isActive ? activeLinkStyle : undefined}>Beranda</NavLink>
               <NavLink to="/tentang" className="nav-link" style={({ isActive }) => isActive ? activeLinkStyle : undefined}>Tentang</NavLink>
               
-              <NavLink to={user ? "/pesanan" : "/masuk"} className="nav-link" style={({ isActive }) => isActive ? activeLinkStyle : undefined}>
+              <NavLink to={user ? "/pesanan" : "/masuk"} className={user? "nav-link":""} style={({ isActive }) => isActive ? activeLinkStyle : undefined}
+              onClick={() => {
+                if (!user) {
+                  alert("Anda harus masuk Akun terlebih dahulu!");
+                }
+              }}
+              >
                 Pesanan
               </NavLink>
               
