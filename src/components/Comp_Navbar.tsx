@@ -1,7 +1,7 @@
 import SearchNav from "./Comp_Search";
 import { useState } from 'react';
 import { NavLink, Link } from 'react-router-dom';
-import { User } from '../types';
+import { User } from '../type';
 
 // ✅ Tipe data untuk props yang diterima Navbar
 interface NavbarProps {
