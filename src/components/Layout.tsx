@@ -3,7 +3,7 @@ import CompNavbar from './Comp_Navbar';
 import CompFooter from './Comp_Footer';
 
 
-import { User } from '../types';
+import { User } from '../type';
 
 interface LayoutProps {
   user: User | null;

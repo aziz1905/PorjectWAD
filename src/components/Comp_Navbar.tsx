@@ -3,13 +3,13 @@ import { useState } from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import { User } from '../type';
 
-// ✅ Tipe data untuk props yang diterima Navbar
+
 interface NavbarProps {
     user: User | null;
     onLogout: () => void;
 }
 
-const CompNavbar = ({ user, onLogout }: NavbarProps) => { // ✅ Terima props
+const CompNavbar = ({ user, onLogout }: NavbarProps) => { 
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleMenu = () => {

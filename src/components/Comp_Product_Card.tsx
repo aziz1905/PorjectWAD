@@ -9,7 +9,7 @@ type ProductProps = {
   price: number;
   description: string;
   sizes?: readonly string[] | "Stok Habis";
-  category: {
+  specification: {
     age: "Dewasa" | "Remaja" | "Anak-anak";
     gender: "Pria" | "Wanita";
   };
@@ -22,7 +22,7 @@ const ProductCard = ({
   price,
   imageUrl,
   sizes,
-  category,
+  specification,
 }: ProductProps) => {
   return (
     <Link
@@ -64,7 +64,7 @@ const ProductCard = ({
         </p>
 
         <p className="text-sm text-gray-700">
-          Kategori: {category.age}, {category.gender}
+          Kategori: {specification.age}, {specification.gender}
         </p>
 
         <p className="text-sm text-gray-700">

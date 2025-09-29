@@ -14,7 +14,7 @@ export default function ProductGrid() {
           price={product.price}
           imageUrl={product.imageUrl}
           sizes={product.sizes}
-          category={product.category}
+          specification={product.specification}
         />
       ))}
     </div>

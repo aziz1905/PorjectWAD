@@ -15,7 +15,7 @@ export interface Product {
     price: number;
     imageUrl: string;
     sizes: readonly string[];
-    category: {
+    spesification: {
         age: string;
         gender: string;
     };

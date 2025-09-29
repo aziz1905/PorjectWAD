@@ -1,6 +1,5 @@
 import React from 'react';
 
-// Defines the types for the component's props.
 interface ButtonProps {
   buttonType: 'sewaSekarang' | 'p_masuk' | 'p_pesanSekarang' | string;
   logoChild?: React.ReactNode;
@@ -10,7 +9,6 @@ interface ButtonProps {
 
 export default function ProductButton({ buttonType, logoChild, fontChild, onClick }: ButtonProps) {
   
-  // This function correctly determines the CSS classes based on buttonType.
   const getButtonClass = () => {
     let specificClass = '';
     if (buttonType === "masukanKeranjang") {

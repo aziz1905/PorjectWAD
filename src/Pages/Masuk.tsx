@@ -84,10 +84,9 @@ const Masuk = ({ onLogin }: MasukProps) => { // ✅ Terima props onLogin
             </div>
 
             <div className='flex item-center justify-center pb-4 flex-grow w-full'>
-              {/* ✅ Ganti onClick dengan type="submit" agar form ter-submit */}
               <Button buttonType="p_masuk" logoChild={<Icon icon="mdi:login" className="text-white text-2xl" />}
                 fontChild="Masuk"
-                type="submit" // Penting!
+                type="submit" 
               />
             </div>
           </form>

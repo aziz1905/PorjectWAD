@@ -1,32 +1,28 @@
 import React, { useState } from 'react';
 import { Icon } from '@iconify/react';
-// ✅ LANGKAH 1: Impor data produk dan tipe datanya
 import Products from '../../data/Produk.ts';
 import { Product } from '../../type.ts';
 
-// ✅ LANGKAH 2: Perbarui tipe HistoryItem agar mencakup semua properti dari Product
 type HistoryItem = Product & {
   rentalStartDate: Date;
   rentalEndDate: Date;
   rating?: number;
 };
 
-// ✅ LANGKAH 3: Buat data dummy dengan mengambil dari array Products
 const dummyHistoryItems: HistoryItem[] = [
   {
-    ...Products[2], // <-- Mengambil semua data dari produk ke-3 (Kostum Tradisional)
+    ...Products[2], 
     rentalStartDate: new Date('2025-09-11'),
     rentalEndDate: new Date('2025-09-12'),
-    // Item ini belum punya rating
   },
   {
-    ...Products[4], // <-- Mengambil semua data dari produk ke-5 (Gaun Putri Salju)
+    ...Products[4], 
     rentalStartDate: new Date('2025-09-11'),
     rentalEndDate: new Date('2025-09-12'),
-    rating: 5, // Item ini sudah diberi rating 5
+    rating: 5, 
   },
   {
-    ...Products[1], // <-- Mengambil semua data dari produk ke-2 (Kostum Superhero)
+    ...Products[1], 
     rentalStartDate: new Date('2025-08-20'),
     rentalEndDate: new Date('2025-08-23'),
     rating: 4,

@@ -17,7 +17,7 @@ const initialCartItems: CartItem[] = Products.slice(0, 4).map(product => ({
   ...product,
   quantity: 1,
   selected: true,
-  duration: 3, // Default sewa 3 hari
+  duration: 3, 
 }));
 
 // Fungsi untuk memformat angka menjadi format Rupiah
