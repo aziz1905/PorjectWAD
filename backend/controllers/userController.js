@@ -13,13 +13,13 @@ const users = [
     }
 ];
 
-export const getAlluser = ('/', (req, res) => {
+export const getAlluser =  (req, res) => {
     const safeUsers = users.map(u => {
         const { password, ...safeUser } = u;
         return safeUser; 
     });
     res.status(200).json(safeUsers);
-});
+};
 
 export const GetUserById = (req, res) => {
     const userId = parseInt(req.params.id);
@@ -43,6 +43,7 @@ export const createAccount = (req, res) => {
     }
 
     newUser.id = users.length + 1;
+    newUser.imageUrl = 'https://via.placeholder.com/150/cccccc/ffffff?text=New';
     users.push(newUser);
 
     const {password, ...safeUser } = newUser;
