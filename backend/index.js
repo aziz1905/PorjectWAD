@@ -7,9 +7,9 @@ const app = express();
 
 app.use(express.json());
 
-app.use('/api/products', productRoutes);
+app.use('/products', productRoutes);
 
-app.use('/api/users', userRoutes);
+app.use('/users', userRoutes);
 
 app.listen(PORT, () => {
   console.log(`http://localhost:${PORT}`);

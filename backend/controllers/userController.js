@@ -34,8 +34,19 @@ export const GetUserById = (req, res) => {
 };
 
 export const createAccount = (req, res) => {
+    const newUser = req.body;
+    if(!newUser || !newUser.email || !newUser.password){
+        return res.status(400).json({message : 'Email dan password harus di isi!'});
+    }
+    if (users.find(u => u.email === newUser.email)){
+        return res.status(409).json({message : 'Email sudah digunakan.'});
+    }
+
+    newUser.id = users.length + 1;
     users.push(newUser);
-    res.status(201).json({message : 'User Berhasil dibuat!', user : newUser});
+
+    const {password, ...safeUser } = newUser;
+    res.status(200).json({message : 'User berhasil dibuat!', user : safeUser});
 };
 
 export const loginAccount = (req, res) => {
