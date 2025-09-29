@@ -3,6 +3,7 @@ import PesananButton from '../../components/Comp_Button.tsx';
 import { Icon } from '@iconify/react';
 import Products from '../../data/Produk.ts';
 import { Product } from '../../type.ts';
+import { Link } from 'react-router-dom';
 
 // Tipe data untuk item di keranjang
 type CartItem = Product & {
@@ -146,11 +147,13 @@ const Keranjang = () => {
             <span>Total</span>
             <span className="text-2xl font-bold text-blue-600">{formatRupiah(totalPrice)}</span>
           </div>
+          <Link to="/detail-penyewaan">
           <PesananButton
             buttonType="p_pesanSekarang"
             logoChild={<Icon icon="mdi:login" className="text-white text-2xl" />}
             fontChild={`Sewa Sekarang (${cartItems.filter(item => item.selected).length})`}
           />
+          </Link>
         </div>
       </div>
     </>

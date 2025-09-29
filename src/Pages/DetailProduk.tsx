@@ -28,7 +28,7 @@ const DetailProduk = () => {
 
     return (
         <div className="detail-bg">
-            <div className="detail-container">
+            <div className="detail-container pt-5">
                 {/* Bagian Utama Produk */}
                 <div className="detail-main-grid">
                     <div className="detail-image-wrapper">
@@ -68,10 +68,12 @@ const DetailProduk = () => {
                                 <button onClick={() => handleQuantityChange(1)} className="quantity-btn">+</button>
                             </div>
                         </div>
-                        <button className="sewa-button">
+                        <Link to="/detail-penyewaan">
+                                <button className="sewa-button">
                             <Icon icon="mdi:cart-plus" className="mr-2" />
                             Sewa Sekarang
                         </button>
+                        </Link>
                     </div>
                 </div>
 
