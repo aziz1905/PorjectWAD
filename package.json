@@ -13,6 +13,7 @@
   "dependencies": {
     "@nextui-org/react": "^2.6.11",
     "@tailwindcss/vite": "^4.1.13",
+    "cors": "^2.8.5",
     "express": "^5.1.0",
     "framer-motion": "^12.23.15",
     "pg": "^8.16.3",

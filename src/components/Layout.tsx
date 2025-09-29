@@ -2,31 +2,23 @@ import { Outlet } from 'react-router-dom';
 import CompNavbar from './Comp_Navbar';
 import CompFooter from './Comp_Footer';
 
-
-import { User } from '../type';
-
-interface LayoutProps {
-  user: User | null;
-  onLogout: () => void;
-}
-
-const Layout = ({ user, onLogout }: LayoutProps) => {
+const Layout = () => {
   return (
-    <div >
-      <header className="kostumkita-top">
-      <CompNavbar user={user} onLogout={onLogout} />
+    <div className="flex flex-col min-h-screen">
+      {/* CompNavbar tidak perlu props lagi */}
+      <header>
+        <CompNavbar />
       </header>
       
-      
-      <main className="kostumkita-main">
+      <main className="flex-grow">
         <Outlet />
       </main>
 
-      <CompFooter />
+      <footer>
+        <CompFooter />
+      </footer>
     </div>
   );
 };
 
 export default Layout;
-
-

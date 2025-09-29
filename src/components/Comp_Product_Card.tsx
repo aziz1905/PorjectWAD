@@ -13,6 +13,7 @@ type ProductProps = {
     age: "Dewasa" | "Remaja" | "Anak-anak";
     gender: "Pria" | "Wanita";
   };
+  categoryId: number;
 };
 
 const ProductCard = ({
@@ -23,6 +24,7 @@ const ProductCard = ({
   imageUrl,
   sizes,
   specification,
+  categoryId,
 }: ProductProps) => {
   return (
     <Link
@@ -33,6 +35,7 @@ const ProductCard = ({
       <img
         src={imageUrl}
         alt={name}
+        type={categoryId}
         className="product-image w-full h-48 object-cover rounded-t-lg"
       />
 

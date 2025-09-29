@@ -28,7 +28,7 @@ const CompFooter = ({user}:FooterProps) => {
               <Link>Beranda</Link>              
               <li><a href="#" className="text-base text-gray-300 hover:text-white">Tentang</a></li>
               <li><a href="#" className="text-base text-gray-300 hover:text-white">Pesanan</a></li>
-              <li>
+              <>
                 {!user && (
                  <>
                     <li><a href="#" className="text-base text-gray-300 hover:text-white">Masuk</a></li>
@@ -42,7 +42,7 @@ const CompFooter = ({user}:FooterProps) => {
                 {user && (
                   <li><a href="#" className="text-base text-gray-300 hover:text-white">Keluar Akun</a></li>
                 )}
-              </li>
+              </>
             </ul>
           </div>
 

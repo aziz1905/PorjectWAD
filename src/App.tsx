@@ -1,7 +1,8 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useState } from 'react';
-import { User } from './types';
+import { User } from './type';
 import { dummyUsers } from './data/Users';
+import { useAuth } from './components/AuthContext'; 
 import Layout from './components/Layout';
 import Beranda from './Pages/Beranda';
 import Tentang from './Pages/Tentang';
@@ -13,30 +14,40 @@ import Keranjang from './Pages/pesanan/Keranjang';
 import Pengiriman from './Pages/pesanan/Pengiriman';
 import Histori from './Pages/pesanan/Histori';
 import DetailPenyewaan from './Pages/DetailPenyewaan';
+import ProtectedRoute from './components/ProtectedRoute';
+
 
 function App() {
-  // ✅ State untuk menyimpan data user yang sedang login
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
 
-  // ✅ Fungsi untuk menangani proses login
+  const { user, login } = useAuth();
+
+  const [currentUser, setCurrentUser] = useState<User | null>(() => {
+  const storedUser = localStorage.getItem('currentUser');
+  return storedUser ? JSON.parse(storedUser) : null;
+  });
+
+
   const handleLogin = (email: string, password: string): boolean => {
-    const user = dummyUsers.find(u => u.email === email && u.password === password);
-    if (user) {
-      // Jangan simpan password di state
-      const { password: _, ...userData } = user; 
-      setCurrentUser(userData);
-      return true; // Login berhasil
-    }
-    return false; // Login gagal
+  const user = dummyUsers.find(u => u.email === email && u.password === password);
+  if (user) {
+    const { password: _, ...userData } = user; 
+    setCurrentUser(userData);
+ 
+    localStorage.setItem('currentUser', JSON.stringify(userData));
+    return true;
+  }
+  return false;
   };
 
-  // ✅ Fungsi untuk menangani proses logout
   const handleLogout = () => {
-    setCurrentUser(null);
-  };
+  setCurrentUser(null);
+  // ✅ HAPUS USER DARI LOCALSTORAGE
+  localStorage.removeItem('currentUser');
+};
   
   return (
     <BrowserRouter>
+    
       <Routes>
         {/* ✅ Kirim state dan fungsi ke komponen Layout */}
         <Route 
@@ -46,14 +57,25 @@ function App() {
           <Route index element={<Navigate replace to="beranda" />} />
           <Route path="beranda" element={<Beranda />} />
           <Route path="tentang" element={<Tentang />} />
-          <Route path="pesanan" element={<Pesanan />}>
+          <Route 
+          path="pesanan" 
+            element={
+              <ProtectedRoute user={currentUser}>
+                <Pesanan />
+              </ProtectedRoute>
+            }
+          >
             <Route index element={<Navigate to="keranjang" replace />} />
             <Route path="keranjang" element={<Keranjang />} />
             <Route path="pengiriman" element={<Pengiriman />} />
             <Route path="histori" element={<Histori />} />
           </Route> 
-          <Route path="masuk" element={<Masuk onLogin={handleLogin} />} />
-          <Route path="buat-akun" element={<BuatAkun />} />
+          <Route path="masuk" element={
+            currentUser ? <Navigate to="/beranda" replace /> : <Masuk onLogin={handleLogin} />
+              }  />
+          <Route path="buat-akun" element={
+              currentUser ? <Navigate to="/masuk" replace /> : <BuatAkun />
+              }  />
           <Route path="detail-produk/:id" element={<DetailProduk />}/>
           <Route path="detail-penyewaan" element={<DetailPenyewaan />} />
 

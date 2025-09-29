@@ -1,13 +1,13 @@
 const users = [
     {
     id: 1,
-    fullName: 'Farhan Fathur',
+    name: 'Farhan Fathur',
     email: 'farhan@example.com',
-    password: 'hashed_password_1' // Kata sandi harus selalu di-hash!
+    password: 'hashed_password_1' 
     },
     {
     id: 2,
-    fullName: 'Aziz R.',
+    name: 'Aziz R.',
     email: 'aziz@example.com',
     password: 'hashed_password_2'
     }

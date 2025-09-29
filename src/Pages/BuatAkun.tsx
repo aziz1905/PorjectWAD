@@ -4,7 +4,7 @@ import BuatAkunButton from '../components/Comp_Button.tsx';
 import { Link } from 'react-router-dom';
 
 const BuatAkun = () => {
-  const [fullName, setFullName] = useState('');
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -16,8 +16,8 @@ const BuatAkun = () => {
       return;
     }
     // TODO: Tambahkan logika untuk handle pendaftaran di sini
-    console.log({ fullName, email, password });
-    alert('Akun berhasil dibuat untuk: ' + fullName);
+    console.log({ name, email, password });
+    alert('Akun berhasil dibuat untuk: ' + name);
   };
 
   return (
@@ -29,18 +29,18 @@ const BuatAkun = () => {
           
           <form onSubmit={handleSubmit} className="mt-8 space-y-6">
             <div className="form-group">
-              <label htmlFor="fullName" className="form-label">Nama Lengkap</label>
+              <label htmlFor="name" className="form-label">Nama Lengkap</label>
               <div className="relative">
                 <Icon icon="mdi:account-outline" className="input-icon" />
                 <input
-                  id="fullName"
-                  name="fullName"
+                  id="name"
+                  name="name"
                   type="text"
                   required
                   className="form-input pl-10"
                   placeholder="Nama Lengkap Anda"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                 />
               </div>
             </div>

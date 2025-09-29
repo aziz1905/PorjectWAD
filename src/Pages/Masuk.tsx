@@ -1,32 +1,38 @@
 import React, { useState } from 'react';
 import { Icon } from '@iconify/react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate
 import Button from '../components/Comp_Button';
 
-// ✅ Tipe data untuk props
-interface MasukProps {
-  onLogin: (email: string, password: string) => boolean;
-}
-
-const Masuk = ({ onLogin }: MasukProps) => { // ✅ Terima props onLogin
+const Masuk = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const navigate = useNavigate(); // ✅ Hook untuk navigasi/redirect
+  const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => { // Fungsi harus async
     e.preventDefault();
-    setError(''); // Hapus error sebelumnya
+    
+    try {
+        const response = await fetch('http://localhost:5000/users/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            // Kirim data email dan password ke backend
+            body: JSON.stringify({ email, password }),
+        });
 
-    // ✅ Panggil fungsi onLogin yang dikirim dari App.tsx
-    const loginSuccess = onLogin(email, password);
+        const data = await response.json();
 
-    if (loginSuccess) {
-      // ✅ Jika berhasil, arahkan ke halaman beranda
-      navigate('/beranda');
-    } else {
-      // ✅ Jika gagal, tampilkan pesan error
-      setError('Email atau kata sandi salah!');
+        if (response.ok) { // Status 200 OK
+            alert('Login berhasil! Selamat datang, ${data.user.fullName}.'); 
+            // Nanti, di sini Anda akan menyimpan token sesi
+            navigate('/'); // Redirect ke halaman beranda
+        } else { // Status 401 Unauthorized
+            alert('Login Gagal: ${data.message}');
+        }
+    } catch (error) {
+        alert('Terjadi kesalahan jaringan atau server. Pastikan server backend berjalan di port 5000.');
+        console.error("Login Error:", error);
     }
   };
 
@@ -38,6 +44,7 @@ const Masuk = ({ onLogin }: MasukProps) => { // ✅ Terima props onLogin
           <p className="login-subtitle">Selamat datang kembali! Silakan masukkan detail Anda.</p>
           
           <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+            {/* Input Email */}
             <div className="form-group">
               <label htmlFor="email" className="form-label">Alamat Email</label>
               <div className="relative">
@@ -56,7 +63,8 @@ const Masuk = ({ onLogin }: MasukProps) => { // ✅ Terima props onLogin
               </div>
             </div>
 
-           <div className="form-group">
+            {/* Input Kata Sandi */}
+            <div className="form-group">
               <label htmlFor="password" className="form-label">Kata Sandi</label>
               <div className="relative">
                 <Icon icon="mdi:lock-outline" className="input-icon" />
@@ -73,9 +81,6 @@ const Masuk = ({ onLogin }: MasukProps) => { // ✅ Terima props onLogin
                 />
               </div>
             </div>
-
-            {/* ✅ Tampilkan pesan error jika ada */}
-            {error && <p className="text-red-500 text-sm text-center">{error}</p>}
             
             <div className="flex items-center justify-end">
               <Link to="#" className="form-link">
@@ -83,12 +88,10 @@ const Masuk = ({ onLogin }: MasukProps) => { // ✅ Terima props onLogin
               </Link>
             </div>
 
-            <div className='flex item-center justify-center pb-4 flex-grow w-full'>
-              <Button buttonType="p_masuk" logoChild={<Icon icon="mdi:login" className="text-white text-2xl" />}
+            <Button buttonType="p_masuk" logoChild={<Icon icon="mdi:login" className="text-white text-2xl" />}
                 fontChild="Masuk"
                 type="submit" 
               />
-            </div>
           </form>
 
           <p className="switch-page-text">
@@ -103,4 +106,4 @@ const Masuk = ({ onLogin }: MasukProps) => { // ✅ Terima props onLogin
   );
 };
 
-export default Masuk;
+export default Masuk;

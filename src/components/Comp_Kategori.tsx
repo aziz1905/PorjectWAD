@@ -1,18 +1,40 @@
+import React, { useState, useEffect } from 'react'; 
 import { Icon } from '@iconify/react';
 
-// Anda bisa mengganti data ini dengan data dari API di kemudian hari
-const categories = [
-  { name: 'Princess', icon: 'mdi:crown-outline' },
-  { name: 'Superhero', icon: 'game-icons:bat-mask' },
-  { name: 'Horor', icon: 'mdi:ghost-outline' },
-  { name: 'Tradisional', icon: 'mdi:drama-masks' },
-  { name: 'Profesi', icon: 'mdi:briefcase-outline' },
-  { name: 'Hewan', icon: 'mdi:dog' },
-  { name: 'Fantasi', icon: 'mdi:magic-staff' },
-  { name: 'Anime', icon: 'mdi:pokeball' },
-];
+interface Category { // Definisikan interface
+  name: string;
+  icon: string;
+}
+
 
 const CompKategori = () => {
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        // Panggil API Kategori Anda
+        const response = await fetch('http://localhost:5000/categories');
+        if (!response.ok) {
+          throw new Error('Gagal memuat kategori dari server.');
+        }
+        const data: Category[] = await response.json();
+        setCategories(data);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  if (loading) {
+    return <div className="text-center py-12">Memuat Kategori...</div>;
+  }
+
   return (
     <section className="kategori-section">
       <div className="kategori-container">
@@ -21,7 +43,7 @@ const CompKategori = () => {
           {categories.map((category) => (
             <div key={category.name} className="kategori-item group">
               <div className="kategori-icon-wrapper">
-                <Icon icon={category.icon} className="kategori-icon" />
+                <Icon icon={category.icon} className="kategori-icon" /> 
               </div>
               <p className="kategori-name">{category.name}</p>
             </div>
@@ -32,4 +54,4 @@ const CompKategori = () => {
   );
 };
 
-export default CompKategori;
+export default CompKategori;
