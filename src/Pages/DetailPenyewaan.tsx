@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Icon } from '@iconify/react';
 import Products from '../data/Produk';
-import { Product } from '../types';
+import { Product } from '../type';
 
 // Helper function untuk format Rupiah
 const formatRupiah = (amount: number) => {
