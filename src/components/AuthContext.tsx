@@ -1,6 +1,6 @@
 import { createContext, useState, useContext, ReactNode } from 'react';
-import { User } from '../type'; // Sesuaikan path jika perlu
-import { dummyUsers } from '../data/Users'; // Sesuaikan path jika perlu
+import { User } from '../type'; 
+import { dummyUsers } from '../data/Users'; 
 
 interface AuthContextType {
   user: User | null;
@@ -8,10 +8,8 @@ interface AuthContextType {
   logout: () => void;
 }
 
-// Buat Context
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Buat Provider (komponen yang akan "menyediakan" state)
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(() => {
     const storedUser = localStorage.getItem('currentUser');
@@ -43,7 +41,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-// Buat custom hook untuk mempermudah penggunaan context
+
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {

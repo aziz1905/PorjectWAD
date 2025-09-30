@@ -9,10 +9,8 @@ interface ProtectedRouteProps {
 
 const ProtectedRoute = ({ user, children }: ProtectedRouteProps) => {
   if (!user) {
-    // Jika tidak ada user, arahkan ke halaman login
     return <Navigate to="/masuk" replace />;
   }
-  // Jika ada user, tampilkan halaman yang diminta
   return <>{children}</>;
 };
 

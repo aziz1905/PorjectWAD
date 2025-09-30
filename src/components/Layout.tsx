@@ -5,7 +5,6 @@ import CompFooter from './Comp_Footer';
 const Layout = () => {
   return (
     <div className="flex flex-col min-h-screen">
-      {/* CompNavbar tidak perlu props lagi */}
       <header>
         <CompNavbar />
       </header>

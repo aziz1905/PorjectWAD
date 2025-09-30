@@ -1,8 +1,7 @@
-// src/components/Comp_Reviews.tsx
+
 
 import React from 'react';
 
-// Data dummy untuk ulasan, bisa Anda ganti dengan data asli
 const reviewsData = [
   {
     imageUrl: 'https://images.unsplash.com/photo-1599330282574-d27e745913e2?q=80&w=1887&auto=format&fit=crop',
