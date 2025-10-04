@@ -1,37 +1,49 @@
 import React, { useState } from 'react';
 import { Icon } from '@iconify/react';
-import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate
+import { Link, useNavigate } from 'react-router-dom';
 import Button from '../components/Comp_Button';
+import { useAuth } from '../components/AuthContext'; // 1. IMPORT useAuth
 
 const Masuk = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(null); // 2. TAMBAHKAN state untuk error
+  
   const navigate = useNavigate();
+  const { login } = useAuth(); // 3. PANGGIL hook useAuth untuk mendapatkan fungsi login
 
-  const handleSubmit = async (e: React.FormEvent) => { // Fungsi harus async
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null); // Reset error setiap kali submit
     
     try {
-        const response = await fetch('http://localhost:5000/users/login', {
+        // URL dan method fetch Anda sudah benar
+        const response = await fetch('http://localhost:5000/users/login', { // Pastikan path-nya benar
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            // Kirim data email dan password ke backend
             body: JSON.stringify({ email, password }),
         });
 
         const data = await response.json();
 
-        if (response.ok) { // Status 200 OK
-            alert('Login berhasil! Selamat datang, ${data.user.fullName}.'); 
-            // Nanti, di sini Anda akan menyimpan token sesi
-            navigate('/'); // Redirect ke halaman beranda
-        } else { // Status 401 Unauthorized
-            alert('Login Gagal: ${data.message}');
+        if (response.ok) { // Jika login berhasil
+            // 4. INI BAGIAN UTAMANYA
+            const { password, ...safeUser } = data.user; // Hapus password dari objek
+
+            const userToSave = {
+              ...safeUser,
+              profileImageUrl: safeUser.imageUrl || 'https://i.pravatar.cc/150'
+            };
+
+            login(userToSave); // Panggil fungsi login dari context
+            navigate('/beranda'); // Arahkan ke beranda (atau '/')
+        } else { // Jika login gagal
+            setError(data.message || 'Email atau kata sandi salah.'); // 5. Set pesan error
         }
     } catch (error) {
-        alert('Terjadi kesalahan jaringan atau server. Pastikan server backend berjalan di port 5000.');
+        setError('Terjadi kesalahan jaringan. Pastikan server backend berjalan.'); // 5. Set pesan error
         console.error("Login Error:", error);
     }
   };
@@ -88,10 +100,15 @@ const Masuk = () => {
               </Link>
             </div>
 
+            {/* 6. TAMPILKAN pesan error di sini */}
+            {error && (
+              <p className="text-red-500 text-sm text-center">{error}</p>
+            )}
+
             <Button buttonType="p_masuk" logoChild={<Icon icon="mdi:login" className="text-white text-2xl" />}
-                fontChild="Masuk"
-                type="submit" 
-              />
+              fontChild="Masuk"
+              type="submit" 
+            />
           </form>
 
           <p className="switch-page-text">
@@ -106,4 +123,4 @@ const Masuk = () => {
   );
 };
 
-export default Masuk;
+export default Masuk;

@@ -1,21 +1,38 @@
 import SearchNav from "./Comp_Search";
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { useAuth } from './AuthContext'; // Pastikan path ini benar
+import { useAuth } from './AuthContext';
 
-// 1. AuthLinks TIDAK PERLU PROPS lagi
-const AuthLinks = () => {
-  // Ia mengambil data langsung dari context
+// Komponen ini HANYA untuk Desktop, agar lebih rapi.
+const DesktopAuthLinks = () => {
   const { user, logout } = useAuth();
 
-  if (user) {
-    // Tampilan JIKA SUDAH LOGIN
+  // 1. Logika diubah: !user (Jika TIDAK ada user)
+  if (!user) {
+    return (
+      <div className="flex items-center gap-2">
+        <NavLink 
+          to="/masuk" 
+          className={({ isActive }) => `nav-link-masuk-buatakun ${isActive ? 'font-bold' : ''}`}
+        >
+          Masuk
+        </NavLink>
+        <span className="text-white hidden sm:block">|</span>
+        <NavLink 
+          to="/buat-akun" 
+          className={({ isActive }) => `nav-link-masuk-buatakun bg-blue-600 ${isActive ? 'font-bold' : ''}`}
+        >
+          Buat Akun
+        </NavLink>
+      </div>
+    );
+  } else { // Jika ADA user
     return (
       <div className="flex items-center gap-4">
-        <img src={user.profileImageUrl} alt={user.name} className="w-10 h-10 rounded-full border-2 border-white" />
+        <img src={user.profileImageUrl || 'https://via.placeholder.com/40'} alt={user.name} className="w-10 h-10 rounded-full border-2 border-white object-cover" />
         <span className="text-white font-semibold hidden md:block">{user.name}</span>
         <button 
-          onClick={logout} // ✅ Gunakan fungsi `logout` dari context
+          onClick={logout} 
           className="nav-link-masuk-buatakun bg-red-600 hover:bg-red-700"
         >
           Keluar
@@ -23,37 +40,16 @@ const AuthLinks = () => {
       </div>
     );
   }
-
-  // Tampilan JIKA BELUM LOGIN
-  return (
-    <div className="flex items-center gap-2">
-      <NavLink 
-        to="/masuk" 
-        className={({ isActive }) => `nav-link-masuk-buatakun ${isActive ? 'font-bold' : ''}`}
-      >
-        Masuk
-      </NavLink>
-      <span className="text-white hidden sm:block">|</span>
-      <NavLink 
-        to="/buat-akun" 
-        className={({ isActive }) => `nav-link-masuk-buatakun bg-blue-600 ${isActive ? 'font-bold' : ''}`}
-      >
-        Buat Akun
-      </NavLink>
-    </div>
-  );
 };
 
-
-// 2. CompNavbar juga TIDAK PERLU PROPS lagi
 const CompNavbar = () => { 
   const [isOpen, setIsOpen] = useState(false);
+  const { user, logout } = useAuth(); // Ambil user dan logout di sini untuk menu mobile
 
-  const navLinkClass = ({ isActive }: { isActive: boolean }) => 
+  const navLinkClass = ({ isActive }) => 
     `nav-link ${isActive ? 'font-bold' : ''}`;
   
-  // Custom handler untuk mobile logout + menutup menu
-  const { logout } = useAuth(); // Ambil fungsi logout untuk mobile menu
+  // Fungsi untuk menangani logout dari mobile dan menutup menu
   const handleMobileLogout = () => {
     logout();
     setIsOpen(false);
@@ -63,7 +59,7 @@ const CompNavbar = () => {
     <nav className="navbar">
       <div className="navbar-container">
         <div className="navbar-content">
-          <NavLink to="/beranda" className="logo">
+          <NavLink to="/" className="logo">
             <p className="font-extrabold">KostumKita.</p>
           </NavLink>
 
@@ -76,9 +72,7 @@ const CompNavbar = () => {
             <NavLink to="/beranda" className={navLinkClass}>Beranda</NavLink>
             <NavLink to="/tentang" className={navLinkClass}>Tentang</NavLink>
             <NavLink to="/pesanan" className={navLinkClass}>Pesanan</NavLink>
-            
-            {/* 3. Panggil AuthLinks tanpa props */}
-            <AuthLinks />
+            <DesktopAuthLinks /> {/* Gunakan komponen khusus desktop */}
           </div>
           
           {/* Tombol untuk Mobile Menu */}
@@ -98,9 +92,27 @@ const CompNavbar = () => {
             <NavLink to="/pesanan" className={navLinkClass} onClick={() => setIsOpen(false)}>Pesanan</NavLink>
             <hr className="w-full border-gray-600"/>
             
-            {/* Kita perlu sedikit modifikasi di sini karena ada aksi tambahan (menutup menu) */}
-            {/* Daripada memanggil AuthLinks, kita bisa duplikasi logikanya atau memanggil logout langsung */}
-            <AuthLinks />
+            {/* 2. Logika otentikasi untuk MOBILE ditangani di sini */}
+            {!user ? (
+              <div className="flex flex-col items-center gap-4 w-full">
+                <NavLink to="/masuk" className="nav-link-masuk-buatakun w-full text-center" onClick={() => setIsOpen(false)}>
+                  Masuk
+                </NavLink>
+                <NavLink to="/buat-akun" className="nav-link-masuk-buatakun bg-blue-600 w-full text-center" onClick={() => setIsOpen(false)}>
+                  Buat Akun
+                </NavLink>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center gap-4 w-full">
+                 <div className="flex items-center gap-2">
+                    <img src={user.profileImageUrl || 'https://via.placeholder.com/40'} alt={user.name} className="w-10 h-10 rounded-full border-2 border-white object-cover" />
+                    <span className="text-white font-semibold">{user.name}</span>
+                 </div>
+                <button onClick={handleMobileLogout} className="nav-link-masuk-buatakun bg-red-600 hover:bg-red-700 w-full text-center">
+                  Keluar
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>

@@ -1,51 +1,73 @@
-import { createContext, useState, useContext, ReactNode } from 'react';
-import { User } from '../type'; 
-import { dummyUsers } from '../data/Users'; 
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
+// 1. Definisikan tipe data untuk user (sesuaikan jika perlu)
+interface User {
+  name: string;
+  profileImageUrl: string;
+  // tambahkan properti lain jika ada, misal: email, token, dll.
+}
+
+// 2. Definisikan tipe untuk value dari context
 interface AuthContextType {
   user: User | null;
-  login: (email: string, password: string) => boolean;
+  login: (userData: User) => void;
   logout: () => void;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+// 3. Buat Context dengan tipe yang sudah didefinisikan
+const AuthContext = createContext<AuthContextType | null>(null);
 
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [currentUser, setCurrentUser] = useState<User | null>(() => {
-    const storedUser = localStorage.getItem('currentUser');
-    return storedUser ? JSON.parse(storedUser) : null;
+// Custom hook agar lebih mudah digunakan
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth harus digunakan di dalam AuthProvider");
+  }
+  return context;
+};
+
+// 4. Buat Provider
+interface AuthProviderProps {
+  children: ReactNode;
+}
+
+export const AuthProvider = ({ children }: AuthProviderProps) => {
+  // Saat pertama kali load, coba ambil data user dari localStorage
+  const [user, setUser] = useState<User | null>(() => {
+    try {
+      const storedUser = localStorage.getItem('user');
+      return storedUser ? JSON.parse(storedUser) : null;
+    } catch (error) {
+      console.error("Gagal parse user dari localStorage", error);
+      return null;
+    }
   });
 
-  const login = (email: string, password: string): boolean => {
-    const user = dummyUsers.find(u => u.email === email && u.password === password);
+  // Setiap kali state 'user' berubah, simpan ke localStorage
+  useEffect(() => {
     if (user) {
-      const { password: _, ...userData } = user;
-      setCurrentUser(userData);
-      localStorage.setItem('currentUser', JSON.stringify(userData));
-      return true;
+      localStorage.setItem('user', JSON.stringify(user));
+    } else {
+      localStorage.removeItem('user');
     }
-    return false;
+  }, [user]); // Dependency array: efek ini berjalan saat 'user' berubah
+
+  // Fungsi login sekarang hanya perlu memanggil setUser
+  // Logika API call sebaiknya ada di halaman login
+  const login = (userData: User) => {
+    setUser(userData);
   };
 
+  // Fungsi logout akan membersihkan state dan localStorage
   const logout = () => {
-    setCurrentUser(null);
-    localStorage.removeItem('currentUser');
+    setUser(null);
   };
 
-  const value = { user: currentUser, login, logout };
+  const value: AuthContextType = { user, login, logout };
 
   return (
     <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );
-};
-
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
 };

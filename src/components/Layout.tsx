@@ -5,11 +5,11 @@ import CompFooter from './Comp_Footer';
 const Layout = () => {
   return (
     <div className="flex flex-col min-h-screen">
-      <header>
+      <header className="kostumkita-top">
         <CompNavbar />
       </header>
       
-      <main className="flex-grow">
+      <main className="kostumkita-main">
         <Outlet />
       </main>
 

@@ -1,7 +1,4 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { useState } from 'react';
-import { User } from './type';
-import { dummyUsers } from './data/Users';
 import { useAuth } from './components/AuthContext'; 
 import Layout from './components/Layout';
 import Beranda from './Pages/Beranda';
@@ -16,51 +13,28 @@ import Histori from './Pages/pesanan/Histori';
 import DetailPenyewaan from './Pages/DetailPenyewaan';
 import ProtectedRoute from './components/ProtectedRoute';
 
-
 function App() {
+  // 1. HANYA butuh 'user' dan 'logout' dari context.
+  // Semua state dan fungsi login lokal sudah dihapus.
+  const { user, logout } = useAuth();
 
-  const { user, login } = useAuth();
-
-  const [currentUser, setCurrentUser] = useState<User | null>(() => {
-  const storedUser = localStorage.getItem('currentUser');
-  return storedUser ? JSON.parse(storedUser) : null;
-  });
-
-
-  const handleLogin = (email: string, password: string): boolean => {
-  const user = dummyUsers.find(u => u.email === email && u.password === password);
-  if (user) {
-    const { password: _, ...userData } = user; 
-    setCurrentUser(userData);
- 
-    localStorage.setItem('currentUser', JSON.stringify(userData));
-    return true;
-  }
-  return false;
-  };
-
-  const handleLogout = () => {
-  setCurrentUser(null);
-  // ✅ HAPUS USER DARI LOCALSTORAGE
-  localStorage.removeItem('currentUser');
-};
-  
   return (
     <BrowserRouter>
-    
       <Routes>
-        {/* ✅ Kirim state dan fungsi ke komponen Layout */}
+        {/* 2. Kirim 'user' dan 'logout' dari context ke Layout */}
         <Route 
           path="/" 
-          element={<Layout user={currentUser} onLogout={handleLogout} />}
+          element={<Layout user={user} onLogout={logout} />}
         >
           <Route index element={<Navigate replace to="beranda" />} />
           <Route path="beranda" element={<Beranda />} />
           <Route path="tentang" element={<Tentang />} />
+          
           <Route 
-          path="pesanan" 
+            path="pesanan" 
             element={
-              <ProtectedRoute user={currentUser}>
+              // 3. ProtectedRoute sekarang juga menggunakan 'user' dari context
+              <ProtectedRoute user={user}>
                 <Pesanan />
               </ProtectedRoute>
             }
@@ -70,12 +44,15 @@ function App() {
             <Route path="pengiriman" element={<Pengiriman />} />
             <Route path="histori" element={<Histori />} />
           </Route> 
+          
+          {/* 4. Logika navigasi juga menggunakan 'user' dari context */}
           <Route path="masuk" element={
-            currentUser ? <Navigate to="/beranda" replace /> : <Masuk onLogin={handleLogin} />
-              }  />
+            user ? <Navigate to="/beranda" replace /> : <Masuk /> // Prop onLogin dihapus
+          } />
           <Route path="buat-akun" element={
-              currentUser ? <Navigate to="/masuk" replace /> : <BuatAkun />
-              }  />
+            user ? <Navigate to="/masuk" replace /> : <BuatAkun />
+          } />
+
           <Route path="detail-produk/:id" element={<DetailProduk />}/>
           <Route path="detail-penyewaan" element={<DetailPenyewaan />} />
 
