@@ -8,6 +8,7 @@ const products = [
         sizes: ['S', 'M', 'L'],
         specification: { age: 'Dewasa', gender: 'Wanita' },
         categoryId: 1
+        
     },
     {
         id: 2,

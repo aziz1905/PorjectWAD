@@ -20,7 +20,7 @@ export const getAlluser =  (req, res) => {
     });
     res.status(200).json(safeUsers);
 };
-
+    
 export const GetUserById = (req, res) => {
     const userId = parseInt(req.params.id);
     const user = users.find(u => u.id === userId);
