@@ -1,18 +1,25 @@
-/*import pg from 'pg';
-import { DB_CONFIG } from './config.js';
+import { Sequelize } from "sequelize";
 
-const { Pool } = pg;
+const sequelize = new Sequelize(
+    process.env.DB_NAME, 
+    process.env.DB_USER, 
+    process.env.DB_PASSWORD, 
+    {
+        host: process.env.DB_HOST,
+        port: parseInt(process.env.DB_PORT, 10),
+        dialect: 'postgres',
+        logging: false,
+    }
+);
 
-const pool = new Pool(DB_CONFIG);
 
-pool.query('SELECT NOW()')
+sequelize.authenticate()
     .then(res => {
         console.log('✅ Koneksi PostgreSQL berhasil!');
     })
     .catch(err => {
         console.error('❌ GAGAL terhubung ke database:', err.message);
-        // Penting: Hentikan proses jika gagal agar server tidak berjalan tanpa DB
         process.exit(1); 
     });
 
-export default pool;*/
+export default sequelize;
