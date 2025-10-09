@@ -1,4 +1,5 @@
 import { Sequelize } from "sequelize";
+import User from '../model/userModel.js';
 
 const sequelize = new Sequelize(
     process.env.DB_NAME, 
@@ -14,8 +15,10 @@ const sequelize = new Sequelize(
 
 
 sequelize.authenticate()
-    .then(res => {
+    .then(async () => {
         console.log('✅ Koneksi PostgreSQL berhasil!');
+        await User.sync({ alter: true }); 
+        console.log('✅ Model User berhasil disinkronkan dengan database.');
     })
     .catch(err => {
         console.error('❌ GAGAL terhubung ke database:', err.message);

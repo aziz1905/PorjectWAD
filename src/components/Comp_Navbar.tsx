@@ -29,7 +29,7 @@ const DesktopAuthLinks = () => {
   } else { // Jika ADA user
     return (
       <div className="flex items-center gap-4">
-        <img src={user.profileImageUrl || 'https://via.placeholder.com/40'} alt={user.name} className="w-10 h-10 rounded-full border-2 border-white object-cover" />
+        <img src={user.profileImageUrl || 'https://via.placeholder.com/40'} alt={user.fullName} className="w-10 h-10 rounded-full border-2 border-white object-cover" />
         <span className="text-white font-semibold hidden md:block">{user.name}</span>
         <button 
           onClick={logout} 

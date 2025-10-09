@@ -14,7 +14,9 @@ app.use('/products', productRoutes);
 app.use('/categories', categoryRoutes);
 app.use('/users', userRoutes);
 
-
-
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+    console.log(`Server Berjalan di http://localhost:${PORT}`);
+});
 
 
