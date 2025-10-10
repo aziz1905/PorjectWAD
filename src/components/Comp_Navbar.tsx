@@ -3,11 +3,11 @@ import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 
-// Komponen ini HANYA untuk Desktop, agar lebih rapi.
+
+
 const DesktopAuthLinks = () => {
   const { user, logout } = useAuth();
 
-  // 1. Logika diubah: !user (Jika TIDAK ada user)
   if (!user) {
     return (
       <div className="flex items-center gap-2">
@@ -26,11 +26,11 @@ const DesktopAuthLinks = () => {
         </NavLink>
       </div>
     );
-  } else { // Jika ADA user
+  } else { 
     return (
       <div className="flex items-center gap-4">
-        <img src={user.profileImageUrl || 'https://via.placeholder.com/40'} alt={user.fullName} className="w-10 h-10 rounded-full border-2 border-white object-cover" />
-        <span className="text-white font-semibold hidden md:block">{user.name}</span>
+        <img src={user.profileImageUrl} alt={user.fullName} className="w-10 h-10 rounded-full border-2 border-white object-cover" />
+        <span className="text-white font-semibold hidden md:block">{user.fullName}</span>
         <button 
           onClick={logout} 
           className="nav-link-masuk-buatakun bg-red-600 hover:bg-red-700"
@@ -44,12 +44,11 @@ const DesktopAuthLinks = () => {
 
 const CompNavbar = () => { 
   const [isOpen, setIsOpen] = useState(false);
-  const { user, logout } = useAuth(); // Ambil user dan logout di sini untuk menu mobile
+  const { user, logout } = useAuth(); 
 
   const navLinkClass = ({ isActive }) => 
     `nav-link ${isActive ? 'font-bold' : ''}`;
   
-  // Fungsi untuk menangani logout dari mobile dan menutup menu
   const handleMobileLogout = () => {
     logout();
     setIsOpen(false);
@@ -105,8 +104,8 @@ const CompNavbar = () => {
             ) : (
               <div className="flex flex-col items-center gap-4 w-full">
                  <div className="flex items-center gap-2">
-                    <img src={user.profileImageUrl || 'https://via.placeholder.com/40'} alt={user.name} className="w-10 h-10 rounded-full border-2 border-white object-cover" />
-                    <span className="text-white font-semibold">{user.name}</span>
+                    <img src={user.profileImageUrl} alt={user.fullName} className="w-10 h-10 rounded-full border-2 border-white object-cover" />
+                    <span className="text-white font-semibold">{user.fullName}</span>
                  </div>
                 <button onClick={handleMobileLogout} className="nav-link-masuk-buatakun bg-red-600 hover:bg-red-700 w-full text-center">
                   Keluar

@@ -2,49 +2,43 @@ import React, { useState } from 'react';
 import { Icon } from '@iconify/react';
 import { Link, useNavigate } from 'react-router-dom';
 import Button from '../components/Comp_Button';
-import { useAuth } from '../components/AuthContext'; // 1. IMPORT useAuth
+import { useAuth } from '../components/AuthContext';
+import api from '../api'; 
+
+// Tambahan: Import tipe error dari Axios
+import { AxiosError } from 'axios';
 
 const Masuk = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState<string | null>(null); // 2. TAMBAHKAN state untuk error
+  const [error, setError] = useState('');
   
   const navigate = useNavigate();
-  const { login } = useAuth(); // 3. PANGGIL hook useAuth untuk mendapatkan fungsi login
+  const { login } = useAuth(); 
 
+  // 1. Beri tipe data pada event handler 'e'
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null); // Reset error setiap kali submit
+    setError(''); 
     
     try {
-        // URL dan method fetch Anda sudah benar
-        const response = await fetch('http://localhost:5000/users/login', { // Pastikan path-nya benar
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ email, password }),
-        });
+      const response = await api.post('/users/login', { email, password });
+      const { user } = response.data;
 
-        const data = await response.json();
+      if (user) {
+        login(user); 
+        navigate('/beranda');
+      } else {
+        setError('Gagal mendapatkan data pengguna.');
+      }
 
-        if (response.ok) { // Jika login berhasil
-            // 4. INI BAGIAN UTAMANYA
-            const { password, ...safeUser } = data.user; // Hapus password dari objek
-
-            const userToSave = {
-              ...safeUser,
-              profileImageUrl: safeUser.imageUrl || 'https://i.pravatar.cc/150'
-            };
-
-            login(userToSave); // Panggil fungsi login dari context
-            navigate('/beranda'); // Arahkan ke beranda (atau '/')
-        } else { // Jika login gagal
-            setError(data.message || 'Email atau kata sandi salah.'); // 5. Set pesan error
-        }
-    } catch (error) {
-        setError('Terjadi kesalahan jaringan. Pastikan server backend berjalan.'); // 5. Set pesan error
-        console.error("Login Error:", error);
+    } catch (err) {
+      // 2. Beri tipe data pada error 'err'
+      // Ini akan membantu TypeScript mengerti struktur error dari Axios
+      const axiosError = err as AxiosError<{ message: string }>;
+      const errorMessage = axiosError.response?.data?.message || 'Terjadi kesalahan. Coba lagi nanti.';
+      setError(errorMessage); 
+      console.error("Login Error:", err);
     }
   };
 
@@ -56,58 +50,56 @@ const Masuk = () => {
           <p className="login-subtitle">Selamat datang kembali! Silakan masukkan detail Anda.</p>
           
           <form onSubmit={handleSubmit} className="mt-8 space-y-6">
-            {/* Input Email */}
             <div className="form-group">
-              <label htmlFor="email" className="form-label">Alamat Email</label>
-              <div className="relative">
-                <Icon icon="mdi:email-outline" className="input-icon" />
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  required
-                  className="form-input pl-10"
-                  placeholder="anda@email.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
-            </div>
+               <label htmlFor="email" className="form-label">Alamat Email</label>
+               <div className="relative">
+                 <Icon icon="mdi:email-outline" className="input-icon" />
+                 <input
+                   id="email"
+                   name="email"
+                   type="email"
+                   autoComplete="email"
+                   required
+                   className="form-input pl-10"
+                   placeholder="anda@email.com"
+                   value={email}
+                   onChange={(e) => setEmail(e.target.value)}
+                 />
+               </div>
+             </div>
 
-            {/* Input Kata Sandi */}
-            <div className="form-group">
-              <label htmlFor="password" className="form-label">Kata Sandi</label>
-              <div className="relative">
-                <Icon icon="mdi:lock-outline" className="input-icon" />
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  autoComplete="current-password"
-                  required
-                  className="form-input pl-10"
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
-            </div>
-            
-            <div className="flex items-center justify-end">
-              <Link to="#" className="form-link">
-                Lupa kata sandi?
-              </Link>
-            </div>
+             <div className="form-group">
+               <label htmlFor="password" className="form-label">Kata Sandi</label>
+               <div className="relative">
+                 <Icon icon="mdi:lock-outline" className="input-icon" />
+                 <input
+                   id="password"
+                   name="password"
+                   type="password"
+                   autoComplete="current-password"
+                   required
+                   className="form-input pl-10"
+                   placeholder="••••••••"
+                   value={password}
+                   onChange={(e) => setPassword(e.target.value)}
+                 />
+               </div>
+             </div>
+             
+             <div className="flex items-center justify-end">
+               <Link to="#" className="form-link">
+                 Lupa kata sandi?
+               </Link>
+             </div>
 
-            {/* 6. TAMPILKAN pesan error di sini */}
-            {error && (
-              <p className="text-red-500 text-sm text-center">{error}</p>
-            )}
-
-            <Button buttonType="p_masuk" logoChild={<Icon icon="mdi:login" className="text-white text-2xl" />}
-              fontChild="Masuk"
-              type="submit" 
+             {error && (
+               <p className="text-red-500 text-sm text-center">{error}</p>
+             )}
+            <Button 
+                buttonType="p_masuk" 
+                logoChild={<Icon icon="mdi:login" className="text-white text-2xl" />}
+                fontChild="Masuk"
+                type="submit" 
             />
           </form>
 

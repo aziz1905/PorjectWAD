@@ -1,15 +1,15 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-
 // 1. Definisikan tipe data untuk user (sesuaikan jika perlu)
 interface User {
-  name: string;
-  profileImageUrl: string;
-  // tambahkan properti lain jika ada, misal: email, token, dll.
+  id: number;
+  fullName: string;
+  email: string;
 }
 
 // 2. Definisikan tipe untuk value dari context
 interface AuthContextType {
   user: User | null;
+  isAuthenticated: boolean;
   login: (userData: User) => void;
   logout: () => void;
 }
@@ -32,7 +32,6 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  // Saat pertama kali load, coba ambil data user dari localStorage
   const [user, setUser] = useState<User | null>(() => {
     try {
       const storedUser = localStorage.getItem('user');
