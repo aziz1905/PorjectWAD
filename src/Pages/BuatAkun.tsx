@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { Icon } from '@iconify/react';
-import BuatAkunButton from '../components/Comp_Button.tsx';
-import { Link } from 'react-router-dom';
+import Button from '../components/Comp_Button'; 
+import { Link, useNavigate } from 'react-router-dom';
+import { AxiosError } from 'axios';
+import api from '../api';
 
 const BuatAkun = () => {
   const [name, setName] = useState('');
@@ -9,15 +11,40 @@ const BuatAkun = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
+    setSuccessMessage('');
+
     if (password !== confirmPassword) {
-      alert("Kata sandi tidak cocok!");
+      setError("Kata sandi dan konfirmasi kata sandi tidak cocok!");
       return;
     }
-    // TODO: Tambahkan logika untuk handle pendaftaran di sini
-    console.log({ name, email, password });
-    alert('Akun berhasil dibuat untuk: ' + name);
+    
+    try {
+      const response = await api.post('/users/registrasi', {
+        name,
+        email,
+        password,
+      });
+
+      setSuccessMessage('Akun berhasil dibuat! Anda akan dialihkan ke halaman login...');
+      
+      setTimeout(() => {
+        navigate('/masuk');
+      }, 2000);
+
+    } catch (err) {
+      const axiosError = err as AxiosError<{ message: string }>;
+      const errorMessage = axiosError.response?.data?.message || 'Gagal membuat akun. Coba lagi nanti.';
+      setError(errorMessage);
+      console.error("Registration Error:", err);
+    }
   };
 
   return (
@@ -28,6 +55,7 @@ const BuatAkun = () => {
           <p className="login-subtitle">Bergabunglah dengan kami dan mulai sewa kostum impian Anda!</p>
           
           <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+            {/* Input Nama Lengkap */}
             <div className="form-group">
               <label htmlFor="name" className="form-label">Nama Lengkap</label>
               <div className="relative">
@@ -45,6 +73,7 @@ const BuatAkun = () => {
               </div>
             </div>
 
+            {/* Input Email */}
             <div className="form-group">
               <label htmlFor="email" className="form-label">Alamat Email</label>
               <div className="relative">
@@ -63,6 +92,7 @@ const BuatAkun = () => {
               </div>
             </div>
 
+            {/* Input Kata Sandi */}
             <div className="form-group">
               <label htmlFor="password" className="form-label">Kata Sandi</label>
               <div className="relative">
@@ -79,7 +109,8 @@ const BuatAkun = () => {
                 />
               </div>
             </div>
-
+            
+            {/* Input Konfirmasi Kata Sandi */}
             <div className="form-group">
               <label htmlFor="confirmPassword" className="form-label">Konfirmasi Kata Sandi</label>
               <div className="relative">
@@ -97,14 +128,16 @@ const BuatAkun = () => {
               </div>
             </div>
 
+            {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+            {successMessage && <p className="text-green-500 text-sm text-center">{successMessage}</p>}
+
             <div className="my-8 flex justify-center">
-              <BuatAkunButton  
-               buttonType="p_masuk" logoChild={<Icon icon="mdi:account-card" className="text-white text-2xl" />}
+              {/* 5. Perbaikan pada Button */}
+              <Button 
+                buttonType="p_masuk" 
+                logoChild={<Icon icon="mdi:account-card" className="text-white text-2xl" />}
                 fontChild="Registrasi"
-              onClick={(e: React.MouseEvent) => {
-                e.preventDefault(); 
-                <Link to="/"> </Link>
-                }}
+                type="submit" 
               />
             </div>
           </form>

@@ -29,8 +29,9 @@ const DesktopAuthLinks = () => {
   } else { 
     return (
       <div className="flex items-center gap-4">
-        <img src={user.profileImageUrl} alt={user.fullName} className="w-10 h-10 rounded-full border-2 border-white object-cover" />
+        
         <span className="text-white font-semibold hidden md:block">{user.fullName}</span>
+        <img src={user.profileImageUrl} alt={user.fullName} className="w-10 h-10 rounded-full border-2 border-white object-cover" />
         <button 
           onClick={logout} 
           className="nav-link-masuk-buatakun bg-red-600 hover:bg-red-700"
@@ -66,12 +67,12 @@ const CompNavbar = () => {
             <SearchNav />
           </div>
 
-          {/* Desktop Menu */}
+          
           <div className="hidden md:flex items-center gap-6">
             <NavLink to="/beranda" className={navLinkClass}>Beranda</NavLink>
             <NavLink to="/tentang" className={navLinkClass}>Tentang</NavLink>
             <NavLink to="/pesanan" className={navLinkClass}>Pesanan</NavLink>
-            <DesktopAuthLinks /> {/* Gunakan komponen khusus desktop */}
+            <DesktopAuthLinks /> 
           </div>
           
           {/* Tombol untuk Mobile Menu */}

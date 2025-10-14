@@ -90,7 +90,6 @@ const DetailProduk = () => {
                         <Link to="/" className="text-blue-600 font-semibold text-sm">Lihat Semua</Link>
                     </div>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        {/* ✅ Tipe data langsung menggunakan "Product" */}
                         {Products.filter((p: Product) => p.id !== id).slice(0, 4).map((p: Product) => (
                             <ProductCard 
                                 key={p.id} 

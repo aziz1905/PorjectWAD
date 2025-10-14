@@ -21,10 +21,9 @@ export default function HeroProduct() {
             >
               Lihat Katalog
             </a>
-
             <a
               href="#"
-              className="block w-full rounded border border-blue-600 px-12 py-3 text-sm font-medium text-white  hover:text-gray-300 hover:border-none focus:outline-none focus:ring active:bg-blue-500 sm:w-auto"
+              className="block w-full rounded border border-blue-600 px-12 py-3 text-sm font-medium text-white  hover:text-gray-300 hover:bg-transparent hover:border-none focus:outline-none focus:ring active:bg-blue-500 sm:w-auto"
             >
               Hubungi Kami
             </a>

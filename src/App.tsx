@@ -14,14 +14,11 @@ import DetailPenyewaan from './Pages/DetailPenyewaan';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
-  // 1. HANYA butuh 'user' dan 'logout' dari context.
-  // Semua state dan fungsi login lokal sudah dihapus.
   const { user, logout } = useAuth();
 
   return (
     <BrowserRouter>
       <Routes>
-        {/* 2. Kirim 'user' dan 'logout' dari context ke Layout */}
         <Route 
           path="/" 
           element={<Layout user={user} onLogout={logout} />}
@@ -33,7 +30,6 @@ function App() {
           <Route 
             path="pesanan" 
             element={
-              // 3. ProtectedRoute sekarang juga menggunakan 'user' dari context
               <ProtectedRoute user={user}>
                 <Pesanan />
               </ProtectedRoute>
@@ -45,7 +41,6 @@ function App() {
             <Route path="histori" element={<Histori />} />
           </Route> 
           
-          {/* 4. Logika navigasi juga menggunakan 'user' dari context */}
           <Route path="masuk" element={
             user ? <Navigate to="/beranda" replace /> : <Masuk /> // Prop onLogin dihapus
           } />

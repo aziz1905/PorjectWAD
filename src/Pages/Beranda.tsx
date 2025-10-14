@@ -5,7 +5,6 @@ import Kategori from '../components/Comp_Kategori';
 
 const Beranda = () => {
   return (
-    // Tambahkan div pembungkus ini kembali
     <div className="kostumkita-main">
       <HeroProduct />
       <Kategori />

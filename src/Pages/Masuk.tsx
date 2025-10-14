@@ -4,19 +4,14 @@ import { Link, useNavigate } from 'react-router-dom';
 import Button from '../components/Comp_Button';
 import { useAuth } from '../components/AuthContext';
 import api from '../api'; 
-
-// Tambahan: Import tipe error dari Axios
 import { AxiosError } from 'axios';
 
 const Masuk = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  
   const navigate = useNavigate();
   const { login } = useAuth(); 
-
-  // 1. Beri tipe data pada event handler 'e'
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(''); 
@@ -33,8 +28,6 @@ const Masuk = () => {
       }
 
     } catch (err) {
-      // 2. Beri tipe data pada error 'err'
-      // Ini akan membantu TypeScript mengerti struktur error dari Axios
       const axiosError = err as AxiosError<{ message: string }>;
       const errorMessage = axiosError.response?.data?.message || 'Terjadi kesalahan. Coba lagi nanti.';
       setError(errorMessage); 

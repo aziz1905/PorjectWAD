@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'; 
 import { Icon } from '@iconify/react';
 
-interface Category { // Definisikan interface
+interface Category {
   name: string;
   icon: string;
 }
@@ -14,7 +14,6 @@ const CompKategori = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        // Panggil API Kategori Anda
         const response = await fetch('http://localhost:5000/categories');
         if (!response.ok) {
           throw new Error('Gagal memuat kategori dari server.');

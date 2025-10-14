@@ -32,7 +32,7 @@ export default function ProductGrid() {
     };
 
     fetchProducts();
-  }, []); // Array kosong berarti fetch hanya dilakukan sekali saat komponen dimuat
+  }, []); 
 
   if (loading) {
     return <div className="text-center py-12">Memuat produk...</div>;
