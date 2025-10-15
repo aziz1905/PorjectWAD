@@ -1,22 +1,35 @@
-import Product from '../model/productModel.js';
-import ProductSize from '../model/productSizeModel.js'; 
-import Category from '../model/categoryModel.js';     
+import db from '../db/db.js'; 
+import { eq } from 'drizzle-orm';
+import { productsTable } from '../db/schema/productsSchema.js';  
+import { productsSizesTable } from '../db/schema/productsSizeSchema.js';
+import { categoriesTable } from '../db/schema/categoriesSchema.js';
 
-const productAttributes = [
-    'id', 'name', 'description', 'price', 'imageUrl', 'rating', 'sold', 'categoryId'
-];
+const productReturnAttributes = {
+    id: productsTable.id,
+    categoryId: productsTable.categoryId,
+    name: productsTable.name,
+    price: productsTable.price,
+    imageUrl: productsTable.imageUrl,
+    rating: productsTable.rating,
+    sold: productsTable.sold
+};
 
 
 export const findAllProducts = async (categoryId) => {
-    const whereCondition = categoryId ? { categoryId: categoryId } : {};
+    let whereClause = undefined;
+
+    if(categoryId){
+        whereClause = eq(productsTable.categoryId, categoryId);
+    }
 
     try {
-        const products = await Product.findAll({
-            where: whereCondition,
-            attributes: productAttributes,
+        const products = await db
+        .select(productReturnAttributes)
+        .from(productsTable)
+        .where(whereClause);
 
-        });
-        return products.map(p => p.toJSON());
+        return products;
+
     } catch (error) {
         console.error("Error findAllProducts:", error);
         throw new Error('Gagal mengambil produk dari database.');
@@ -26,24 +39,19 @@ export const findAllProducts = async (categoryId) => {
 
 export const findProductById = async (productId) => {
     try {
-        const product = await Product.findByPk(productId, {
-            attributes: productAttributes,
-       
-            include: [
-                {
-                    model: Category,
-                    as: 'category', 
-                    attributes: ['name']
-                },
-                {
-                    model: ProductSize,
-                    as: 'sizes', 
-                    attributes: ['sizeName', 'stock']
-                }
-            ]
-        });
-        
-        return product ? product.toJSON() : undefined;
+        const result = await db
+        .select({
+            product: productReturnAttributes,
+            categoryName: categoriesTable.name,
+            sizeName: productsSizesTable.name,
+            stock: productsSizesTable.stock
+        })
+        .from(productsTable)
+        .leftJoin(categoriesTable.eq(productsTable.categoryId, categoryId))
+        .leftJoin(productsSizesTable.eq(productsSizesTable.productId, ProductId))
+        .where(eq(productsTable.id, productId));
+
+        return result.length > 0 ? result[0].product : undefined;
     } catch (error) {
         console.error("Error findProductById:", error);
         throw new Error('Gagal mencari detail produk di database.');
