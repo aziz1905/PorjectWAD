@@ -50,17 +50,14 @@
   
   /* Styling saat link di-hover */
   .nav-link:hover {
-    @apply bg-blue-900 text-white;
+    @apply underline-offset-7 underline text-white;
     
   }
   .nav-link:focus{
-    @apply bg-blue-950 text-white;
+    @apply underline-offset-7 underline text-gray-300;
   }
 
-  /* Styling untuk link yang sedang aktif */
-  .nav-link.active {
-    @apply font-bold bg-blue-600 shadow ;
-  }
+  
 
   /* Styling khusus untuk tombol "Masuk" dan "Buat Akun" */
   .nav-link-masuk-buatakun {
@@ -170,12 +167,15 @@
 /* ------------------------------------------------------------------------------------------------------------------------------ */
   /* Styling untuk search bar di navbar */
   .search-bar {
-    @apply text-sm text-white placeholder-gray-300 pl-3 py-2.5 pr-6 bg-blue-700 rounded-l-2xl;
+    @apply text-sm text-gray-700 placeholder-gray-300 pl-3 py-2.5 pr-6 bg-white rounded-l-2xl;
     @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500;
     @apply transition-all duration-300 ease-in-out;
   }
   .search-bar:focus {
-    @apply bg-blue-700 shadow-lg;
+    @apply bg-white shadow-lg;
+  }
+  .search-bar::placeholder {
+    @apply text-gray-400;
   }
 
   .search-button {

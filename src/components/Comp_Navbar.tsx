@@ -6,10 +6,25 @@ import Search, { useSearch } from './Comp_Search';
 // Komponen ini tidak perlu diubah
 const DesktopAuthLinks = () => {
   const { user, logout } = useAuth();
+  const [isDropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (isDropdownOpen && dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setDropdownOpen(false); 
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isDropdownOpen]);
+
 
   if (!user) {
     return (
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2" >
         <NavLink 
           to="/masuk" 
           className={({ isActive }) => `nav-link-masuk-buatakun ${isActive ? 'font-bold' : ''}`}
@@ -25,17 +40,54 @@ const DesktopAuthLinks = () => {
         </NavLink>
       </div>
     );
-  } else { 
+  }  else { 
     return (
-      <div className="flex items-center gap-4">
-        <span className="text-white font-semibold hidden md:block">{user.fullName}</span>
-        <img src={user.profileImageUrl} alt={user.fullName} className="w-10 h-10 rounded-full border-2 border-white object-cover" />
+      <div className="relative" ref={dropdownRef}>
         <button 
-          onClick={logout} 
-          className="nav-link-masuk-buatakun bg-red-600 hover:bg-red-700"
+          onClick={() => setDropdownOpen(!isDropdownOpen)}
+          className="flex items-center gap-4 focus:outline-none"
         >
-          Keluar
+          <span className="text-white font-semibold hidden md:block">{user.fullName}</span>
+          <img src={user.profileImageUrl} alt={user.fullName} className="w-10 h-10 rounded-full border-2 border-white object-cover" />
         </button>
+
+        {/* 4. Dropdown Menu (hanya tampil jika isDropdownOpen true) */}
+        {isDropdownOpen && (
+          <div 
+            className="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg py-1 z-50"
+          >
+           <div className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 border-b border-gray-200">
+              <img src={user.profileImageUrl} alt={user.fullName} className="w-10 h-10 rounded-full object-cover flex-shrink-0"/>
+  
+              {/* Add the classes below to the span */}
+              <span className="truncate min-w-0">{user.email}</span>
+           </div>
+            <NavLink 
+              to="/settings" 
+              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 "
+              onClick={() => setDropdownOpen(false)} // Tutup dropdown saat diklik
+            >
+              Setting Akun
+            </NavLink>
+            <NavLink 
+              to="/wishlist" 
+              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+              onClick={() => setDropdownOpen(false)}
+            >
+              Wishlist
+            </NavLink>
+            <hr className="my-1"/>
+            <button 
+              onClick={() => {
+                logout();
+                setDropdownOpen(false); // Pastikan dropdown tertutup saat logout
+              }} 
+              className="block w-full px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+            >
+              Keluar Akun
+            </button>
+          </div>
+        )}
       </div>
     );
   }
@@ -75,12 +127,14 @@ const CompNavbar = () => {
   }, [searchRef]); 
 
   const navLinkClass = ({ isActive }) => 
-    `nav-link ${isActive ? 'font-bold' : ''}`;
+    `nav-link ${isActive ? 'font-bold underline-offset-7 underline text-white' : ''}`;
   
   const handleMobileLogout = () => {
     logout();
     setIsOpen(false);
   }
+
+
 
   return (
     <nav className="navbar relative z-30">
@@ -125,7 +179,7 @@ const CompNavbar = () => {
           
           {/* BAGIAN KANAN: Auth Links */}
           <div className={`hidden md:flex items-center flex-shrink-0 transition-opacity duration-300 ${isSearchActive ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
-            <DesktopAuthLinks /> 
+            <DesktopAuthLinks />
           </div>
 
           {/* Tombol untuk Mobile Menu */}
@@ -157,10 +211,13 @@ const CompNavbar = () => {
               </div>
             ) : (
               <div className="flex flex-col items-center gap-4 w-full">
-                <div className="flex items-center gap-2">
-                  <img src={user.profileImageUrl} alt={user.fullName} className="w-10 h-10 rounded-full border-2 border-white object-cover" />
-                  <span className="text-white font-semibold">{user.fullName}</span>
-                </div>
+                <button onClick={() => setIsOpen(false)} className="w-full flex items-center justify-center gap-2">
+                  <div className="flex items-center gap-2">
+                    <img src={user.profileImageUrl} alt={user.fullName} className="w-10 h-10 rounded-full border-2 border-white object-cover" />
+                    <span className="text-white font-semibold">{user.fullName}</span>
+                  </div>  
+                </button>
+                
                 <button onClick={handleMobileLogout} className="nav-link-masuk-buatakun bg-red-600 hover:bg-red-700 w-full text-center">
                   Keluar
                 </button>

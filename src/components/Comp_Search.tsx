@@ -41,7 +41,7 @@ const Search = () => {
   return (
     <div className="flex items-center w-full">
       <div
-        className="relative flex items-center w-full max-w-lg bg-blue-700 rounded-2xl"
+        className="relative flex items-center w-full max-w-lg bg-blue-600 rounded-2xl"
         onClick={() => inputRef.current?.focus()}
         style={{ cursor: 'text' }}
       >
