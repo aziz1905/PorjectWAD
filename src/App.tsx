@@ -13,6 +13,7 @@ import Histori from './Pages/pesanan/Histori';
 import DetailPenyewaan from './Pages/DetailPenyewaan';
 import ProtectedRoute from './components/ProtectedRoute';
 
+
 function App() {
   const { user, logout } = useAuth();
 

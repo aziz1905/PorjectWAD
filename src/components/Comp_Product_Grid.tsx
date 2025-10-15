@@ -1,38 +1,43 @@
 import ProductCard from "./Comp_Product_Card";
 import { useState, useEffect } from 'react';
 import { Product } from "../type";
-
-
+import { useSearch } from './Comp_Search'; 
+import api from '../api'; 
 
 export default function ProductGrid() {
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<Product[]>([]); // Menyimpan daftar asli dari API
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]); // Menyimpan daftar yang akan ditampilkan
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // 2. Ambil searchTerm dari context
+  const { searchTerm } = useSearch();
+
+  // Efek ini hanya berjalan sekali untuk mengambil semua produk dari backend
   useEffect(() => {
-    // Fungsi untuk mengambil data dari backend
     const fetchProducts = async () => {
       try {
-        // Panggil API Produk Anda
-        const response = await fetch('http://localhost:5000/products');
-        if (!response.ok) {
-          throw new Error('Gagal mengambil data produk dari server.');
-        }
-        const data: Product[] = await response.json();
-        setProducts(data);
+        const response = await api.get('/products'); // Menggunakan api.get
+        setProducts(response.data); // Simpan daftar produk asli
       } catch (err) {
-        if (err instanceof Error) {
-          setError(err.message);
-        } else {
-          setError('Terjadi kesalahan saat mengambil data.');
-        }
+        setError('Gagal mengambil data produk dari server.');
+        console.error(err);
       } finally {
         setLoading(false);
       }
     };
 
     fetchProducts();
-  }, []); 
+  }, []); // Dependency array kosong, jadi hanya berjalan saat komponen dimuat
+
+  // 3. Efek ini berjalan setiap kali searchTerm atau daftar produk asli berubah
+  useEffect(() => {
+    // Lakukan filtering berdasarkan searchTerm
+    const results = products.filter(product =>
+      product.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredProducts(results);
+  }, [searchTerm, products]); // Bergantung pada searchTerm dan products
 
   if (loading) {
     return <div className="text-center py-12">Memuat produk...</div>;
@@ -44,7 +49,8 @@ export default function ProductGrid() {
   
   return (
     <div className="product-grid">
-      {products.map((product) => (
+      {/* 4. Tampilkan 'filteredProducts', bukan 'products' */}
+      {filteredProducts.map((product) => (
         <ProductCard
           key={product.id}
           id={product.id}
@@ -57,6 +63,6 @@ export default function ProductGrid() {
           categoryId={product.categoryId}
         />
       ))}
-    </div>
-  );
+    </div>
+  );
 }

@@ -1,10 +1,9 @@
-import SearchNav from "./Comp_Search";
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react'; // 1. Import useRef dan useEffect
 import { NavLink } from 'react-router-dom';
 import { useAuth } from './AuthContext';
+import Search, { useSearch } from './Comp_Search';
 
-
-
+// Komponen ini tidak perlu diubah
 const DesktopAuthLinks = () => {
   const { user, logout } = useAuth();
 
@@ -29,7 +28,6 @@ const DesktopAuthLinks = () => {
   } else { 
     return (
       <div className="flex items-center gap-4">
-        
         <span className="text-white font-semibold hidden md:block">{user.fullName}</span>
         <img src={user.profileImageUrl} alt={user.fullName} className="w-10 h-10 rounded-full border-2 border-white object-cover" />
         <button 
@@ -44,8 +42,37 @@ const DesktopAuthLinks = () => {
 };
 
 const CompNavbar = () => { 
+  const [isSearchActive, setIsSearchActive] = useState(false);
+  const { setSearchTerm } = useSearch();
+
+  // 2. Definisikan ref untuk menunjuk ke wrapper search bar
+  const searchRef = useRef<HTMLDivElement>(null);
+
+  // State dan fungsi untuk mobile, biarkan apa adanya
   const [isOpen, setIsOpen] = useState(false);
   const { user, logout } = useAuth(); 
+
+  const handleSearchFocus = () => {
+    setIsSearchActive(true);
+  };
+  
+  const handleSearchClose = () => {
+    setIsSearchActive(false);
+    setSearchTerm('');
+  };
+
+  // 3. useEffect untuk mendeteksi klik di luar
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+        handleSearchClose();
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [searchRef]); 
 
   const navLinkClass = ({ isActive }) => 
     `nav-link ${isActive ? 'font-bold' : ''}`;
@@ -56,25 +83,51 @@ const CompNavbar = () => {
   }
 
   return (
-    <nav className="navbar">
+    <nav className="navbar relative z-30">
       <div className="navbar-container">
         <div className="navbar-content">
-          <NavLink to="/" className="logo">
-            <p className="font-extrabold">KostumKita.</p>
-          </NavLink>
-
-          <div className="hidden md:block"> 
-            <SearchNav />
+          {/* BAGIAN KIRI: Logo */}
+          <div className={`flex-shrink-0 transition-opacity duration-300 ${isSearchActive ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+            <NavLink to="/" className="logo">
+              <p className="font-extrabold">KostumKita.</p>
+            </NavLink>
           </div>
-
           
-          <div className="hidden md:flex items-center gap-6">
-            <NavLink to="/beranda" className={navLinkClass}>Beranda</NavLink>
-            <NavLink to="/tentang" className={navLinkClass}>Tentang</NavLink>
-            <NavLink to="/pesanan" className={navLinkClass}>Pesanan</NavLink>
+          {/* BAGIAN TENGAH: Navigasi dan Search Bar */}
+          <div className="hidden md:flex flex-grow items-center justify-center relative">
+            
+            {/* Navigasi Links (akan menghilang) */}
+           
+
+            {/* Search Bar (akan membesar) */}
+            <div 
+              ref={searchRef} // 4. Pasang ref di sini
+              className={`flex items-center transition-all duration-500 ease-in-out ${
+                isSearchActive 
+                ? ' absolute w-full max-w-100' // State Aktif
+                : 'relative w-64 ml-8'      // State Normal
+              }`}
+            >
+              <div onFocusCapture={handleSearchFocus} className="w-full">
+                 <NavLink to="/beranda#produk" style={{ display: 'block' }}>
+                   <Search />
+                 </NavLink>
+              </div>
+            </div>
+
+            <div className={`flex items-center gap-6 transition-opacity duration-300 ${isSearchActive ? 'opacity-0 pointer-events-none' : 'ml-10 opacity-100'}`}>
+              <NavLink to="/beranda" className={navLinkClass}>Beranda</NavLink>
+              <NavLink to="/tentang" className={navLinkClass}>Tentang</NavLink>
+              <NavLink to="/pesanan" className={navLinkClass}>Pesanan</NavLink>
+            </div>
+
+          </div>
+          
+          {/* BAGIAN KANAN: Auth Links */}
+          <div className={`hidden md:flex items-center flex-shrink-0 transition-opacity duration-300 ${isSearchActive ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
             <DesktopAuthLinks /> 
           </div>
-          
+
           {/* Tombol untuk Mobile Menu */}
           <div className="md:hidden">
             <button onClick={() => setIsOpen(!isOpen)}>
@@ -86,13 +139,13 @@ const CompNavbar = () => {
         {/* Mobile Menu Dropdown */}
         {isOpen && (
           <div className="md:hidden mt-4 bg-gray-800 p-4 rounded-lg flex flex-col items-center gap-4">
-            <SearchNav />
+            <Search />
             <NavLink to="/beranda" className={navLinkClass} onClick={() => setIsOpen(false)}>Beranda</NavLink>
             <NavLink to="/tentang" className={navLinkClass} onClick={() => setIsOpen(false)}>Tentang</NavLink>
             <NavLink to="/pesanan" className={navLinkClass} onClick={() => setIsOpen(false)}>Pesanan</NavLink>
             <hr className="w-full border-gray-600"/>
             
-            {/* 2. Logika otentikasi untuk MOBILE ditangani di sini */}
+            {/* Logika otentikasi untuk MOBILE */}
             {!user ? (
               <div className="flex flex-col items-center gap-4 w-full">
                 <NavLink to="/masuk" className="nav-link-masuk-buatakun w-full text-center" onClick={() => setIsOpen(false)}>
@@ -104,10 +157,10 @@ const CompNavbar = () => {
               </div>
             ) : (
               <div className="flex flex-col items-center gap-4 w-full">
-                 <div className="flex items-center gap-2">
-                    <img src={user.profileImageUrl} alt={user.fullName} className="w-10 h-10 rounded-full border-2 border-white object-cover" />
-                    <span className="text-white font-semibold">{user.fullName}</span>
-                 </div>
+                <div className="flex items-center gap-2">
+                  <img src={user.profileImageUrl} alt={user.fullName} className="w-10 h-10 rounded-full border-2 border-white object-cover" />
+                  <span className="text-white font-semibold">{user.fullName}</span>
+                </div>
                 <button onClick={handleMobileLogout} className="nav-link-masuk-buatakun bg-red-600 hover:bg-red-700 w-full text-center">
                   Keluar
                 </button>

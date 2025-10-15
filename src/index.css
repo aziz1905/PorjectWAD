@@ -186,11 +186,11 @@
 
   /* ------------------------------------------------------------------------------------------------------------------------------ */
    .kategori-section {
-      @apply bg-white py-12 sm:py-16;
+      @apply bg-white py-10 sm:py-16;
     }
 
     .kategori-container {
-      @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+      @apply max-w-7xl mx-auto px-3 sm:px-6 lg:px-8;
     }
 
     .kategori-title {

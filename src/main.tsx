@@ -4,11 +4,15 @@ import ReactDOM from 'react-dom/client';
 import App from './App.tsx'; 
 import './index.css';
 import { AuthProvider } from './components/AuthContext.tsx';
+import { SearchProvider } from './components/Comp_Search.tsx';
+
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <AuthProvider>
-      <App />
+      <SearchProvider>
+        <App />
+      </SearchProvider>
     </AuthProvider>
   </React.StrictMode>,
 );

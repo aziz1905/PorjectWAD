@@ -40,7 +40,7 @@ const ProductCard = ({
       />
 
       {/* Info Produk */}
-      <div className="product-info p-4">
+      <div className="product-info p-5">
         {/* Rating Bintang */}
         <div className="flex items-center my-2">
           {Array.from({ length: 5 }).map((_, index) => (
