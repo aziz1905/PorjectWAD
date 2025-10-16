@@ -6,9 +6,10 @@ export const createAccount = async (req, res) => {
         return res.status(400).json({message : 'Nama , Email dan password harus di isi!'});
     }
     const newUser = { 
-        fullName: name, 
+        fullName: fullName, 
         email: email, 
-        password: password
+        password: password,
+        role: 'customer' 
     };
     try {
         const user = await findByEmail(newUser.email);
@@ -17,7 +18,7 @@ export const createAccount = async (req, res) => {
             return res.status(409).json({message : 'Email sudah digunakan.'});
         }
         const savedUser = await createUser(newUser);
-        const {password, ...safeUser } = savedUser.toJSON;
+        const {password : pw, ...safeUser } = savedUser.toJSON;
         res.status(200).json({message : 'User berhasil dibuat!', user : safeUser});
     }catch(error){
         console.log("error Buat Akun:", error.message); 
