@@ -12,18 +12,23 @@ const userReturnAttributes = {
 export const createUser = async (newUser) => {
     console.log("Data yang diterima repository:", newUser);
 
+    try {
+        const result = await db
+            .insert(usersTable)
+            .values({
+                name: newUser.fullName, 
+                email: newUser.email,
+                password: newUser.password,
+                role: newUser.role || 'customer'
+            })
+            .returning(userReturnAttributes);
 
-    const result = await db
-        .insert(usersTable)
-        .values({
-            name: newUser.fullName, 
-            email: newUser.email,
-            password: newUser.password,
-            role: newUser.role || 'customer'
-        })
-        .returning(userReturnAttributes);
-
-    return result[0];
+        return result[0];
+        
+    } catch (error) {
+        console.error("Error di createUser repository:", error);
+        throw new Error('Gagal menyimpan user ke database.'); 
+    }
 };
 
 export const findByEmail = async (email) => {
@@ -38,9 +43,9 @@ export const findByEmail = async (email) => {
         })
         .from(usersTable)
         .where(eq(usersTable.email, email))
-        .limit[1];
+        .limit(1);
 
-        return result.lenght > 0 ? result[0] : undefined;
+        return result.length > 0 ? result[0] : undefined;
     }catch(error){
         console.error("Error findByEmail:", error);
         throw new Error('Gagal mencari user di database.');
