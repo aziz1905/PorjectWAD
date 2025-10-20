@@ -12,6 +12,7 @@ import Pengiriman from './Pages/pesanan/Pengiriman';
 import Histori from './Pages/pesanan/Histori';
 import DetailPenyewaan from './Pages/DetailPenyewaan';
 import ProtectedRoute from './components/ProtectedRoute';
+import SettingAkun from './Pages/SettingAkun';
 
 
 function App() {
@@ -27,6 +28,8 @@ function App() {
           <Route index element={<Navigate replace to="beranda" />} />
           <Route path="beranda" element={<Beranda />} />
           <Route path="tentang" element={<Tentang />} />
+          <Route path="settings" element={<SettingAkun />} />
+          {/* <Route path="wishlist" element={<Wishlist />} /> */}
           
           <Route 
             path="pesanan" 

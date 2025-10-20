@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react'; // 1. Import useRef dan use
 import { NavLink } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 import Search, { useSearch } from './Comp_Search';
+import {Icon} from '@iconify/react';
 
 // Komponen ini tidak perlu diubah
 const DesktopAuthLinks = () => {
@@ -51,40 +52,41 @@ const DesktopAuthLinks = () => {
           <img src={user.profileImageUrl} alt={user.fullName} className="w-10 h-10 rounded-full border-2 border-white object-cover" />
         </button>
 
-        {/* 4. Dropdown Menu (hanya tampil jika isDropdownOpen true) */}
         {isDropdownOpen && (
           <div 
             className="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg py-1 z-50"
           >
            <div className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 border-b border-gray-200">
-              <img src={user.profileImageUrl} alt={user.fullName} className="w-10 h-10 rounded-full object-cover flex-shrink-0"/>
+              <img src={user.profileImageUrl} alt={user.fullName} className="outline w-10 h-10 rounded-full object-cover flex-shrink-0"/>
   
               {/* Add the classes below to the span */}
               <span className="truncate min-w-0">{user.email}</span>
            </div>
             <NavLink 
               to="/settings" 
-              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 "
+              className="flex items-center gap-1 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
               onClick={() => setDropdownOpen(false)} // Tutup dropdown saat diklik
             >
-              Setting Akun
+             <Icon icon="mdi:cog-outline" className="w-5 h-5 text-gray-500" />
+             <span>Setting Akun</span> 
             </NavLink>
             <NavLink 
               to="/wishlist" 
-              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+              className="flex items-center gap-1 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
               onClick={() => setDropdownOpen(false)}
             >
-              Wishlist
+              <Icon icon="mdi:hanger" className="w-5 h-5 text-gray-500" />
+              <span>Wishlist</span>
             </NavLink>
-            <hr className="my-1"/>
             <button 
               onClick={() => {
                 logout();
-                setDropdownOpen(false); // Pastikan dropdown tertutup saat logout
+                setDropdownOpen(false);
               }} 
-              className="block w-full px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+              className="flex items-center gap-1 text-left w-full px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
             >
-              Keluar Akun
+              <Icon icon="mdi:logout" className="w-5 h-5 text-red-500" />
+              <span>Keluar</span>
             </button>
           </div>
         )}
