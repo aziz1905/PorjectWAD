@@ -6,7 +6,7 @@ export const productsSizesTable = pgTable("productsSizes", {
     productId: integer("product_id").references(() => productsTable.id, { onDelete: 'cascade' }),
     name: varchar("name_size", { length: 255 }).notNull(),
     stock: integer("stock").notNull().default(0),
-}, (table) => { // Mendefinisikan batasan di tingkat tabel
+}, (table) => {
     return {
         productSizeUnique: uniqueIndex("product_size_unique").on(table.productId, table.name),
     };

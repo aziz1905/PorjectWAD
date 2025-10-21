@@ -13,6 +13,7 @@ import Histori from './Pages/pesanan/Histori';
 import DetailPenyewaan from './Pages/DetailPenyewaan';
 import ProtectedRoute from './components/ProtectedRoute';
 import SettingAkun from './Pages/SettingAkun';
+import Wishlist from './Pages/Wishlist';
 
 
 function App() {
@@ -29,7 +30,7 @@ function App() {
           <Route path="beranda" element={<Beranda />} />
           <Route path="tentang" element={<Tentang />} />
           <Route path="settings" element={<SettingAkun />} />
-          {/* <Route path="wishlist" element={<Wishlist />} /> */}
+          <Route path="wishlist" element={<Wishlist />} />
           
           <Route 
             path="pesanan" 
