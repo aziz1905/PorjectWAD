@@ -1,5 +1,4 @@
 import 'dotenv/config'; 
-// ===============================================
 
 import { drizzle } from 'drizzle-orm/node-postgres';
 import pg from 'pg'; 
@@ -11,12 +10,12 @@ console.log(`DB_DEBUG: User=${process.env.DB_USER}, Port=${dbPort}, PasswordLeng
 
 const pool = new pg.Pool({
     user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD, 
+    password: process.env.DB_PASSWORD,
     host: process.env.DB_HOST,
-    port: dbPort, 
+    port: dbPort,
     database: process.env.DB_NAME,
 });
 
-const db = drizzle(pool); 
+const db = drizzle(pool);
 
 export default db;

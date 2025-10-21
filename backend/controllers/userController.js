@@ -1,5 +1,6 @@
-import { createUser, findByEmail } from "../repository/userRepository.js";
-import bcrypt from 'bcrypt'; // 1. Import bcrypt
+import { createOrReplaceBiodata, createUser, findByEmail } from "../repository/userRepository.js";
+import bcrypt from 'bcrypt'; 
+import { generateAuthToken } from "../service/authService.js";
 
 export const createAccount = async (req, res) => {
     const { name, email, password } = req.body;
@@ -14,13 +15,13 @@ export const createAccount = async (req, res) => {
             return res.status(409).json({ message: 'Email sudah digunakan.' });
         }
 
-        // 2. Hash password-nya!
+        // 2. Hash password
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
         // 3. Buat objek user baru
         const newUser = { 
-            fullName: name, // Perbaikan: Gunakan 'name'
+            fullName: name,
             email: email, 
             password: hashedPassword, // Simpan password yang sudah di-hash
             role: 'customer' 
@@ -29,10 +30,8 @@ export const createAccount = async (req, res) => {
         // Panggil repository
         const savedUser = await createUser(newUser);
         
-        // 4. Perbaikan: Langsung destructure, tidak perlu .toJSON
+        // Hapus password hash
         const { password: pw, ...safeUser } = savedUser; 
-
-        // 5. Perbaikan: Gunakan status 201 (Created)
         res.status(201).json({ message: 'User berhasil dibuat!', user: safeUser });
 
     } catch(error) {
@@ -46,18 +45,26 @@ export const loginAccount = async (req, res) => {
     try {
         const user = await findByEmail(email);
 
-        // 6. Cek jika user tidak ada
+        //  Cek jika user tidak ada
         if (!user) {
             return res.status(401).json({ message: 'Email atau password salah!' });
         }
 
-        // 7. Gunakan bcrypt.compare untuk membandingkan password
+        //  Gunakan bcrypt.compare untuk membandingkan password
         const isMatch = await bcrypt.compare(password, user.password);
 
         if (isMatch) {
-            // 8. Perbaikan: Langsung destructure
+            // Hapus password hash
             const { password: pw, ...safeUser } = user;
-            return res.status(200).json({ message: 'Login berhasil!', user: safeUser });
+
+            // Buat JWT dengan ID dan Role untuk otentikasi sesi
+            const token = generateAuthToken(user.id, user.role);
+            
+            return res.status(200).json({ 
+            message: 'Login berhasil!', 
+            token: token, 
+            user: safeUser 
+        });
         } else {
             return res.status(401).json({ message: 'Email atau password salah!' });
         }
@@ -65,4 +72,32 @@ export const loginAccount = async (req, res) => {
         console.log("error Login:", error);
         return res.status(500).json({ message: 'Gagal Login!' });
     }
+};
+
+export const updateBiodata = async (req, res) => {
+    const userId = req.user.id;
+    const {phone, address} = req.body;
+    
+    const biodataToUpdate = {
+        userId: userId,
+        phone: phone,
+        address: address
+    };
+
+    try{
+        let UpdateBiodata = null;
+        if(phone || address){
+            updateBiodata = await createOrReplaceBiodata(userId, biodataToUpdate);
+        }
+
+        const finalResponse = {
+            message: 'Biodata berhasil diperbarui!',
+            biodata: updateBiodata
+        }
+
+        return res.status(200).json(finalResponse);
+    }catch (error) {
+        console.log("error Update Biodata:", error);
+        return res.status(500).json({ message: 'Gagal Update Data!' });
+    }  
 };
