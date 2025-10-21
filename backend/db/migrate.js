@@ -1,15 +1,12 @@
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
 import { Pool } from 'pg';
 import { drizzle } from 'drizzle-orm/node-postgres';
-
-// === SOLUSI KRITIS UNTUK MEMUAT .ENV ===
 import { config } from 'dotenv';
 import path from 'path';
 
 // Pemuatan environment secara eksplisit dari root proyek
 // Ini harus dijalankan sebelum Pool dibuat.
 config({ path: path.resolve(process.cwd(), '.env') });
-// =======================================
 
 const dbPort = process.env.DB_PORT ? parseInt(process.env.DB_PORT) : 5440;
 

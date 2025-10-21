@@ -2,6 +2,8 @@ import { relations } from "drizzle-orm";
 import { productsTable } from './productsSchema.js'; 
 import { productsSizesTable } from './productsSizeSchema.js';
 import { categoriesTable } from './categoriesSchema.js';
+import { usersTable } from "./usersSchema.js";
+import { usersBiodataTable } from "./usersBiodataSchema.js";
 
 
 // Relasi Product memiliki banyak ProductSize
@@ -27,4 +29,17 @@ export const productSizesRelations = relations(productsSizesTable, ({ one }) => 
 // Relasi Category memiliki banyak Product
 export const categoryRelations = relations(categoriesTable, ({ many }) => ({
     products: many(productsTable), // Menggunakan helper 'many'
+}));
+
+// Relasi user memiliki banyak biodata
+export const userRelations = relations(usersTable, ({ many }) => ({
+    userBiodata: many(usersBiodataTable),
+}));
+
+// Relasi biodata dimiliki satu user
+export const userBiodataRelations = relations(usersBiodataTable, ({ one }) => ({
+    users: one(usersTable, {
+        fields: [usersBiodataTable.userId],
+        references: [usersTable.id],
+    }),
 }));

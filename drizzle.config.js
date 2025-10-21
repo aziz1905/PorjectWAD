@@ -1,18 +1,14 @@
 import { defineConfig } from "drizzle-kit";
 
 export default defineConfig({
-    // PERBAIKAN 1: Tambahkan DIALECT di tingkat atas (Wajib)
     dialect: 'postgresql', 
-
+    dbCredentials: {
+        url: "postgresql://kostum_kita:admin123@localhost:5440/db_final_project"
+    },
     schema: "./backend/db/schema",
     out: "./drizzle-migrate",
-    
-    // Perhatikan: driver di luar db: {} seringkali opsional, 
-    // tetapi kita perlu memastikan driver yang benar di dalam db: {}
 
     db: {
-        // PERBAIKAN 2: Tentukan DRIVER di dalam blok db.
-        // Drizzle-Kit akan mengaitkan driver 'pg' ini dengan dialect 'postgresql'
         driver: 'pg', 
         connectionString: process.env.DATABASE_URL,
     },
