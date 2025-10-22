@@ -7,6 +7,20 @@ const categoriesReturnAttribut = {
     name: categoriesTable.name
 };
 
+export const insertCategory = async(categoryName) =>{
+    try{
+    const newCategory = await db
+    .insert(categoriesTable)
+    .values({name: categoryName})
+    .returning(categoriesReturnAttribut)
+
+    return newCategory;
+    }catch(error) {
+        console.error("Error insert kategori:", error);
+        throw new Error('Gagal membuat kategori.');
+    }
+}
+
 export const findAllCategories = async () => {
     try {
         const categories = await db

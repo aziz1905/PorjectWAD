@@ -5,8 +5,6 @@ import pg from 'pg';
 
 const dbPort = process.env.DB_PORT ? parseInt(process.env.DB_PORT) : 5440;
 
-// Cek debug Anda akan menunjukkan variabel sudah terisi
-console.log(`DB_DEBUG: User=${process.env.DB_USER}, Port=${dbPort}, PasswordLength=${process.env.DB_PASSWORD ? process.env.DB_PASSWORD.length : 'UNDEFINED'}`);
 
 const pool = new pg.Pool({
     user: process.env.DB_USER,

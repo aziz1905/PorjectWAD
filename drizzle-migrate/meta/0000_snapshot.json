@@ -1,11 +1,11 @@
 {
-  "id": "b3c5651c-0a8f-425e-949c-8cda4c84eb66",
+  "id": "eb7abb36-3669-4b64-9712-b10bf57ed72e",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
-    "public.Categories": {
-      "name": "Categories",
+    "public.categories": {
+      "name": "categories",
       "schema": "",
       "columns": {
         "id": {
@@ -15,7 +15,7 @@
           "notNull": true,
           "identity": {
             "type": "always",
-            "name": "Categories_id_seq",
+            "name": "categories_id_seq",
             "schema": "public",
             "increment": "1",
             "startWith": "1",
@@ -36,8 +36,8 @@
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "Categories_name_category_unique": {
-          "name": "Categories_name_category_unique",
+        "categories_name_category_unique": {
+          "name": "categories_name_category_unique",
           "nullsNotDistinct": false,
           "columns": [
             "name_category"
@@ -81,6 +81,12 @@
           "primaryKey": false,
           "notNull": true
         },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
         "price": {
           "name": "price",
           "type": "numeric(10, 2)",
@@ -100,8 +106,8 @@
           "notNull": false,
           "default": "'0.0'"
         },
-        "sold": {
-          "name": "sold",
+        "rent_count": {
+          "name": "rent_count",
           "type": "integer",
           "primaryKey": false,
           "notNull": false,
@@ -110,10 +116,10 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "products_category_id_Categories_id_fk": {
-          "name": "products_category_id_Categories_id_fk",
+        "products_category_id_categories_id_fk": {
+          "name": "products_category_id_categories_id_fk",
           "tableFrom": "products",
-          "tableTo": "Categories",
+          "tableTo": "categories",
           "columnsFrom": [
             "category_id"
           ],
@@ -155,11 +161,12 @@
           "name": "product_id",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
-        "name_size": {
-          "name": "name_size",
-          "type": "varchar(255)",
+        "size_name": {
+          "name": "size_name",
+          "type": "product_size",
+          "typeSchema": "public",
           "primaryKey": false,
           "notNull": true
         },
@@ -182,7 +189,7 @@
               "nulls": "last"
             },
             {
-              "expression": "name_size",
+              "expression": "size_name",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -211,6 +218,76 @@
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.userBiodata": {
+      "name": "userBiodata",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "identity": {
+            "type": "always",
+            "name": "userBiodata_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "cache": "1",
+            "cycle": false
+          }
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "phone": {
+          "name": "phone",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "address": {
+          "name": "address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "userBiodata_user_id_Users_id_fk": {
+          "name": "userBiodata_user_id_Users_id_fk",
+          "tableFrom": "userBiodata",
+          "tableTo": "Users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "userBiodata_user_id_unique": {
+          "name": "userBiodata_user_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "user_id"
+          ]
+        }
+      },
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -281,6 +358,17 @@
     }
   },
   "enums": {
+    "public.product_size": {
+      "name": "product_size",
+      "schema": "public",
+      "values": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ]
+    },
     "public.user_role": {
       "name": "user_role",
       "schema": "public",
