@@ -8,11 +8,8 @@ export const productsSizesTable = pgTable("productsSizes", {
     productId: integer("product_id").references(() => productsTable.id, { onDelete: 'cascade' }),
     name: productSize('size').notNull(),
     stock: integer("stock").notNull().default(0),
-<<<<<<< HEAD
+
 }, (table) => {
-=======
-}, (table) => { // Mendefinisikan setiap 
->>>>>>> farhan
     return {
         productSizeUnique: uniqueIndex("product_size_unique").on(table.productId, table.name),
     };

@@ -5,7 +5,7 @@ export default defineConfig({
     dbCredentials: {
         url: "postgresql://kostum_kita:admin123@localhost:5440/db_final_project"
     },
-    schema: "./backend/db/schema",
+    schema: "./backend/db/schema/**/*.js",
     out: "./drizzle-migrate",
 
     db: {
