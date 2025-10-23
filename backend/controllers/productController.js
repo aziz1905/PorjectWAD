@@ -55,7 +55,7 @@ export const createProduct = async (req, res) => {
         description: description,
         price: price, 
         imageUrl: imageUrl,
-        age: ageGroup, 
+        age: age, 
         gender: gender
     }
 
