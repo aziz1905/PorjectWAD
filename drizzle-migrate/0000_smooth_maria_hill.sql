@@ -1,3 +1,5 @@
+CREATE TYPE "public"."product_age" AS ENUM('Anak', 'Remaja', 'Dewasa');--> statement-breakpoint
+CREATE TYPE "public"."product_gender" AS ENUM('Pria', 'Wanita', 'Unisex');--> statement-breakpoint
 CREATE TYPE "public"."product_size" AS ENUM('S', 'M', 'L', 'XL', 'XXL');--> statement-breakpoint
 CREATE TYPE "public"."user_role" AS ENUM('customer', 'admin');--> statement-breakpoint
 CREATE TABLE "categories" (
@@ -13,6 +15,8 @@ CREATE TABLE "products" (
 	"description" text NOT NULL,
 	"price" numeric(10, 2) NOT NULL,
 	"image_url" varchar NOT NULL,
+	"Age" "product_age" DEFAULT 'Dewasa' NOT NULL,
+	"gender" "product_gender" DEFAULT 'Unisex' NOT NULL,
 	"rating" numeric(2, 1) DEFAULT '0.0',
 	"rent_count" integer DEFAULT 0
 );
@@ -41,7 +45,16 @@ CREATE TABLE "Users" (
 	CONSTRAINT "Users_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint
+CREATE TABLE "wishlist" (
+	"user_id" integer NOT NULL,
+	"product_id" integer NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "wishlist_user_id_product_id_pk" PRIMARY KEY("user_id","product_id")
+);
+--> statement-breakpoint
 ALTER TABLE "products" ADD CONSTRAINT "products_category_id_categories_id_fk" FOREIGN KEY ("category_id") REFERENCES "public"."categories"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "productsSizes" ADD CONSTRAINT "productsSizes_product_id_products_id_fk" FOREIGN KEY ("product_id") REFERENCES "public"."products"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "userBiodata" ADD CONSTRAINT "userBiodata_user_id_Users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."Users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "wishlist" ADD CONSTRAINT "wishlist_user_id_Users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."Users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "wishlist" ADD CONSTRAINT "wishlist_product_id_products_id_fk" FOREIGN KEY ("product_id") REFERENCES "public"."products"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 CREATE UNIQUE INDEX "product_size_unique" ON "productsSizes" USING btree ("product_id","size_name");

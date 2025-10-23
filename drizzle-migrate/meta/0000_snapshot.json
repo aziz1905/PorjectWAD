@@ -1,5 +1,5 @@
 {
-  "id": "eb7abb36-3669-4b64-9712-b10bf57ed72e",
+  "id": "97c3e1ae-eef8-4e64-98dc-19041d608dd6",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -98,6 +98,22 @@
           "type": "varchar",
           "primaryKey": false,
           "notNull": true
+        },
+        "Age": {
+          "name": "Age",
+          "type": "product_age",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'Dewasa'"
+        },
+        "gender": {
+          "name": "gender",
+          "type": "product_gender",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'Unisex'"
         },
         "rating": {
           "name": "rating",
@@ -355,9 +371,94 @@
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
+    },
+    "public.wishlist": {
+      "name": "wishlist",
+      "schema": "",
+      "columns": {
+        "user_id": {
+          "name": "user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "product_id": {
+          "name": "product_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "wishlist_user_id_Users_id_fk": {
+          "name": "wishlist_user_id_Users_id_fk",
+          "tableFrom": "wishlist",
+          "tableTo": "Users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "wishlist_product_id_products_id_fk": {
+          "name": "wishlist_product_id_products_id_fk",
+          "tableFrom": "wishlist",
+          "tableTo": "products",
+          "columnsFrom": [
+            "product_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "wishlist_user_id_product_id_pk": {
+          "name": "wishlist_user_id_product_id_pk",
+          "columns": [
+            "user_id",
+            "product_id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
     }
   },
   "enums": {
+    "public.product_age": {
+      "name": "product_age",
+      "schema": "public",
+      "values": [
+        "Anak",
+        "Remaja",
+        "Dewasa"
+      ]
+    },
+    "public.product_gender": {
+      "name": "product_gender",
+      "schema": "public",
+      "values": [
+        "Pria",
+        "Wanita",
+        "Unisex"
+      ]
+    },
     "public.product_size": {
       "name": "product_size",
       "schema": "public",
