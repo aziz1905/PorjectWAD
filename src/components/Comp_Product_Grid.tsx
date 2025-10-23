@@ -59,8 +59,10 @@ export default function ProductGrid() {
           price={product.price}
           imageUrl={product.imageUrl}
           sizes={product.sizes}
-          specification={product.specification}
+          age={product.age as "Dewasa" | "Remaja" | "Anak-anak"}
+          gender={product.gender as "Pria" | "Wanita" | "Unisex"}
           categoryId={product.categoryId}
+          wishlisted={product.wishlisted}
         />
       ))}
     </div>

@@ -6,7 +6,6 @@ export interface User {
   email: string;
   profileImageUrl: string;
 }
-
 // Kamu juga bisa menambahkan tipe data lain di sini nanti, misalnya untuk Produk:
 export interface Product {
     id: string;
@@ -14,12 +13,11 @@ export interface Product {
     description: string;
     price: number;
     imageUrl: string;
-    sizes: readonly string[];
-    specification: {
-        age: string;
-        gender: string;
-    };
+    sizes: readonly string[]; 
+    age: string;
+    gender: string;;
     rating?: number;
     sold?: number;
     categoryId: number;
+    wishlisted?: boolean;
 }
