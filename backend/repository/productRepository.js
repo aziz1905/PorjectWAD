@@ -8,10 +8,11 @@ const productReturnAttributes = {
     id: productsTable.id,
     categoryId: productsTable.categoryId,
     name: productsTable.name,
+    description: productsTable.description,
     price: productsTable.price,
     imageUrl: productsTable.imageUrl,
     rating: productsTable.rating,
-    sold: productsTable.sold
+    rentCount: productsTable.rentCount
 };
 
 
@@ -57,3 +58,41 @@ export const findProductById = async (productId) => {
         throw new Error('Gagal mencari detail produk di database.');
     }
 };
+
+export const insertProduct = async (productData, sizes) => {
+    try{
+        return await db.transaction(async (tx) => {
+        
+        const [newProduct] = await tx
+            .insert(productsTable)
+            .values(productData)
+            .returning();
+
+        // Cek dan mendapatkan ID
+        if (!newProduct) {
+            throw new Error('Failed to create product record.');
+        }
+        const newProductId = newProduct.id;
+        
+        const sizeInsertData = sizes.map(size => ({
+            productId: newProductId,
+            sizeName: size.sizeName,
+            stock: size.stock,
+        }));
+        
+        // 3. INSERT ke productsSizesTable
+        await tx
+            .insert(productsSizesTable)
+            .values(sizeInsertData); 
+
+        // Transaksi berhasil.
+        return {
+            ...newProduct,
+            sizes: sizeInsertData,
+        };
+    });
+    }catch(error){
+        console.error("Error di addProduct repository:", error);
+        throw new Error('Gagal menyimpan product ke database.'); 
+    }
+}

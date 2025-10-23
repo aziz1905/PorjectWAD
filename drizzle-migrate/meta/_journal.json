@@ -5,29 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1760524599446,
-      "tag": "0000_ordinary_wendigo",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1761019246970,
-      "tag": "0001_busy_blob",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1761047033246,
-      "tag": "0002_icy_skullbuster",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1761047726383,
-      "tag": "0003_tricky_jigsaw",
+      "when": 1761117338289,
+      "tag": "0000_absent_shape",
       "breakpoints": true
     }
   ]

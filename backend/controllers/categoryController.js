@@ -1,15 +1,30 @@
 import { findAllCategories } from "../repository/categoryRepository.js";
+import { insertCategory } from '../repository/categoryRepository.js';
 
-const categories = [
-    { id: 1, name: 'Princess', icon: 'mdi:crown-outline' },
-    { id: 2, name: 'Superhero', icon: 'game-icons:bat-mask' },
-    { id: 3, name: 'Horor', icon: 'mdi:ghost-outline' },
-    { id: 4, name: 'Tradisional', icon: 'mdi:drama-masks' },
-    { id: 5, name: 'Profesi', icon: 'mdi:briefcase-outline' },
-    { id: 6, name: 'Hewan', icon: 'mdi:dog' },
-    { id: 7, name: 'Fantasi', icon: 'mdi:magic-staff' },
-    { id: 8, name: 'Anime', icon: 'mdi:pokeball' }
-];
+export const createCategory = async (req, res) => {
+    const {name} = req.body;
+
+    if(!name || name.length === 0){
+        return res.status(400).json({ message: 'Nama kategori wajib diisi.' });
+    }
+    try{
+        const newCategory = await insertCategory(name);
+
+        // Respon Sukses
+        return res.status(201).json({ 
+            message: 'Kategori berhasil ditambahkan!', 
+            category: newCategory 
+        });
+
+    }catch (error) {
+        console.error("Error createCategory:", error);
+        // Nama sudah ada atau terjadi duplikasi
+        if (error.message.includes('unique constraint')) {
+            return res.status(409).json({ message: 'Kategori dengan nama ini sudah ada.' });
+        }
+        return res.status(500).json({ message: 'Gagal menambahkan kategori. Terjadi masalah pada server.' });
+    }
+}
 
 export const getAllCategories = async (req, res) => {
     try{

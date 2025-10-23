@@ -15,11 +15,11 @@ export const createAccount = async (req, res) => {
             return res.status(409).json({ message: 'Email sudah digunakan.' });
         }
 
-        // 2. Hash password
+        // Hash password
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        // 3. Buat objek user baru
+        // Buat objek user baru
         const newUser = { 
             fullName: name,
             email: email, 

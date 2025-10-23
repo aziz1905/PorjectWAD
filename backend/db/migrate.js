@@ -10,9 +10,6 @@ config({ path: path.resolve(process.cwd(), '.env') });
 
 const dbPort = process.env.DB_PORT ? parseInt(process.env.DB_PORT) : 5440;
 
-console.log(`DEBUG: USER=${process.env.DB_USER}, HOST=${process.env.DB_HOST}, PORT=${dbPort}, NAME=${process.env.DB_NAME}`);
-console.log(`DEBUG: Password Length=${process.env.DB_PASSWORD ? process.env.DB_PASSWORD.length : 'UNDEFINED'}`);
-
 
 const pool = new Pool({
     user: process.env.DB_USER,

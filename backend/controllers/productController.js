@@ -1,4 +1,4 @@
-import { findAllProducts, findProductById } from "../repository/productRepository.js";
+import { findAllProducts, findProductById, insertProduct } from "../repository/productRepository.js";
 
 
 
@@ -40,3 +40,47 @@ export const getProductByid = async (req, res) =>{
     }
     
 };
+
+export const createProduct = async (req, res) => {
+
+    const {categoryId, name, description, price, imageUrl, sizes } = req.body;
+
+    if (!categoryId || !name || !price || !imageUrl || !sizes || sizes.length === 0) {
+        return res.status(400).json({ message: 'Semua field produk (termasuk ukuran/stok) wajib diisi.' });
+    }
+
+    const newProductData = {
+        categoryId: categoryId,
+        name: name,
+        description: description,
+        price: price, 
+        imageUrl: imageUrl
+    }
+
+    try{
+        const product = await insertProduct(newProductData, sizes);
+        return res.status(201).json({ 
+            message: 'Produk dan stok berhasil ditambahkan!', 
+            product: product 
+        });
+    }catch (error) {
+        console.error("Error createProduct:", error.message);
+
+        // KOREKSI: Tambahkan penanganan error spesifik dari database
+        const errorMessage = error.message;
+
+        if (errorMessage.includes('violates foreign key constraint')) {
+            // Error jika categoryId tidak ditemukan di tabel Categories
+            return res.status(400).json({ message: 'Category ID tidak valid atau tidak ditemukan.' });
+        }
+        if (errorMessage.includes('violates not-null constraint')) {
+            // Error jika field seperti description atau imageUrl dikirim sebagai null/undefined
+            return res.status(400).json({ message: 'Data produk tidak lengkap: Field wajib tidak boleh kosong.' });
+        }
+        
+        // Error default (misalnya, masalah koneksi atau error Drizzle internal)
+        return res.status(500).json({ 
+            message: 'Gagal menambahkan produk. Terjadi masalah database atau server yang tidak terduga.'
+        });
+    }
+}
