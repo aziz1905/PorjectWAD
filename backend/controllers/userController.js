@@ -42,34 +42,50 @@ export const createAccount = async (req, res) => {
 
 export const loginAccount = async (req, res) => {
     const { email, password } = req.body;
+    
+    // Log incoming data
+    console.log("Login attempt for email:", email); 
+    if (!password) {
+        console.error("Password missing from request body!");
+        return res.status(400).json({ message: 'Password harus diisi.' });
+    }
+
     try {
         const user = await findByEmail(email);
 
-        //  Cek jika user tidak ada
+        // Check if user exists
         if (!user) {
+            console.log(`User not found for email: ${email}`);
             return res.status(401).json({ message: 'Email atau password salah!' });
         }
 
-        //  Gunakan bcrypt.compare untuk membandingkan password
+        // Check if user object has a password property (should exist if user was found)
+        if (!user.password) {
+             console.error(`User ${email} found, but has no password hash in the database!`);
+             return res.status(500).json({ message: 'Kesalahan internal server.' });
+        }
+
+        // Now it's safe to compare
+        console.log("Comparing provided password with stored hash...");
         const isMatch = await bcrypt.compare(password, user.password);
 
         if (isMatch) {
-            // Hapus password hash
+            console.log(`Password match for ${email}`);
             const { password: pw, ...safeUser } = user;
-
-            // Buat JWT dengan ID dan Role untuk otentikasi sesi
-            const token = generateAuthToken(user.id, user.role);
+            const token = generateAuthToken(user.id, user.role); // Assuming generateAuthToken exists
             
             return res.status(200).json({ 
-            message: 'Login berhasil!', 
-            token: token, 
-            user: safeUser 
-        });
+                message: 'Login berhasil!', 
+                token: token, 
+                user: safeUser 
+            });
         } else {
+            console.log(`Password mismatch for ${email}`);
             return res.status(401).json({ message: 'Email atau password salah!' });
         }
     } catch (error) {
-        console.log("error Login:", error);
+        // Log the specific error during the process
+        console.error("Error during login process:", error); 
         return res.status(500).json({ message: 'Gagal Login!' });
     }
 };
@@ -85,14 +101,17 @@ export const updateBiodata = async (req, res) => {
     };
 
     try{
-        let UpdateBiodata = null;
+        // 1. Deklarasikan variabel dengan huruf kecil
+        let updatedBiodata = null; 
         if(phone || address){
-            updateBiodata = await createOrReplaceBiodata(userId, biodataToUpdate);
+            // 2. Gunakan nama variabel yang sama (huruf kecil)
+            updatedBiodata = await createOrReplaceBiodata(userId, biodataToUpdate); 
         }
 
         const finalResponse = {
             message: 'Biodata berhasil diperbarui!',
-            biodata: updateBiodata
+            // 3. Gunakan nama variabel yang sama (huruf kecil)
+            biodata: updatedBiodata 
         }
 
         return res.status(200).json(finalResponse);
