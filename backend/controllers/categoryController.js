@@ -34,5 +34,4 @@ export const getAllCategories = async (req, res) => {
         console.log("Gagal Menampilkan kategori: ", error.message); 
         return res.status(500).json({message : 'Gagal Memuat Daftar Kategori!'});
     }
-    
 };
