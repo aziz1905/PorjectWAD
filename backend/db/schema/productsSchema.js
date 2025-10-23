@@ -1,6 +1,8 @@
-import { integer, pgTable, varchar, decimal, text } from "drizzle-orm/pg-core";
+import { integer, pgTable, varchar, decimal, text, pgEnum } from "drizzle-orm/pg-core";
 import { categoriesTable } from "./categoriesSchema.js";
 
+export const productAgeEnum = pgEnum('product_age', ['Anak', 'Remaja', 'Dewasa']);
+export const productGenderEnum = pgEnum('product_gender', ['Pria', 'Wanita', 'Unisex']);
 
 export const productsTable = pgTable("products", {
     id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
@@ -9,6 +11,8 @@ export const productsTable = pgTable("products", {
     description: text("description").notNull(),
     price: decimal("price", { precision: 10, scale: 2 }).notNull(),
     imageUrl: varchar("image_url").notNull(),
+    age: productAgeEnum('Age').notNull().default('Dewasa'),
+    gender: productGenderEnum('gender').notNull().default('Unisex'),
     rating: decimal("rating", { precision: 2, scale: 1 }).default('0.0'),
     rentCount: integer("rent_count").default(0),
 });

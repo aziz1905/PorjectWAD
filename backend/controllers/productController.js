@@ -43,7 +43,7 @@ export const getProductByid = async (req, res) =>{
 
 export const createProduct = async (req, res) => {
 
-    const {categoryId, name, description, price, imageUrl, sizes } = req.body;
+    const {categoryId, name, description, price, imageUrl, age, gender, sizes } = req.body;
 
     if (!categoryId || !name || !price || !imageUrl || !sizes || sizes.length === 0) {
         return res.status(400).json({ message: 'Semua field produk (termasuk ukuran/stok) wajib diisi.' });
@@ -54,7 +54,9 @@ export const createProduct = async (req, res) => {
         name: name,
         description: description,
         price: price, 
-        imageUrl: imageUrl
+        imageUrl: imageUrl,
+        age: ageGroup, 
+        gender: gender
     }
 
     try{

@@ -4,6 +4,7 @@ import cors from 'cors';
 import productRoutes from './routes/productRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import categoryRoutes from './routes/categoryRoutes.js';
+import wishlistRouter from './routes/wishlistRoutes.js';
 import { connectDB } from './db/dbSetup.js';
 
 
@@ -16,6 +17,7 @@ app.use(cors());
 app.use('/products', productRoutes);
 app.use('/categories', categoryRoutes);
 app.use('/users', userRoutes);
+app.use('/wishlist', wishlistRouter);
 
 connectDB().then(() => {
     app.listen(PORT, () => {

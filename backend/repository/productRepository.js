@@ -11,6 +11,8 @@ const productReturnAttributes = {
     description: productsTable.description,
     price: productsTable.price,
     imageUrl: productsTable.imageUrl,
+    ageGroup: productsTable.age,
+    gender: productsTable.gender,
     rating: productsTable.rating,
     rentCount: productsTable.rentCount
 };
