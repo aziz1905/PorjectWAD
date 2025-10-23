@@ -12,11 +12,11 @@ type ProductProps = {
   price: number;
   description: string;
   sizes?: readonly string[] | "Stok Habis";
-  // Ganti tipe ini jadi string jika Pilihan 1 yang dipilih
   age: "Dewasa" | "Remaja" | "Anak-anak"; 
   gender: "Pria" | "Wanita" | "Unisex";
   categoryId: number;
   wishlisted?: boolean;
+  rating?: number;
 };
 
 const ProductCard = ({
@@ -29,7 +29,8 @@ const ProductCard = ({
   age,
   gender,
   categoryId,
-  wishlisted = false, 
+  wishlisted = false,
+  rating = 0,
 }: ProductProps) => {
   const { user } = useAuth(); // Ambil user untuk cek login
   const [isWishlisted, setIsWishlisted] = useState(wishlisted);
@@ -69,6 +70,30 @@ const ProductCard = ({
       alert("Gagal memperbarui wishlist. Coba lagi.");
     }
   };
+  const numericPrice = typeof price === 'string' ? parseFloat(price) : price;
+  const formattedPrice = numericPrice.toLocaleString("id-ID", {
+    minimumFractionDigits: 0, 
+    maximumFractionDigits: 0  
+  });
+  const renderStars = () => {
+    const stars = [];
+    const maxStars = 5;
+    const currentRating = Math.max(0, Math.min(maxStars, rating || 0)); // Pastikan rating antara 0-5
+
+    for (let i = 1; i <= maxStars; i++) {
+      if (i <= currentRating) {
+        // Bintang penuh
+        stars.push(<Icon key={i} icon="mdi:star" className="text-yellow-400 mr-1" />);
+      } else if (i - 0.5 <= currentRating) {
+        // Setengah bintang
+        stars.push(<Icon key={i} icon="mdi:star-half-full" className="text-yellow-400 mr-1" />);
+      } else {
+        // Bintang kosong
+        stars.push(<Icon key={i} icon="mdi:star-outline" className="text-yellow-400 mr-1" />);
+      }
+    }
+    return stars;
+  };
 
   return (
     <Link
@@ -97,12 +122,9 @@ const ProductCard = ({
       {/* Info Produk */}
       <div className="product-info p-5">
         {/* Rating Bintang */}
-        <div className="flex items-center my-2">
-          {Array.from({ length: 5 }).map((_, index) => (
-            <Icon key={index} icon="mdi:star" className="text-yellow-400 mr-1"/>
-          ))}
+          <div className="flex items-center my-2">
+          {renderStars()}
         </div>
-        
         <h3 className="product-name text-lg font-semibold group-hover:text-blue-600">{name}</h3>
         <p className="product-description text-sm text-gray-600 mb-2">{description}</p>
         <p className="mb-1">

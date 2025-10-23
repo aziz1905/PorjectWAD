@@ -5,20 +5,18 @@ import { useSearch } from './Comp_Search';
 import api from '../api'; 
 
 export default function ProductGrid() {
-  const [products, setProducts] = useState<Product[]>([]); // Menyimpan daftar asli dari API
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]); // Menyimpan daftar yang akan ditampilkan
+  const [products, setProducts] = useState<Product[]>([]); 
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]); 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // 2. Ambil searchTerm dari context
   const { searchTerm } = useSearch();
 
-  // Efek ini hanya berjalan sekali untuk mengambil semua produk dari backend
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await api.get('/products'); // Menggunakan api.get
-        setProducts(response.data); // Simpan daftar produk asli
+        const response = await api.get('/products'); 
+        setProducts(response.data); 
       } catch (err) {
         setError('Gagal mengambil data produk dari server.');
         console.error(err);
@@ -28,16 +26,14 @@ export default function ProductGrid() {
     };
 
     fetchProducts();
-  }, []); // Dependency array kosong, jadi hanya berjalan saat komponen dimuat
+  }, []); 
 
-  // 3. Efek ini berjalan setiap kali searchTerm atau daftar produk asli berubah
   useEffect(() => {
-    // Lakukan filtering berdasarkan searchTerm
     const results = products.filter(product =>
       product.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredProducts(results);
-  }, [searchTerm, products]); // Bergantung pada searchTerm dan products
+  }, [searchTerm, products]);
 
   if (loading) {
     return <div className="text-center py-12">Memuat produk...</div>;
@@ -49,22 +45,32 @@ export default function ProductGrid() {
   
   return (
     <div className="product-grid">
-      {/* 4. Tampilkan 'filteredProducts', bukan 'products' */}
-      {filteredProducts.map((product) => (
-        <ProductCard
-          key={product.id}
-          id={product.id}
-          name={product.name}
-          description={product.description}
-          price={product.price}
-          imageUrl={product.imageUrl}
-          sizes={product.sizes}
-          age={product.age as "Dewasa" | "Remaja" | "Anak-anak"}
-          gender={product.gender as "Pria" | "Wanita" | "Unisex"}
-          categoryId={product.categoryId}
-          wishlisted={product.wishlisted}
-        />
-      ))}
+      {filteredProducts.map((product) => { // Buka kurung kurawal di sini
+        
+        // TAMBAHKAN INI UNTUK DEBUGGING:
+        console.log("Data Produk:", product); 
+        console.log("Age:", product.age); // Cek age di dalam specification
+        console.log("Gender:", product.gender); // Cek gender di dalam specification
+        console.log("Sizes:", product.sizes); // Cek sizes
+        
+        return ( // Kembalikan JSX di sini
+          <ProductCard
+            key={product.id}
+            id={product.id}
+            name={product.name}
+            description={product.description}
+            price={product.price}
+            imageUrl={product.imageUrl}
+            sizes={product.sizes}
+            // Pastikan ini mengambil dari specification jika itu struktur datanya
+            age={product.age as "Dewasa" | "Remaja" | "Anak-anak" || 'N/A'} 
+            gender={product.gender as "Pria" | "Wanita" | "Unisex" || 'N/A'}
+            categoryId={product.categoryId}
+            wishlisted={product.wishlisted}
+            rating={product.rating}
+          />
+        ); // Tutup kurung JSX
+      })} {/* Tutup kurung kurawal map */}
     </div>
   );
 }

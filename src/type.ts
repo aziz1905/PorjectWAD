@@ -15,7 +15,7 @@ export interface Product {
     imageUrl: string;
     sizes: readonly string[]; 
     age: string;
-    gender: string;;
+    gender: string;
     rating?: number;
     sold?: number;
     categoryId: number;
