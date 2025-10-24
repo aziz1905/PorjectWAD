@@ -11,7 +11,7 @@ export const productsTable = pgTable("products", {
     description: text("description").notNull(),
     price: decimal("price", { precision: 10, scale: 2 }).notNull(),
     imageUrl: varchar("image_url").notNull(),
-    age: productAgeEnum('Age').notNull().default('Dewasa'),
+    age: productAgeEnum('age').notNull().default('Dewasa'),
     gender: productGenderEnum('gender').notNull().default('Unisex'),
     rating: decimal("rating", { precision: 2, scale: 1 }).default('0.0'),
     rentCount: integer("rent_count").default(0),

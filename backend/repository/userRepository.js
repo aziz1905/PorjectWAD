@@ -7,7 +7,7 @@ const userReturnAttributes = {
     id: usersTable.id,
     fullName: usersTable.name,
     email: usersTable.email,
-    role: usersTable.role, 
+    role: usersTable.role
 };
 
 export const createUser = async (newUser) => {
@@ -53,27 +53,46 @@ export const findByEmail = async (email) => {
     }
 };
 
-export const createOrReplaceBiodata = async(userId, data) => {
-    const updatePayload = {
-        phone: data.phone,
-        address: data.address
-    }
+export const createOrReplaceBiodata = async (userId, data) => {
+    const updatePayload = {};
 
-    // Mencari baris berdasarkan user_id
-    const update = await db
-        .update(usersBiodataTable)
-        .set(updatePayload)
-        .where(eq(usersBiodataTable.id, userId))
-        .returning();
+    if (data.phone !== undefined) updatePayload.phone = data.phone ?? '';
+    if (data.address !== undefined) updatePayload.address = data.address ?? '';
+    if (data.imageUrl !== undefined) updatePayload.imageUrl = data.imageUrl ?? '';
 
-    if(update.length > 0){
-        return update[0];
-    }else{
+    try {
+
+        // 1UPDATE berdasarkan userId
+        const updated = await db
+            .update(usersBiodataTable)
+            .set(updatePayload)
+            .where(eq(usersBiodataTable.userId, userId))
+            .returning();
+
+        if (updated.length > 0) {
+            console.log("Biodata updated:", updated[0]);
+            return updated[0]; // Baris ditemukan dan diupdate
+        }
+
+        // Jika tidak ditemukan, lakukan INSERT baru
+        const createdPayload = {
+            userId,
+            phone: data.phone ?? '',
+            address: data.address ?? '',
+            imageUrl: data.imageUrl ?? '',
+        };
+
+        console.log("Insert Payload:", createdPayload);
+
         const created = await db
-        .insert(usersBiodataTable)
-        .values({... updatePayload, userId :userId})
-        .returning();
+            .insert(usersBiodataTable)
+            .values(createdPayload)
+            .returning();
 
+        console.log("Biodata created:", created[0]);
         return created[0];
+    } catch (error) {
+        console.error("Drizzle Error in createOrReplaceBiodata:", error);
+        throw new Error("Gagal create/replace biodata.");
     }
 };
