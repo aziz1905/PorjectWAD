@@ -3,7 +3,7 @@ import { Icon } from '@iconify/react';
 import { Link, useNavigate } from 'react-router-dom';
 import Button from '../components/Comp_Button';
 import { useAuth } from '../components/AuthContext';
-import api from '../api'; 
+import api from '../api';
 import { AxiosError } from 'axios';
 
 const Masuk = () => {
@@ -11,23 +11,37 @@ const Masuk = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  // Ambil fungsi 'login' dari context
   const { login } = useAuth(); 
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(''); 
     
     try {
+      // Panggil API login
       const response = await api.post('/users/login', { email, password });
-      const { user } = response.data;
 
-      if (user) {
+      // Ambil token DAN user dari respons DI DALAM try
+      const { token, user } = response.data; 
+
+      // Cek apakah token dan user ada
+      if (token && user) {
+        // SIMPAN TOKEN ke localStorage DI SINI
+        localStorage.setItem('token', token); 
+        
+        // Panggil fungsi login dari context untuk menyimpan data user
         login(user); 
-        navigate('/beranda');
+        
+        // Navigasi ke halaman beranda SETELAH semuanya berhasil
+        navigate('/beranda'); 
       } else {
-        setError('Gagal mendapatkan data pengguna.');
+        // Handle jika backend merespons OK tapi tidak ada token/user
+        setError('Respons tidak valid dari server.');
       }
 
     } catch (err) {
+      // Tangani error API
       const axiosError = err as AxiosError<{ message: string }>;
       const errorMessage = axiosError.response?.data?.message || 'Terjadi kesalahan. Coba lagi nanti.';
       setError(errorMessage); 
@@ -60,7 +74,6 @@ const Masuk = () => {
                  />
                </div>
              </div>
-
              <div className="form-group">
                <label htmlFor="password" className="form-label">Kata Sandi</label>
                <div className="relative">
@@ -77,22 +90,22 @@ const Masuk = () => {
                    onChange={(e) => setPassword(e.target.value)}
                  />
                </div>
-             </div>
-             
-             <div className="flex items-center justify-end">
-               <Link to="#" className="form-link">
-                 Lupa kata sandi?
-               </Link>
-             </div>
+             </div>            
+            <div className="flex items-center justify-end">
+              <Link to="#" className="form-link">
+                Lupa kata sandi?
+              </Link>
+            </div>
 
-             {error && (
-               <p className="text-red-500 text-sm text-center">{error}</p>
-             )}
+            {error && (
+              <p className="text-red-500 text-sm text-center">{error}</p>
+            )}
+
             <Button 
-                buttonType="p_masuk" 
-                logoChild={<Icon icon="mdi:login" className="text-white text-2xl" />}
-                fontChild="Masuk"
-                type="submit" 
+              buttonType="p_masuk" 
+              logoChild={<Icon icon="mdi:login" className="text-white text-2xl" />}
+              fontChild="Masuk"
+              type="submit" 
             />
           </form>
 

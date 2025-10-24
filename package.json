@@ -37,6 +37,7 @@
     "@iconify/tailwind": "^1.2.0",
     "@iconify/tailwind4": "^1.0.6",
     "@tailwindcss/line-clamp": "^0.4.4",
+    "@types/multer": "^2.0.0",
     "@types/pg": "^8.15.5",
     "@types/react": "^19.1.13",
     "@types/react-dom": "^19.1.9",

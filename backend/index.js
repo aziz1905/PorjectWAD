@@ -8,7 +8,6 @@ import wishlistRouter from './routes/wishlistRoutes.js';
 import { connectDB } from './db/dbSetup.js';
 
 
-
 const app = express();
 const PORT = process.env.PORT || 5000;
 

@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useState, useRef, ReactNode } from 'react';
 import { Icon } from '@iconify/react';
+import { NavLink } from 'react-router-dom';
+
 
 interface SearchContextType {
   searchTerm: string;
@@ -38,14 +40,18 @@ const Search = () => {
   const { searchTerm, setSearchTerm } = useSearch();
   const inputRef = useRef<HTMLInputElement>(null);
 
+
   return (
+    <NavLink to="/beranda#produk" style={{ display: 'block' }}>
     <div className="flex items-center w-full">
       <div
         className="relative flex items-center w-full max-w-lg bg-blue-600 rounded-2xl"
         onClick={() => inputRef.current?.focus()}
         style={{ cursor: 'text' }}
       >
+        
         <input
+          onClick={<NavLink to="/beranda#produk" style={{ display: 'block' }} />}
           ref={inputRef}
           type="text"
           placeholder="Cari kostum..."
@@ -58,6 +64,7 @@ const Search = () => {
         </button>
       </div>
     </div>
+  </NavLink>
   );
 };
 

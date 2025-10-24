@@ -85,10 +85,10 @@ const SettingAkun = () => {
     if (!selectedFile) return Promise.resolve();
     setProfileMessage({ type: '', text: 'Mengunggah foto...' });
     const formData = new FormData();
-    formData.append('profileImage', selectedFile); 
+    formData.append('profileImageUrl', selectedFile); 
 
     try {
-      const response = await api.put('/users/profile/picture', formData, {
+      const response = await api.put('/users/biodata', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       
@@ -176,7 +176,11 @@ const SettingAkun = () => {
                 className="hidden" 
               />
             </div>
+            <div>
+              <p>{}</p>
+            </div>
             <div className="space-y-1 flex-grow">
+              <p>{phone}</p>
                <div>
                   <label className="block text-xs font-medium text-gray-500">User ID</label>
                   <p className="text-sm text-gray-800 font-medium">{user.id || 'N/A'}</p>
@@ -227,109 +231,58 @@ const SettingAkun = () => {
           {/* --- Bagian Ganti Password --- */}
 
       <div className="bg-white p-6 rounded-lg shadow-md">
-
         <h2 className="text-xl font-semibold mb-6 text-gray-700 border-b pb-3">Ubah Kata Sandi</h2>
-
         <form onSubmit={handleSimpanPassword} className="space-y-4">
-
           <div>
-
             <label htmlFor="passwordLama" className="block text-sm font-medium text-gray-600 mb-1">Kata Sandi Lama</label>
-
             <input
-
               id="passwordLama"
-
               type="password"
-
               value={passwordLama}
-
               onChange={(e) => setPasswordLama(e.target.value)}
-
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-
               required
-
             />
-
           </div>
-
-         
-
+         {passwordMessage.text && (
+               <p className={`text-sm mt-2 ${passwordMessage.type === 'error' ? 'text-red-600' : 'text-green-600'}`}>
+                  {passwordMessage.text}
+               </p>
+            )}
           <div>
-
             <label htmlFor="passwordBaru" className="block text-sm font-medium text-gray-600 mb-1">Kata Sandi Baru</label>
-
             <input
-
               id="passwordBaru"
-
               type="password"
-
               value={passwordBaru}
-
               onChange={(e) => setPasswordBaru(e.target.value)}
-
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-
               required
-
             />
-
           </div>
-
          
-
           <div>
-
             <label htmlFor="konfirmasiPasswordBaru" className="block text-sm font-medium text-gray-600 mb-1">Konfirmasi Kata Sandi Baru</label>
-
             <input
-
               id="konfirmasiPasswordBaru"
-
               type="password"
-
               value={konfirmasiPasswordBaru}
-
               onChange={(e) => setKonfirmasiPasswordBaru(e.target.value)}
-
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-
               required
-
             />
-
           </div>
-
-
 
           <div className="pt-4">
-
             <button
-
               type="submit"
-
               className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-5 rounded-md transition duration-200 flex items-center gap-2"
-
             >
-
                <Icon icon="mdi:lock-reset" /> Simpan Kata Sandi Baru
-
             </button>
-
           </div>
-
         </form>
-
       </div>
-
-     
-
-      {/* Tambahkan bagian lain jika perlu, misal Notifikasi, Alamat, dll. */}
-
-
-
     </div>
 
   );

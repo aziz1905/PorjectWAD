@@ -1,7 +1,8 @@
 import ProductCard from "./Comp_Product_Card";
 import { useState, useEffect } from 'react';
 import { Product } from "../type";
-import { useSearch } from './Comp_Search'; 
+import { useSearch } from './Comp_Search';
+import { useCategory } from './Comp_Kategori';
 import api from '../api'; 
 
 export default function ProductGrid() {
@@ -9,8 +10,32 @@ export default function ProductGrid() {
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]); 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
+  const { selectedCategoryId } = useCategory();
   const { searchTerm } = useSearch();
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        let apiUrl = '/products';
+        if (selectedCategoryId !== null) {
+          apiUrl += `?categoryId=${selectedCategoryId}`;  
+        }
+        
+        const response = await api.get(apiUrl); 
+
+        console.log("Data diterima dari API:", response.data);
+        setProducts(response.data); 
+      } catch (err) {
+        setError('Gagal mengambil data produk dari server.');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProducts();
+  }, [selectedCategoryId]);
 
   useEffect(() => {
     const fetchProducts = async () => {

@@ -52,36 +52,9 @@ const Comp_Reviews: React.FC = () => {
         {/* Grid untuk Kartu Ulasan */}
         <div className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-3">
           {reviewsData.map((review, index) => (
-            <article key={index} className="flex flex-col items-start justify-between">
-              {/* Gambar Ulasan */}
-              <div className="relative w-full">
-                <img
-                  src={review.imageUrl}
-                  alt=""
-                  className="aspect-[16/9] w-full rounded-2xl bg-gray-800 object-cover sm:aspect-[2/1] lg:aspect-[3/2]"
-                />
-                <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-gray-900/10" />
-              </div>
-              
-              <div className="max-w-xl">
-                <div className="mt-8 flex items-center gap-x-4 text-xs">
-                  <span className="relative z-10 rounded-full bg-blue-600 px-3 py-1.5 font-medium text-white">
-                    {review.category}
-                  </span>
-                </div>
-                
-                <div className="group relative">
-                  <h3 className="mt-3 text-lg font-semibold leading-6 text-white group-hover:text-gray-300">
-                    <span className="absolute inset-0" />
-                    {review.title}
-                  </h3>
-                  <p className="mt-5 line-clamp-3 text-sm leading-6 text-gray-400">
-                    {review.description}
-                  </p>
-                </div>
-
-                {/* Info Penulis Ulasan */}
-                <div className="relative mt-8 flex items-center gap-x-4">
+            <article key={index} className="flex flex-col items-start justify-between bg-blue-950 rounded-2xl">
+              {/* Info Penulis Ulasan */}
+                <div className="relative mb-4 mt-4 ml-4 flex items-center gap-x-4">
                   <img src={review.author.avatarUrl} alt="" className="h-10 w-10 rounded-full bg-gray-800 object-cover" />
                   <div className="text-sm leading-6">
                     <p className="font-semibold text-white">
@@ -89,6 +62,24 @@ const Comp_Reviews: React.FC = () => {
                     </p>
                   </div>
                 </div>
+              {/* Gambar Ulasan */}
+              <div className="relative w-full">
+                <img
+                  src={review.imageUrl}
+                  alt=""
+                  className="aspect-[16/9] w-full bg-gray-800 object-cover sm:aspect-[2/1] lg:aspect-[3/2] outline-none"
+                />
+                <>Nama barang</>
+              </div>
+              <>bintang </>
+              <div className="max-w m-1 p-3">
+                <div className="group relative">
+                  <p className="line-clamp-3 text-sm leading-6 text-gray-400">
+                    {review.description}
+                  </p>
+                </div>
+
+                
               </div>
             </article>
           ))}
