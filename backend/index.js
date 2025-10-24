@@ -5,6 +5,7 @@ import productRoutes from './routes/productRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import categoryRoutes from './routes/categoryRoutes.js';
 import wishlistRouter from './routes/wishlistRoutes.js';
+import reviewsRouter from './routes/reviewsRoutes.js';
 import { connectDB } from './db/dbSetup.js';
 
 
@@ -18,6 +19,7 @@ app.use('/products', productRoutes);
 app.use('/categories', categoryRoutes);
 app.use('/users', userRoutes);
 app.use('/wishlist', wishlistRouter);
+app.use('/reviews', reviewsRouter);
 
 connectDB().then(() => {
     app.listen(PORT, () => {

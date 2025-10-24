@@ -1,0 +1,1 @@
+ALTER TABLE "products" RENAME COLUMN "profil_image_url" TO "image_url";

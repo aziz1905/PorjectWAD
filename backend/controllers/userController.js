@@ -1,4 +1,4 @@
-import { createOrReplaceBiodata, createUser, findByEmail } from "../repository/userRepository.js";
+import { createOrReplaceBiodata, createUser, findByEmail, findById, updatePassword } from "../repository/userRepository.js";
 import bcrypt from 'bcrypt'; 
 import { generateAuthToken } from "../service/authService.js";
 
@@ -40,6 +40,42 @@ export const createAccount = async (req, res) => {
     }
 };
 
+
+
+export const getUserById = async (req, res) => {
+    const userId = req.user?.id; 
+
+    if (!userId) {
+        // fallback jika middleware gagal, tapi user terotentikasi.
+        return res.status(401).json({ message: "Otentikasi gagal: User ID tidak ditemukan." });
+    }
+
+    try {
+        // Ambil data user lengkap dari database
+        const user = await findById(userId); 
+
+        if (!user) {
+            return res.status(404).json({ message: "Profil pengguna tidak ditemukan." });
+        }
+
+        // hapus password sebelum dikirim ke client
+        // mengekstrak 'password' dan menempatkan sisanya ke 'safeUser'
+        const { password, ...safeUser } = user;
+        
+        // Kirim data profil yang aman
+        return res.status(200).json({ 
+            message: "Data profil berhasil diambil.",
+            user: safeUser
+        });
+
+    } catch (error) {
+        console.error("Error Get User Profile:", error);
+        return res.status(500).json({ message: "Gagal mengambil data profil." });
+    }
+};
+
+
+
 export const loginAccount = async (req, res) => {
     const { email, password } = req.body;
     
@@ -53,7 +89,6 @@ export const loginAccount = async (req, res) => {
     try {
         const user = await findByEmail(email);
 
-        // Check if user exists
         if (!user) {
             console.log(`User not found for email: ${email}`);
             return res.status(401).json({ message: 'Email atau password salah!' });
@@ -84,11 +119,65 @@ export const loginAccount = async (req, res) => {
             return res.status(401).json({ message: 'Email atau password salah!' });
         }
     } catch (error) {
-        // Log the specific error during the process
         console.error("Error during login process:", error); 
         return res.status(500).json({ message: 'Gagal Login!' });
     }
 };
+
+
+
+
+export const updateUserPassword = async (req, res) => {
+    // 1. Ambil ID Pengguna dari token
+    const userId = req.user?.id;
+    const { oldPassword, newPassword } = req.body;
+
+    if (!userId) {
+        return res.status(401).json({ message: "Otentikasi gagal: User ID tidak ditemukan." });
+    }
+
+    // Validasi Input
+    if (!oldPassword || !newPassword) {
+        return res.status(400).json({ message: "Password lama dan password baru wajib diisi." });
+    }
+
+    if (newPassword.length <= 8) {
+        return res.status(400).json({ message: "Password baru harus minimal 8 karakter." });
+    }
+
+    try {
+        // Ambil data user dari database 
+        const user = await findById(userId); 
+
+        if (!user) {
+            return res.status(404).json({ message: "Pengguna tidak ditemukan." });
+        }
+
+        // Verifikasi Password Lama
+        const isMatch = await bcrypt.compare(oldPassword, user.password);
+
+        if (!isMatch) {
+            return res.status(403).json({ message: "Password lama salah. Gagal memperbarui password." });
+        }
+
+        // Hash Password Baru
+        const salt = await bcrypt.genSalt(10);
+        const newHashedPassword = await bcrypt.hash(newPassword, salt);
+
+        // Update Password di Database
+        const updatedUser = await updatePassword(userId, newHashedPassword);
+
+        return res.status(200).json({ 
+            message: "Password berhasil diperbarui!",
+            user: { id: updatedUser.id, email: updatedUser.email }
+        });
+
+    } catch (error) {
+        console.error("Error Update Password:", error);
+        return res.status(500).json({ message: "Gagal memperbarui password." });
+    }
+};
+
 
 export const updateBiodata = async (req, res) => {
     const userId = req.user?.id;
