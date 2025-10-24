@@ -42,9 +42,8 @@ const CompKategori = () => {
           {categories.map((category) => (
             <div key={category.name} className="kategori-item group">
               <div className="kategori-icon-wrapper">
-                <Icon icon={category.icon} className="kategori-icon" /> 
+                  <p className="kategori-name">{category.name}</p>
               </div>
-              <p className="kategori-name">{category.name}</p>
             </div>
           ))}
         </div>

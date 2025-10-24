@@ -44,10 +44,11 @@ const Wishlist = () => {
 
   return (
     <div className="container mx-auto p-6 md:p-12 bg-gray-50 min-h-screen">
-      <h1 className="text-3xl font-bold mb-8 text-gray-800 flex items-center gap-3">
-        <Icon icon="mdi:hanger" className="w-8 h-8 text-pink-500" /> 
-        Wishlist Saya
-      </h1>
+      <div className="flex items-center gap-1 px-4 py-2">
+        <Icon icon="mdi:hanger" className="w-8 h-8 text-pink-500" />
+        <h1 className="text-3xl font-bold text-gray-800">Wishlist Saya</h1>
+      </div>
+      
 
       {loading && (
         <div className="text-center py-12 text-gray-600">Memuat wishlist...</div>

@@ -123,7 +123,7 @@
     /* product card */
      /* Styling untuk layout grid produk */
   .product-grid {
-    @apply grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 p-8 px-12;
+    @apply grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 p-8 px-12 ;
   }
   /* ------------------------------------------------------------------------------------------------------------------------------ */
 
@@ -186,7 +186,7 @@
 
   /* ------------------------------------------------------------------------------------------------------------------------------ */
    .kategori-section {
-      @apply bg-white py-10 sm:py-16;
+      @apply bg-white py-10 sm:py-5 mt-5;
     }
 
     .kategori-container {
@@ -194,7 +194,7 @@
     }
 
     .kategori-title {
-      @apply text-center text-3xl font-bold tracking-tight text-gray-900 mb-10;
+      @apply text-center text-3xl font-bold tracking-tight text-gray-900 mb-5;
     }
 
     /* Grid untuk menampung semua item kategori */
@@ -209,10 +209,24 @@
 
     /* Lingkaran yang membungkus ikon */
     .kategori-icon-wrapper {
-      @apply w-16 h-16 sm:w-20 sm:h-20 bg-gray-100 rounded-full flex items-center justify-center border-2 border-transparent;
-      @apply transition-all duration-300 ease-in-out;
-      /* Efek saat .kategori-item di-hover */
-      @apply group-hover:bg-blue-600 group-hover:shadow-lg group-hover:scale-110;
+     /* Mengatur tampilan dasar */
+    @apply inline-flex items-center justify-center;
+    
+    /* Warna (Gelap seperti di gambar 2) */
+    @apply bg-gray-50 text-black shadow-md;
+    
+    /* Bentuk Pil (Padding + Rounded) */
+    @apply px-5 py-2; /* Padding horizontal (px) dan vertikal (py) */
+    @apply rounded-lg; /* Sudut yang tumpul (bisa juga 'rounded-full') */
+    
+    /* Efek Transisi */
+    @apply transition-all duration-200 ease-in-out;
+
+    /* Efek saat di-hover (misalnya jadi sedikit lebih terang) */
+    @apply hover:bg-gray-200;
+    
+    /* Menghilangkan outline saat di-klik */
+    @apply focus:outline-none;
     }
 
     /* Ikon di dalam lingkaran */
@@ -225,7 +239,7 @@
 
     /* Teks nama kategori di bawah ikon */
     .kategori-name {
-      @apply mt-3 text-sm font-medium text-gray-800;
+      @apply my-1.5 text-sm font-medium;
     }
     /* ------------------------------------------------------------------------------------------------------------------------------ */
     .tentang-container {

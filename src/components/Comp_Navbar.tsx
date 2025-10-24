@@ -67,7 +67,7 @@ const DesktopAuthLinks = () => {
               className="flex items-center gap-1 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
               onClick={() => setDropdownOpen(false)} // Tutup dropdown saat diklik
             >
-             <Icon icon="mdi:cog-outline" className="w-5 h-5 text-gray-500" />
+             <Icon icon="mdi:account-cog-outline" className="w-5 h-5 text-gray-500" />
              <span>Setting Akun</span> 
             </NavLink>
             <NavLink 
