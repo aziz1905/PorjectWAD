@@ -10,7 +10,7 @@ export const productsTable = pgTable("products", {
     name: varchar("name", { length: 255 }).notNull(),
     description: text("description").notNull(),
     price: decimal("price", { precision: 10, scale: 2 }).notNull(),
-    imageUrl: varchar("image_url").notNull(),
+    profilImageUrl: varchar("profil_image_url").notNull(),
     age: productAgeEnum('age').notNull().default('Dewasa'),
     gender: productGenderEnum('gender').notNull().default('Unisex'),
     rating: decimal("rating", { precision: 2, scale: 1 }).default('0.0'),

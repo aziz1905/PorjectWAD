@@ -92,7 +92,7 @@ export const loginAccount = async (req, res) => {
 
 export const updateBiodata = async (req, res) => {
     const userId = req.user?.id;
-    const { phone, address, imageUrl } = req.body;
+    const { phone, address, profilImageUrl } = req.body;
 
     if (!userId) {
         return res.status(400).json({ message: "User ID tidak ditemukan di token." });
@@ -102,7 +102,7 @@ export const updateBiodata = async (req, res) => {
 
     if (phone !== undefined) biodataToUpdate.phone = phone ?? '';
     if (address !== undefined) biodataToUpdate.address = address ?? '';
-    if (imageUrl !== undefined) biodataToUpdate.imageUrl = imageUrl ?? '';
+    if (profilImageUrl !== undefined) biodataToUpdate.profilImageUrl = profilImageUrl ?? '';
 
     try {
         let updatedBiodata = null;

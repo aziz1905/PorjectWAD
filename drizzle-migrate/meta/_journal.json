@@ -5,29 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1761226245821,
-      "tag": "0000_white_vertigo",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1761277783784,
-      "tag": "0001_silly_cerebro",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1761295877648,
-      "tag": "0002_brave_nicolaos",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1761300832619,
-      "tag": "0003_curved_firestar",
+      "when": 1761318909665,
+      "tag": "0000_polite_absorbing_man",
       "breakpoints": true
     }
   ]

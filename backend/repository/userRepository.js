@@ -58,7 +58,7 @@ export const createOrReplaceBiodata = async (userId, data) => {
 
     if (data.phone !== undefined) updatePayload.phone = data.phone ?? '';
     if (data.address !== undefined) updatePayload.address = data.address ?? '';
-    if (data.imageUrl !== undefined) updatePayload.imageUrl = data.imageUrl ?? '';
+    if (data.profilImageUrl !== undefined) updatePayload.profilImageUrl = data.profilImageUrl ?? '';
 
     try {
 
@@ -79,7 +79,7 @@ export const createOrReplaceBiodata = async (userId, data) => {
             userId,
             phone: data.phone ?? '',
             address: data.address ?? '',
-            imageUrl: data.imageUrl ?? '',
+            profilImageUrl: data.profilImageUrl ?? '',
         };
 
         console.log("Insert Payload:", createdPayload);

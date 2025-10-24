@@ -5,6 +5,7 @@ import { categoriesTable } from './categoriesSchema.js';
 import { usersTable } from "./usersSchema.js";
 import { usersBiodataTable } from "./usersBiodataSchema.js";
 import { wishlistsTable } from "./wishlistSchema.js";
+import { reviewsTable } from "./reviewsSchema.js";
 
 
 // Relasi Product memiliki banyak ProductSize
@@ -13,6 +14,9 @@ export const productRelations = relations(productsTable, ({ many, one }) => ({
     
     // Relasi Product memiliki banyak Wishlist Item
     wishlist: many(wishlistsTable),
+
+    // Relasi Product memiliki banyak reviews
+    reviews: many(reviewsTable),
 
     // Relasi Product dimiliki satu Category
     category: one(categoriesTable, {
@@ -41,17 +45,19 @@ export const userRelations = relations(usersTable, ({ many }) => ({
 
     // Relasi User memiliki banyak Wishlist Item
     wishlist: many(wishlistsTable),
+
+    // Satu user dapat memiliki banyak review.
+    reviews: many(reviewsTable),
 }));
 
 // Relasi biodata dimiliki satu user
 export const userBiodataRelations = relations(usersBiodataTable, ({ one }) => ({
-    users: one(usersTable, {
+    user: one(usersTable, {
         fields: [usersBiodataTable.userId],
         references: [usersTable.id],
     }),
 }));
 
-// Relasi User memiliki banyak Wishlist Item
 
 // Relasi Wishlist (Menghubungkan user dan product)
 export const wishlistRelations = relations(wishlistsTable, ({ one }) => ({
@@ -61,6 +67,17 @@ export const wishlistRelations = relations(wishlistsTable, ({ one }) => ({
     }),
     product: one(productsTable, {
         fields: [wishlistsTable.productId],
+        references: [productsTable.id],
+    }),
+}));
+
+export const reviewRelations = relations(reviewsTable, ({ one }) => ({
+    user: one(usersTable, {
+        fields: [reviewsTable.userId],
+        references: [usersTable.id],
+    }),
+    product: one(productsTable, {
+        fields: [reviewsTable.productId],
         references: [productsTable.id],
     }),
 }));

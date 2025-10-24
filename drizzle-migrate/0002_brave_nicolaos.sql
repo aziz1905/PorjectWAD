@@ -1,1 +1,0 @@
-ALTER TABLE "userBiodata" ADD COLUMN "imageUrl" text NOT NULL;
