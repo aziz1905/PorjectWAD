@@ -1,4 +1,4 @@
-import { findAllProducts, findProductById, insertProduct } from "../repository/productRepository.js";
+import { findAllProducts, findProductById, insertProduct, removeFromProduct } from "../repository/productRepository.js";
 
 
 
@@ -86,3 +86,23 @@ export const createProduct = async (req, res) => {
         });
     }
 }
+
+export const deleteProduct = async (req, res) => {
+    const productId = parseInt(req.params.productId); 
+
+    if (isNaN(productId)) {
+        return res.status(400).json({ message: 'Product ID tidak valid.' });
+    }
+
+    try{
+        const deleteId = await removeFromProduct(productId);
+
+        if (deleteId === 0) {
+            return res.status(404).json({ message: 'Produk tidak ditemukan di wishlist Anda.' });
+        }
+        return res.status(200).json({ message: 'Produk berhasil dihapus.' });
+    }catch(error){
+        console.error("Error deleting product:", error);
+        return res.status(500).json({ message: 'Gagal menghapus product.' });
+    }
+};

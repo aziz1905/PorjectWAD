@@ -1,4 +1,4 @@
-import { addToWishlist, getWishlistByUserId } from "../repository/wishlistRepository.js";
+import { addToWishlist, getWishlistByUserId, removeFromWishlist } from "../repository/wishlistRepository.js";
 
 export const getWishlist = async (req, res) => {
     const userId = req.user.id; // Diambil dari token JWT

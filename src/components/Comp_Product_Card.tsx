@@ -12,7 +12,7 @@ type ProductProps = {
   price: number;
   description: string;
   sizes?: readonly string[] | "Stok Habis";
-  age: "Dewasa" | "Remaja" | "Anak-anak"; 
+  age: "Anak" | "Remaja" | "Dewasa"; 
   gender: "Pria" | "Wanita" | "Unisex";
   categoryId: number;
   wishlisted?: boolean;

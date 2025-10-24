@@ -15,6 +15,7 @@ export const insertCategory = async(categoryName) =>{
     .returning(categoriesReturnAttribut)
 
     return newCategory;
+    
     }catch(error) {
         console.error("Error insert kategori:", error);
         throw new Error('Gagal membuat kategori.');

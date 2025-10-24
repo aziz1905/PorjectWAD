@@ -5,6 +5,7 @@ import { usersTable } from "./usersSchema.js";
 export const usersBiodataTable = pgTable('userBiodata', {
     id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
     userId: integer("user_id").references(() => usersTable.id, {onDelete: 'cascade' }).notNull().unique(),
-    phone: varchar("phone").notNull(),
-    address: text("address").notNull(),
+    phone: varchar("phone").notNull().default(''),
+    address: text("address").notNull().default(''),
+    imageUrl: text("imageUrl").notNull().default('')
 });

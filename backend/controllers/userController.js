@@ -61,8 +61,8 @@ export const loginAccount = async (req, res) => {
 
         // Check if user object has a password property (should exist if user was found)
         if (!user.password) {
-             console.error(`User ${email} found, but has no password hash in the database!`);
-             return res.status(500).json({ message: 'Kesalahan internal server.' });
+            console.error(`User ${email} found, but has no password hash in the database!`);
+            return res.status(500).json({ message: 'Kesalahan internal server.' });
         }
 
         // Now it's safe to compare
@@ -91,32 +91,36 @@ export const loginAccount = async (req, res) => {
 };
 
 export const updateBiodata = async (req, res) => {
-    const userId = req.user.id;
-    const {phone, address} = req.body;
-    
-    const biodataToUpdate = {
-        userId: userId,
-        phone: phone,
-        address: address
-    };
+    const userId = req.user?.id;
+    const { phone, address, imageUrl } = req.body;
 
-    try{
-        // 1. Deklarasikan variabel dengan huruf kecil
-        let updatedBiodata = null; 
-        if(phone || address){
-            // 2. Gunakan nama variabel yang sama (huruf kecil)
-            updatedBiodata = await createOrReplaceBiodata(userId, biodataToUpdate); 
+    if (!userId) {
+        return res.status(400).json({ message: "User ID tidak ditemukan di token." });
+    }
+
+    const biodataToUpdate = {};
+
+    if (phone !== undefined) biodataToUpdate.phone = phone ?? '';
+    if (address !== undefined) biodataToUpdate.address = address ?? '';
+    if (imageUrl !== undefined) biodataToUpdate.imageUrl = imageUrl ?? '';
+
+    try {
+        let updatedBiodata = null;
+
+        if (Object.keys(biodataToUpdate).length > 0) {
+            updatedBiodata = await createOrReplaceBiodata(userId, biodataToUpdate);
+        } else {
+            return res.status(400).json({ message: "Tidak ada data biodata yang dikirim." });
         }
 
         const finalResponse = {
-            message: 'Biodata berhasil diperbarui!',
-            // 3. Gunakan nama variabel yang sama (huruf kecil)
-            biodata: updatedBiodata 
-        }
+            message: "Biodata berhasil diperbarui!",
+            biodata: updatedBiodata,
+        };
 
         return res.status(200).json(finalResponse);
-    }catch (error) {
-        console.log("error Update Biodata:", error);
-        return res.status(500).json({ message: 'Gagal Update Data!' });
-    }  
+    } catch (error) {
+        console.error("Error Update Biodata:", error);
+        return res.status(500).json({ message: "Gagal Update Data!" });
+    }
 };
