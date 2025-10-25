@@ -1,8 +1,11 @@
 import db from '../db/db.js';
-import { eq, sql } from 'drizzle-orm';
+import { eq, sql,desc} from 'drizzle-orm';
 import { reviewsTable } from '../db/schema/reviewsSchema.js';
 import { productsTable } from '../db/schema/productsSchema.js';
+import { usersTable } from '../db/schema/usersSchema.js';
 
+
+//untuk menginput comment dan update rating
 export const insertReviewsAndUpdateRating = async (reviewData) => {
     try{
         return await db.transaction(async (tx) => {
@@ -40,5 +43,92 @@ export const insertReviewsAndUpdateRating = async (reviewData) => {
     }catch(error){
         console.error("Error in insertReviewsAndUpdateRating: ", error);
         throw new Error("Gagal insert reviews/update rating.");
+    }
+};
+
+export const findAllReviews = async () => {
+    try{
+        const result = await db
+        .select({
+            reviewId: reviewsTable.id,
+            productId: productsTable.id,
+            productName: productsTable.name,
+            userName: usersTable.name,
+            rating: reviewsTable.rating,
+            comment: reviewsTable.comment,
+            createdAt: reviewsTable.createdAt, 
+        })
+        .from(reviewsTable)
+        .innerJoin(productsTable, eq(productsTable.productId, reviewsTable.id)) 
+        .innerJoin(usersTable, eq(usersTable.userId, reviewsTable.id)) 
+        
+        return result;
+    }catch(error){
+        console.error("Error findAllReviews:", error);
+        throw new Error('Gagal mengambil reviews dari database.');
+    }
+}
+
+//untuk mengambil reviews sesuai id product
+export const findReviewsByProductId = async (productId) => {
+    const id = parseInt(productId);
+    if(isNaN(id)){
+        throw new Error("ID Produk tidak valid.");
+    }
+
+    try{
+        const result = await db
+        .select({
+            reviewId: reviewsTable.id,
+            userName: usersTable.name,
+            rating: reviewsTable.rating,
+            comment: reviewsTable.comment,
+            createdAt: reviewsTable.createdAt,
+        })
+        .from(reviewsTable)
+        .innerJoin(usersTable, eq(usersTable.id, reviewsTable.userId))
+        .where(eq(reviewsTable.productId, id))
+        .orderBy(desc(reviewsTable.createdAt)) // urut dari yang terbaru
+
+        const totalReviews = result.length;
+
+        const finalProses = {
+            data: result,
+            totalCount: totalReviews, 
+            message: totalReviews > 0 ? "Review berhasil diambil." : "Produk belum memiliki review."
+        };
+
+        return finalProses;
+
+    }catch(error){
+        console.error("Error in getReviewsByProductId:", error);
+        throw new Error('Gagal mengambil data review dari database.');
+    }
+}
+
+
+// untuk menampilkan reviews di beranda
+export const findHomepageReviews = async (limit = 6) => {
+    try {
+        const reviews = await db
+            .select({
+                reviewId: reviewsTable.id,
+                productId: productsTable.id,
+                productName: productsTable.name,
+                userName: usersTable.name,
+                rating: reviewsTable.rating,
+                comment: reviewsTable.comment,
+            })
+            .from(reviewsTable)
+            .innerJoin(productsTable, eq(reviewsTable.productId, productsTable.id))
+            .innerJoin(usersTable, eq(reviewsTable.userId, usersTable.id))
+            .orderBy(desc(reviewsTable.createdAt)) 
+            .limit(limit); 
+            
+        return reviews;
+
+    } catch (error) {
+        console.error("Error in getHomepageReviews:", error);
+        throw new Error('Gagal mengambil data review untuk beranda.');
     }
 };

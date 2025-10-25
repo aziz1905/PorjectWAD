@@ -1,9 +1,9 @@
 import db from '../db/db.js'; 
-import { eq } from 'drizzle-orm';
-import { productAgeEnum, productsTable } from '../db/schema/productsSchema.js';  
+import { eq,sql,avg } from 'drizzle-orm';
+import { productsTable } from '../db/schema/productsSchema.js';  
 import { productsSizesTable } from '../db/schema/productsSizeSchema.js';
 import { categoriesTable } from '../db/schema/categoriesSchema.js';
-import { select } from '@nextui-org/react';
+import { reviewsTable } from '../db/schema/reviewsSchema.js';
 
 
 const productReturnAttributes = {
@@ -55,8 +55,6 @@ export const findAllProducts = async (categoryId) => {
 
             const sizeName = row.sizeName;
 
-            
-
             // Tambahkan ukuran ke array sizes jika sizeName ada
         if (row.sizeName && typeof row.sizeName === 'string' && !acc[productId].sizes.includes(sizeName)) {
             acc[productId].sizes.push(row.sizeName);
@@ -83,6 +81,19 @@ export const findAllProducts = async (categoryId) => {
 };
 
 
+// Definisikan Subquery Rata-rata Rating di luar fungsi findProductById
+const avgProductRating = db
+    .select({
+        productId: reviewsTable.productId,
+        // Gunakan AVG(rating)
+        averageRating: avg(reviewsTable.rating).as('average_rating'),
+        reviewCount: sql`count(${reviewsTable.id})`.as('review_count')
+    })
+    .from(reviewsTable)
+    .groupBy(reviewsTable.productId)
+    .as('rating_subquery');
+
+
 export const findProductById = async (productId) => {
     const id = parseInt(productId);
     if (isNaN(id)) return undefined;
@@ -92,38 +103,67 @@ export const findProductById = async (productId) => {
             .select({
                 ...productReturnAttributes,
                 categoryName: categoriesTable.name,
-                sizeName: productsSizesTable.sizeName
+                sizeName: productsSizesTable.sizeName,
+                stock: productsSizesTable.stock,
+                avgRating: avgProductRating.averageRating,
+                reviewCount: avgProductRating.reviewCount,
             })
             .from(productsTable)
             .leftJoin(categoriesTable, eq(productsTable.categoryId, categoriesTable.id)) 
             .leftJoin(productsSizesTable, eq(productsSizesTable.productId, productsTable.id)) 
+            .leftJoin(avgProductRating, eq(productsTable.id, avgProductRating.productId))
             .where(eq(productsTable.id, id));
 
-
-        const firstRow = result[0];
-
-        const sizesArray = result
-            .filter(row => row.sizeName !== null) 
-            .map(row => row.sizeName); 
-
-            
 
         if (result.length === 0) {
             return undefined;
         }
         
         
-    const finalProduct = {
-        id: firstRow.id,
-        name: firstRow.name,
-        description: firstRow.description,
-        price: firstRow.price,
-        imageUrl: firstRow.imageUrl,
-        age: firstRow.age,
-        gender: firstRow.gender,
-        categoryName: firstRow.categoryName,
-        sizes: sizesArray.length > 0 ? sizesArray : "Stok Habis",
-    };
+
+        // proses pengelompokan sizes dan memeriksa stok
+        const sizesArray = result
+            .filter(row => row.sizeName !== null) 
+            .map(row => {
+                const stockAvailable = row.stock > 0 ? row.stock : "Stok Habis";
+                
+                return {
+                    size: row.sizeName, 
+                    stock: stockAvailable 
+                }
+            }); 
+
+        const firstRow = result[0];
+        
+        // membandingkan dengan tipe data yang benar, dan menangani NULL/undefined
+
+        // Ambil nilai rating dan review count dari firstRow
+        const rawAverageRating = firstRow.avgRating;
+        const rawReviewCount = firstRow.reviewCount;
+
+        // Tentukan Rating Akhir
+        const finalRating = rawAverageRating !== null && rawAverageRating !== undefined
+                ? parseFloat(rawAverageRating).toFixed(1) 
+                : 0.0;
+
+        // Tentukan Total Review Akhir
+        const finalReviewCount = rawReviewCount !== null && rawReviewCount !== undefined
+                ? parseInt(rawReviewCount)
+                : 0;
+        
+        const finalProduct = {
+            id: firstRow.id,
+            name: firstRow.name,
+            description: firstRow.description,
+            price: firstRow.price,
+            imageUrl: firstRow.imageUrl,
+            age: firstRow.age,
+            gender: firstRow.gender,
+            categoryName: firstRow.categoryName,
+            sizes: sizesArray.length > 0 ? sizesArray : "Stok Habis",
+            rating: finalRating,
+            totalReviews: finalReviewCount
+        }
 
     return finalProduct;
         
@@ -172,12 +212,41 @@ export const insertProduct = async (productData, sizes) => {
     }
 }
 
+export const updateProductRating = async (productId) => {
+    try{
+    // Hitung Rata-rata Rating yang baru
+    const ratingResult = await db
+        .select({
+            averageRating: avg(reviewsTable.rating).as('average_rating')
+        })
+        .from(reviewsTable)
+        .where(eq(reviewsTable.productId, productId));
+
+    const newRating = parseFloat(ratingResult[0].averageRating) || 0.0;
+
+    // 2. UPDATE nilai baru ke productsTable
+    await db
+        .update(productsTable)
+        .set({ rating: newRating }) // Set kolom rating dengan nilai baru
+        .where(eq(productsTable.id, productId));
+
+    return newRating;
+    }catch{
+        console.error("Error di updateProductRating repository:", error);
+        throw new Error('Gagal mengupdate rating ke database.'); 
+    }
+};
 
 export const removeFromProduct = async(productId) => {
-    const result = await db
-    .delete(productsTable)
-    .where(eq(productsTable.id, productId))
-    .returning({id: productsTable.id});
+    try{
+        const result = await db
+        .delete(productsTable)
+        .where(eq(productsTable.id, productId))
+        .returning({id: productsTable.id});
 
-    return result.length;
+        return result.length;
+    }catch(error){
+        console.error("Error di removeFromProduct repository:", error);
+        throw new Error('Gagal menghapus product database.'); 
+    }
 }

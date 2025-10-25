@@ -1,4 +1,5 @@
-import { insertReviewsAndUpdateRating } from "../repository/reviewsRepository.js";
+import { updateProductRating } from "../repository/productRepository.js";
+import { findHomepageReviews, insertReviewsAndUpdateRating } from "../repository/reviewsRepository.js";
 
 export const createReviews = async (req, res) => {
     const userId = req.user.id;
@@ -18,6 +19,8 @@ export const createReviews = async (req, res) => {
     try{
         const newReview = await insertReviewsAndUpdateRating(reviewData);
         
+        await updateProductRating(productId);
+        
         return res.status(201).json({ 
             message: 'Ulasan dan rating berhasil ditambahkan.', 
             review: newReview 
@@ -27,3 +30,30 @@ export const createReviews = async (req, res) => {
         return res.status(500).json({ message: 'Gagal memberi Ulasan!' });
     }
 }
+
+export const getHomepageReviews = async (req, res) => {
+    const limit = req.query.limit ? parseInt(req.query.limit) : 6; 
+
+    try {
+        const reviews = await findHomepageReviews(limit);
+
+        // Jika tidak ada review sama sekali
+        if (reviews.length === 0) {
+            return res.status(200).json({
+                message: 'Belum ada review yang tersedia.',
+                data: []
+            });
+        }
+
+        return res.status(200).json({
+            message: "Review untuk beranda berhasil diambil!",
+            data: reviews,
+        });
+
+    } catch (error) {
+        console.error("Error di getHomepageReviews controller:", error.message);
+        return res.status(500).json({ 
+            message: 'Gagal mengambil data review untuk beranda!' 
+        });
+    }
+};

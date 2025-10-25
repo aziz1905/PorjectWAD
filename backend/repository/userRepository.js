@@ -34,7 +34,9 @@ export const createUser = async (newUser) => {
 
 export const findById = async (userId) => {
     const id = parseInt(userId);
-    if (isNaN(id)) return undefined; 
+    if (isNaN(id)) {
+        return undefined; 
+    }
 
     try {
         const result = await db
@@ -43,16 +45,20 @@ export const findById = async (userId) => {
                 fullName: usersTable.name,
                 email: usersTable.email,
                 password: usersTable.password,
-                role: usersTable.role 
+                role: usersTable.role,
+                phone: usersBiodataTable.phone,
+                address: usersBiodataTable.address,
+                profilImageUrl: usersBiodataTable.profilImageUrl
             })
             .from(usersTable)
+            .leftJoin(usersBiodataTable, eq(usersBiodataTable.userId, usersTable.id))
             .where(eq(usersTable.id, id))
             .limit(1);
 
         return result.length > 0 ? result[0] : undefined;
 
     } catch (error) {
-        console.error(`Drizzle Error findById for user ${id}:`, error);
+        console.error(`Error findById for user ${id}:`, error);
         throw new Error('Gagal mencari user di database.');
     }
 };
