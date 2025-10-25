@@ -32,6 +32,31 @@ export const createUser = async (newUser) => {
     }
 };
 
+export const findById = async (userId) => {
+    const id = parseInt(userId);
+    if (isNaN(id)) return undefined; 
+
+    try {
+        const result = await db
+            .select({
+                id: usersTable.id,
+                fullName: usersTable.name,
+                email: usersTable.email,
+                password: usersTable.password,
+                role: usersTable.role 
+            })
+            .from(usersTable)
+            .where(eq(usersTable.id, id))
+            .limit(1);
+
+        return result.length > 0 ? result[0] : undefined;
+
+    } catch (error) {
+        console.error(`Drizzle Error findById for user ${id}:`, error);
+        throw new Error('Gagal mencari user di database.');
+    }
+};
+
 export const findByEmail = async (email) => {
     try{
         const result = await db
@@ -53,12 +78,27 @@ export const findByEmail = async (email) => {
     }
 };
 
+export const updatePassword = async (userId, newHashedPassword) => {
+    try {
+        const result = await db
+            .update(usersTable)
+            .set({ password: newHashedPassword })
+            .where(eq(usersTable.id, userId))
+            .returning({ id: usersTable.id, email: usersTable.email });
+            
+        return result[0] || null;
+    } catch (error) {
+        console.error("Drizzle Error Update Password:", error);
+        throw new Error("Gagal memperbarui password di database.");
+    }
+};
+
 export const createOrReplaceBiodata = async (userId, data) => {
     const updatePayload = {};
 
     if (data.phone !== undefined) updatePayload.phone = data.phone ?? '';
     if (data.address !== undefined) updatePayload.address = data.address ?? '';
-    if (data.imageUrl !== undefined) updatePayload.imageUrl = data.imageUrl ?? '';
+    if (data.profilImageUrl !== undefined) updatePayload.profilImageUrl = data.profilImageUrl ?? '';
 
     try {
 
@@ -79,7 +119,7 @@ export const createOrReplaceBiodata = async (userId, data) => {
             userId,
             phone: data.phone ?? '',
             address: data.address ?? '',
-            imageUrl: data.imageUrl ?? '',
+            profilImageUrl: data.profilImageUrl ?? '',
         };
 
         console.log("Insert Payload:", createdPayload);

@@ -7,5 +7,5 @@ export const usersBiodataTable = pgTable('userBiodata', {
     userId: integer("user_id").references(() => usersTable.id, {onDelete: 'cascade' }).notNull().unique(),
     phone: varchar("phone").notNull().default(''),
     address: text("address").notNull().default(''),
-    imageUrl: text("imageUrl").notNull().default('')
+    profilImageUrl: text("imageUrl").notNull().default('')
 });
