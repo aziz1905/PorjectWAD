@@ -14,7 +14,7 @@ CREATE TABLE "products" (
 	"name" varchar(255) NOT NULL,
 	"description" text NOT NULL,
 	"price" numeric(10, 2) NOT NULL,
-	"profil_image_url" varchar NOT NULL,
+	"image_url" varchar NOT NULL,
 	"age" "product_age" DEFAULT 'Dewasa' NOT NULL,
 	"gender" "product_gender" DEFAULT 'Unisex' NOT NULL,
 	"rating" numeric(2, 1) DEFAULT '0.0',

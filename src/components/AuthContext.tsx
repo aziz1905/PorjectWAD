@@ -3,6 +3,9 @@ interface User {
   id: number;
   fullName: string;
   email: string;
+  profileImageUrl?: string | null; 
+  phone?: string | null; 
+  address?: string | null;
 }
 
 interface AuthContextType {

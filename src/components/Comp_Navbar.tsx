@@ -165,10 +165,9 @@ const CompNavbar = () => {
               }`}
             >
               <div onFocusCapture={handleSearchFocus} className="w-full">
-
-                   <Search 
-                   onClick={<NavLink to="/beranda#produk" style={{ display: 'block' }}/>}
-                   />
+                  <NavLink to="/beranda#produk" style={{ display: 'block' }}>
+                    <Search/>
+                  </NavLink>
               </div>
             </div>
 

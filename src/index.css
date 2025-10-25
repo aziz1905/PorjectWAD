@@ -129,7 +129,7 @@
 
   /* Styling untuk satu kartu produk */
   .product-card {
-  @apply bg-white border border-gray-200 rounded-xl shadow-md overflow-hidden flex flex-col h-full px-5;
+  @apply bg-white border border-gray-200 rounded-xl shadow-md overflow-hidden flex flex-col h-full px-1 py-1;
 
   @apply transition-all duration-400;
   

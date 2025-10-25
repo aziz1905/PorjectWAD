@@ -51,7 +51,7 @@ const Search = () => {
       >
         
         <input
-          onClick={<NavLink to="/beranda#produk" style={{ display: 'block' }} />}
+          onClick={<NavLink to="/beranda#produk" style={{ display: 'botom' }} />}
           ref={inputRef}
           type="text"
           placeholder="Cari kostum..."
