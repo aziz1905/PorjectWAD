@@ -67,7 +67,8 @@ export const findByEmail = async (email) => {
         password: usersTable.password,
         role: usersTable.role,
         phone: usersBiodataTable.phone,
-        address: usersBiodataTable.address
+        address: usersBiodataTable.address,
+        profileImageUrl: usersBiodataTable.imageUrl
             })
             .from(usersTable)
             // Gunakan LEFT JOIN agar user tetap ditemukan walau biodata belum ada
