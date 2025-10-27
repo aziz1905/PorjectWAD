@@ -1,3 +1,5 @@
+import { uploadToGetUrl } from "../service/uploadService.js";
+
 export const uploadImage = async (req, res) => {
     const file = req.file; // File info from multer
 
@@ -6,10 +8,7 @@ export const uploadImage = async (req, res) => {
     }
 
     try {
-        // Langsung buat URL publik berdasarkan filename dari multer
-        // Pastikan Express menyajikan folder 'public' atau 'uploads' secara statis
-        // Contoh: http://localhost:5000/uploads/namafileunik.jpg
-        const imageUrl = `${req.protocol}://${req.get('host')}/uploads/${file.filename}`; 
+        const imageUrl = await uploadToGetUrl(file);
 
         console.log("Generated public URL:", imageUrl); // Log URL yang benar
 
@@ -20,9 +19,7 @@ export const uploadImage = async (req, res) => {
         });
 
     } catch (error) {
-        console.error("Error processing uploaded image:", error); 
-        // Hapus file jika ada error setelah multer menyimpan? (Opsional)
-        // if (file && fs.existsSync(file.path)) { fs.unlinkSync(file.path); }
-        return res.status(500).json({ message: 'Gagal memproses gambar!' });
+        console.error("Error upload image:", error); 
+        return res.status(500).json({ message: 'Gagal Upload!' });
     }
 };

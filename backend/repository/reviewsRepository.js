@@ -107,28 +107,53 @@ export const findReviewsByProductId = async (productId) => {
 }
 
 
-// untuk menampilkan reviews di beranda
-export const findHomepageReviews = async (limit = 6) => {
+// --- FUNGSI YANG BARU DITAMBAHKAN (DENGAN PERBAIKAN) ---
+export const findRecentReviews = async (limit = 3) => {
     try {
-        const reviews = await db
+        // 1. Ambil data secara "datar" (flat select)
+        const results = await db
             .select({
-                reviewId: reviewsTable.id,
-                productId: productsTable.id,
-                productName: productsTable.name,
-                userName: usersTable.name,
+                // Bidang ulasan
+                id: reviewsTable.id,
                 rating: reviewsTable.rating,
                 comment: reviewsTable.comment,
+                createdAt: reviewsTable.createdAt,
+                
+                // Bidang pengguna (datar dengan alias)
+                userName: usersTable.name,
+                userAvatar: usersBiodataTable.imageUrl, // Akan bernilai null jika tidak ada biodata
+                
+                // Bidang produk (datar dengan alias)
+                productName: productsTable.name,
+                productImage: productsTable.imageUrl
             })
             .from(reviewsTable)
-            .innerJoin(productsTable, eq(reviewsTable.productId, productsTable.id))
             .innerJoin(usersTable, eq(reviewsTable.userId, usersTable.id))
-            .orderBy(desc(reviewsTable.createdAt)) 
-            .limit(limit); 
+            .innerJoin(productsTable, eq(reviewsTable.productId, productsTable.id))
+            .leftJoin(usersBiodataTable, eq(reviewsTable.userId, usersBiodataTable.userId))
+            .orderBy(desc(reviewsTable.createdAt))
+            .limit(limit);
             
-        return reviews;
+        // 2. Susun ulang (remap) data menjadi struktur bersarang yang diharapkan frontend
+        const finalResults = results.map(row => ({
+            id: row.id,
+            rating: row.rating,
+            comment: row.comment,
+            createdAt: row.createdAt,
+            user: {
+                name: row.userName,
+                avatarUrl: row.userAvatar // Nilai ini akan null atau berisi string URL
+            },
+            product: {
+                name: row.productName,
+                imageUrl: row.productImage
+            }
+        }));
+
+        return finalResults;
 
     } catch (error) {
-        console.error("Error in getHomepageReviews:", error);
-        throw new Error('Gagal mengambil data review untuk beranda.');
+        console.error("Error in findRecentReviews: ", error);
+        throw new Error("Gagal mengambil data ulasan.");
     }
 };
