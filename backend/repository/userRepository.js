@@ -65,11 +65,15 @@ export const findByEmail = async (email) => {
         fullName: usersTable.name,
         email: usersTable.email,
         password: usersTable.password,
-        role: usersTable.role
-        })
-        .from(usersTable)
-        .where(eq(usersTable.email, email))
-        .limit(1);
+        role: usersTable.role,
+        phone: usersBiodataTable.phone,
+        address: usersBiodataTable.address
+            })
+            .from(usersTable)
+            // Gunakan LEFT JOIN agar user tetap ditemukan walau biodata belum ada
+            .leftJoin(usersBiodataTable, eq(usersTable.id, usersBiodataTable.userId))
+            .where(eq(usersTable.email, email))
+            .limit(1);
 
         return result.length > 0 ? result[0] : undefined;
     }catch(error){
@@ -98,7 +102,7 @@ export const createOrReplaceBiodata = async (userId, data) => {
 
     if (data.phone !== undefined) updatePayload.phone = data.phone ?? '';
     if (data.address !== undefined) updatePayload.address = data.address ?? '';
-    if (data.profilImageUrl !== undefined) updatePayload.profilImageUrl = data.profilImageUrl ?? '';
+    if (data.profileImageUrl !== undefined) updatePayload.profileImageUrl = data.profileImageUrl ?? '';
 
     try {
 

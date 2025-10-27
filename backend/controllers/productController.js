@@ -29,8 +29,8 @@ export const getProductByid = async (req, res) =>{
     try{
         const product = await findProductById(productId);
 
-        if (!productId) {
-        return res.status(404).json({message: `Product dengan ID ${ProductId} Tidak Ditemukan.`});
+        if (!product) {
+        return res.status(404).json({message: `Product dengan ID ${productId} Tidak Ditemukan.`});
         } else {
         res.status(200).json(product);
         }

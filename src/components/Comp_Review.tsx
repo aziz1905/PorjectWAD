@@ -1,41 +1,74 @@
+// src/components/Comp_Review.tsx
 
+import React, { useState, useEffect } from 'react';
+import api from '../api'; // Import instance axios
+import { Icon } from '@iconify/react';
+import NonPict from '../assets/NonPict.png'; // Fallback jika user tidak punya foto
 
-import React from 'react';
+// Tentukan interface untuk data yang akan diterima dari API
+interface ApiReview {
+  id: number;
+  rating: string; // Rating dari 'reviewsTable'
+  comment: string; // Komentar dari 'reviewsTable'
+  user: {
+    name: string; // Nama dari 'usersTable'
+    avatarUrl: string | null; // imageUrl dari 'usersBiodataTable'
+  };
+  product: {
+    name: string; // Nama dari 'productsTable'
+    imageUrl: string; // imageUrl dari 'productsTable'
+  };
+}
 
-const reviewsData = [
-  {
-    imageUrl: 'https://images.unsplash.com/photo-1599330282574-d27e745913e2?q=80&w=1887&auto=format&fit=crop',
-    category: 'Pesta Ulang Tahun',
-    title: 'Kostum Spiderman Jadi Bintang Acara!',
-    description: 'Anak saya senang sekali memakai kostum Spiderman dari KostumKita. Bahannya nyaman dan detailnya keren. Semua teman-temannya minta foto bareng!',
-    author: {
-      name: 'Rina S.',
-      avatarUrl: 'https://randomuser.me/api/portraits/women/44.jpg',
-    },
-  },
-  {
-    imageUrl: 'https://images.unsplash.com/photo-1542838223-970681a001a1?q=80&w=1887&auto=format&fit=crop',
-    category: 'Acara Kantor',
-    title: 'Tampil Profesional dengan Kostum Bertema',
-    description: 'Untuk acara tahunan kantor, kami menyewa kostum tema 80-an. Kualitasnya bagus, bersih, dan ukurannya pas. Tim kami jadi pusat perhatian!',
-    author: {
-      name: 'Budi Hartono',
-      avatarUrl: 'https://randomuser.me/api/portraits/men/32.jpg',
-    },
-  },
-  {
-    imageUrl: 'https://images.unsplash.com/photo-1521478330007-152f6f34e6b3?q=80&w=1887&auto=format&fit=crop',
-    category: 'Pernikahan',
-    title: 'Gaun Pengantin Tradisional yang Memukau',
-    description: 'Menyewa gaun pengantin tradisional di sini adalah keputusan terbaik. Harganya terjangkau dan gaunnya terlihat sangat mewah dan elegan di hari spesial kami.',
-    author: {
-      name: 'Dewi & Angga',
-      avatarUrl: 'https://images.unsplash.com/photo-1521124234389-03ac55b5ba47?w=500',
-    },
-  },
-];
+// Komponen untuk menampilkan bintang rating
+const RenderStars = ({ rating }: { rating: number }) => {
+  const stars = [];
+  const maxStars = 5;
+  // Pastikan rating adalah angka valid antara 0-5
+  const currentRating = Math.max(0, Math.min(maxStars, rating || 0));
+
+  for (let i = 1; i <= maxStars; i++) {
+    if (i <= currentRating) {
+      // Bintang penuh
+      stars.push(<Icon key={i} icon="mdi:star" className="text-yellow-400" />);
+    } else if (i - 0.5 <= currentRating) {
+      // Setengah bintang
+      stars.push(<Icon key={i} icon="mdi:star-half-full" className="text-yellow-400" />);
+    } else {
+      // Bintang kosong
+      stars.push(<Icon key={i} icon="mdi:star-outline" className="text-yellow-400" />);
+    }
+  }
+  return <div className="flex items-center">{stars}</div>;
+};
+
 
 const Comp_Reviews: React.FC = () => {
+  // State untuk menyimpan data dari API
+  const [reviews, setReviews] = useState<ApiReview[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // useEffect untuk mengambil data saat komponen dimuat
+  useEffect(() => {
+    const fetchReviews = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        // Panggil endpoint GET /reviews (yang akan kita buat di backend)
+        const response = await api.get('/reviews');
+        setReviews(response.data);
+      } catch (err) {
+        setError('Gagal memuat ulasan pelanggan.');
+        console.error("Error fetching reviews:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchReviews();
+  }, []); // Array dependensi kosong agar hanya berjalan sekali
+
   return (
     <div className="bg-blue-900 py-16 sm:py-24">
       <div className="margin-side-content">
@@ -49,41 +82,73 @@ const Comp_Reviews: React.FC = () => {
           </p>
         </div>
 
-        {/* Grid untuk Kartu Ulasan */}
-        <div className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-3">
-          {reviewsData.map((review, index) => (
-            <article key={index} className="flex flex-col items-start justify-between bg-blue-950 rounded-2xl">
-              {/* Info Penulis Ulasan */}
+        {/* Loading State */}
+        {loading && (
+          <p className="text-center text-gray-300 mt-16">Memuat ulasan...</p>
+        )}
+
+        {/* Error State */}
+        {error && (
+          <p className="text-center text-red-400 mt-16">{error}</p>
+        )}
+
+        {/* Grid untuk Kartu Ulasan (Data dari API) */}
+        {!loading && !error && reviews.length > 0 && (
+          <div className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-3">
+            {reviews.map((review) => (
+              <article key={review.id} className="flex flex-col items-start justify-between bg-blue-950 rounded-2xl shadow-lg">
+                
+                {/* Info Penulis Ulasan */}
                 <div className="relative mb-4 mt-4 ml-4 flex items-center gap-x-4">
-                  <img src={review.author.avatarUrl} alt="" className="h-10 w-10 rounded-full bg-gray-800 object-cover" />
+                  <img 
+                    src={review.user.avatarUrl || NonPict} // Gunakan fallback NonPict
+                    alt={review.user.name} 
+                    className="h-10 w-10 rounded-full bg-gray-800 object-cover" 
+                  />
                   <div className="text-sm leading-6">
                     <p className="font-semibold text-white">
-                      {review.author.name}
+                      {review.user.name}
                     </p>
                   </div>
                 </div>
-              {/* Gambar Ulasan */}
-              <div className="relative w-full">
-                <img
-                  src={review.imageUrl}
-                  alt=""
-                  className="aspect-[16/9] w-full bg-gray-800 object-cover sm:aspect-[2/1] lg:aspect-[3/2] outline-none"
-                />
-                <>Nama barang</>
-              </div>
-              <>bintang </>
-              <div className="max-w m-1 p-3">
-                <div className="group relative">
-                  <p className="line-clamp-3 text-sm leading-6 text-gray-400">
-                    {review.description}
-                  </p>
+
+                {/* Gambar Produk yang Diulas */}
+                <div className="relative w-full">
+                  <img
+                    src={review.product.imageUrl}
+                    alt={review.product.name}
+                    className="aspect-[16/9] w-full bg-gray-800 object-cover sm:aspect-[2/1] lg:aspect-[3/2]"
+                  />
+                  {/* Nama Produk di atas gambar */}
+                  <div className="absolute bottom-0 left-0 p-2 bg-black bg-opacity-50 rounded-tr-lg">
+                     <p className="text-xs font-medium text-white">{review.product.name}</p>
+                  </div>
                 </div>
 
-                
-              </div>
-            </article>
-          ))}
-        </div>
+                <div className="max-w m-1 p-3 w-full">
+                  {/* Rating Bintang */}
+                  <div className="flex items-center gap-2 mb-2">
+                    <RenderStars rating={parseFloat(review.rating)} />
+                    <span className="text-gray-300 text-sm">({review.rating})</span>
+                  </div>
+
+                  {/* Komentar */}
+                  <div className="group relative">
+                    <p className="line-clamp-3 text-sm leading-6 text-gray-400">
+                      "{review.comment}"
+                    </p>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
+        
+        {/* State Jika Tidak Ada Review */}
+        {!loading && !error && reviews.length === 0 && (
+           <p className="text-center text-gray-400 mt-16">Belum ada ulasan.</p>
+        )}
+
       </div>
     </div>
   );

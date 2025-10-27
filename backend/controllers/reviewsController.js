@@ -1,4 +1,4 @@
-import { insertReviewsAndUpdateRating } from "../repository/reviewsRepository.js";
+import { insertReviewsAndUpdateRating, findRecentReviews } from "../repository/reviewsRepository.js";
 
 export const createReviews = async (req, res) => {
     const userId = req.user.id;
@@ -27,3 +27,16 @@ export const createReviews = async (req, res) => {
         return res.status(500).json({ message: 'Gagal memberi Ulasan!' });
     }
 }
+
+export const getRecentReviews = async (req, res) => {
+    try {
+        // Panggil repository untuk mendapatkan 3 ulasan terbaru
+        const reviews = await findRecentReviews(3);
+        
+        return res.status(200).json(reviews);
+
+    } catch (error) {
+        console.error("Error getRecentReviews:", error); 
+        return res.status(500).json({ message: 'Gagal memuat ulasan.' });
+    }
+};

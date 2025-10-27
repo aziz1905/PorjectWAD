@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
-// 1. PASTIKAN INTERFACE DI-EXPORT
+// 1. PASTIKAN INTERFACE DI-EXPORT dan LENGKAP
 export interface User {
   id: number; // Atau string, sesuaikan dengan backend
   fullName: string;
