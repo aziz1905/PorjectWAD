@@ -20,6 +20,7 @@ export const getProduct = async (req, res) => {
     }
 };
 
+
 // bagian pertama untuk detail product
 export const getProductDetail = async (req, res) =>{
     const productId = parseInt(req.params.id); 
@@ -32,7 +33,7 @@ export const getProductDetail = async (req, res) =>{
         const product = await findProductById(productId);
 
         if (!productId) {
-        return res.status(404).json({message: `Product dengan ID ${ProductId} Tidak Ditemukan.`});
+        return res.status(404).json({message: `Product dengan ID ${productId} Tidak Ditemukan.`});
         } else {
         res.status(200).json(product);
         }
@@ -40,7 +41,6 @@ export const getProductDetail = async (req, res) =>{
         console.log("Gagal Menampilkan Product ini. ", error.message); 
         return res.status(500).json({message : 'Gagal Memuat Product!'});
     }
-    
 };
 
 

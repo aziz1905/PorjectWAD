@@ -1,10 +1,10 @@
 export const uploadToGetUrl = async (file) => {
     if (!file) {
-        throw new Error("File tidak ditemukan.");
+        throw new Error("File objek tidak ditemukan.");
     }
     
-    // Generate nama file unik (menggunakan timestamp dan nama asli)
-    const originalName = file.originalname || 'unknown_file'; //Dapatkan nama file asli (misalnya, "Foto Kostum Baru.jpg")
+    // Pastikan nama file selalu ada, jika Multer tidak menyediakannya (kasus ekstrem)
+    const originalName = file.originalname || 'temp_file.bin';
     const cleanFileName = originalName.replace(/\s/g, '_');// Bersihkan Nama File (Hapus spasi dan karakter bermasalah)
     const uniqueFileName = `${Date.now()}_${cleanFileName}`; // Buat Nama File yang Unik dengan Timestamp
     
