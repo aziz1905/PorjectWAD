@@ -1,8 +1,9 @@
 import db from '../db/db.js';
-import { eq, sql,desc} from 'drizzle-orm';
+import { eq, sql, desc } from 'drizzle-orm';
 import { reviewsTable } from '../db/schema/reviewsSchema.js';
 import { productsTable } from '../db/schema/productsSchema.js';
 import { usersTable } from '../db/schema/usersSchema.js';
+import { usersBiodataTable } from '../db/schema/usersBiodataSchema.js';
 
 
 //untuk menginput comment dan update rating
@@ -59,8 +60,8 @@ export const findAllReviews = async () => {
             createdAt: reviewsTable.createdAt, 
         })
         .from(reviewsTable)
-        .innerJoin(productsTable, eq(productsTable.productId, reviewsTable.id)) 
-        .innerJoin(usersTable, eq(usersTable.userId, reviewsTable.id)) 
+        .innerJoin(productsTable, eq(productsTable.id, reviewsTable.productId)) 
+        .innerJoin(usersTable, eq(usersTable.id, reviewsTable.userId)) 
         
         return result;
     }catch(error){
@@ -110,50 +111,48 @@ export const findReviewsByProductId = async (productId) => {
 // --- FUNGSI YANG BARU DITAMBAHKAN (DENGAN PERBAIKAN) ---
 export const findRecentReviews = async (limit = 3) => {
     try {
-        // 1. Ambil data secara "datar" (flat select)
+
         const results = await db
             .select({
-                // Bidang ulasan
                 id: reviewsTable.id,
                 rating: reviewsTable.rating,
                 comment: reviewsTable.comment,
                 createdAt: reviewsTable.createdAt,
-                
-                // Bidang pengguna (datar dengan alias)
+
+                // User
                 userName: usersTable.name,
-                userAvatar: usersBiodataTable.imageUrl, // Akan bernilai null jika tidak ada biodata
-                
-                // Bidang produk (datar dengan alias)
+                userAvatar: usersBiodataTable.profileImageUrl, // sudah sesuai log
+
+                // Produk
                 productName: productsTable.name,
-                productImage: productsTable.imageUrl
+                productImage: productsTable.imageUrl,
             })
             .from(reviewsTable)
+            // urutan JOIN harus berawal dari reviewsTable
             .innerJoin(usersTable, eq(reviewsTable.userId, usersTable.id))
+            .leftJoin(usersBiodataTable, eq(usersTable.id, usersBiodataTable.userId))
             .innerJoin(productsTable, eq(reviewsTable.productId, productsTable.id))
-            .leftJoin(usersBiodataTable, eq(reviewsTable.userId, usersBiodataTable.userId))
             .orderBy(desc(reviewsTable.createdAt))
             .limit(limit);
-            
-        // 2. Susun ulang (remap) data menjadi struktur bersarang yang diharapkan frontend
-        const finalResults = results.map(row => ({
+
+        const finalResults = results.map((row) => ({
             id: row.id,
             rating: row.rating,
             comment: row.comment,
             createdAt: row.createdAt,
             user: {
                 name: row.userName,
-                avatarUrl: row.userAvatar // Nilai ini akan null atau berisi string URL
+                avatarUrl: row.userAvatar || null,
             },
             product: {
                 name: row.productName,
-                imageUrl: row.productImage
-            }
+                imageUrl: row.productImage,
+            },
         }));
 
         return finalResults;
-
     } catch (error) {
-        console.error("Error in findRecentReviews: ", error);
+        console.error("Error in findRecentReviews:", error);
         throw new Error("Gagal mengambil data ulasan.");
     }
 };

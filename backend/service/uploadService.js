@@ -1,15 +1,18 @@
 export const uploadToGetUrl = async (file) => {
-    if (!file) {
-        throw new Error("File objek tidak ditemukan.");
+    if (!file || !file.buffer) {
+        // Memastikan file dan data binernya (buffer) ada
+        throw new Error("Data file tidak valid dari Multer.");
     }
     
-    // Pastikan nama file selalu ada, jika Multer tidak menyediakannya (kasus ekstrem)
-    const originalName = file.originalname || 'temp_file.bin';
-    const cleanFileName = originalName.replace(/\s/g, '_');// Bersihkan Nama File (Hapus spasi dan karakter bermasalah)
-    const uniqueFileName = `${Date.now()}_${cleanFileName}`; // Buat Nama File yang Unik dengan Timestamp
+    // 1. Dapatkan tipe MIME untuk header data URI
+    const mimeType = file.mimetype; 
     
-    // Kembalikan URL publik tiruan.
-    const simulatedUrl = `https://cdn.kostumkita.com/products/${uniqueFileName}`;
+    // 2. Konversi Buffer menjadi string Base64
+    const base64String = file.buffer.toString('base64');
     
-    return simulatedUrl;
+    // 3. Gabungkan menjadi format Data URI (yang dapat dibaca browser)
+    const dataUri = `data:${mimeType};base64,${base64String}`;
+    
+    // Kembalikan Data URI (Ini adalah 'link' gambar yang sesungguhnya)
+    return dataUri;
 };
