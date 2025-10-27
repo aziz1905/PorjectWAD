@@ -1,114 +1,109 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+// Pastikan @iconify/react dipasang: npm install @iconify/react
 import { Icon } from '@iconify/react';
-import api from '../../api'; // 2. Import api instance
+// Laluan ini sepatutnya betul jika api.ts berada di dalam folder src
+import api from '../../api';
 
-// 3. Define interfaces for API data
+// Interfaces (Tetap sama)
 interface TransactionSummary {
   monthlyIncome: number;
   monthlyRenters: number;
   monthlyItemsRented: number;
 }
-
-interface TransactionItem {
-  id: string | number; // Product ID or Rental ID
-  nama: string;
-  jumlah: number;
-  status: string;
-  waktu: string; // Duration string
+interface RentalApiAdmin {
+  id: number;
+  userEmail: string;
+  orderStatus: string;
+  returnStatus: string;
+  orderDate: string;
+  items: { productId: number; productName: string; productImageUrl: string; unit: number; duration: number; }[];
+}
+interface TransactionItemUI {
+  id: string; nama: string; email: string; jumlah: number; status: string; waktu: string;
 }
 
 const LogTransaksi: React.FC = () => {
-  // 4. State for API data, loading, and errors
-  const [summary, setSummary] = React.useState<TransactionSummary | null>(null);
-  const [transactions, setTransactions] = React.useState<TransactionItem[]>([]);
-  const [loadingSummary, setLoadingSummary] = React.useState(true);
-  const [loadingTransactions, setLoadingTransactions] = React.useState(true);
-  const [error, setError] = React.useState<string | null>(null);
+  // State (Tetap sama)
+  const [summary, setSummary] = useState<TransactionSummary | null>(null);
+  const [transactions, setTransactions] = useState<TransactionItemUI[]>([]);
+  const [loadingSummary, setLoadingSummary] = useState(true);
+  const [loadingTransactions, setLoadingTransactions] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // 5. Function to fetch data
+  // Fetch data (Tetap sama)
   const fetchData = async () => {
-    setLoadingSummary(true);
-    setLoadingTransactions(true);
-    setError(null);
+    setLoadingSummary(true); setLoadingTransactions(true); setError(null);
     try {
-      // Fetch summary and transactions in parallel
-      // TEMAN ANDA PERLU MEMBUAT ENDPOINT INI DI BACKEND:
-      // GET /rentals/summary -> mengembalikan TransactionSummary
-      // GET /rentals -> mengembalikan TransactionItem[]
       const [summaryResponse, transactionsResponse] = await Promise.all([
-        api.get<TransactionSummary>('/rentals/summary'), // Endpoint summary
-        api.get<TransactionItem[]>('/rentals')           // Endpoint list rentals
+        api.get<TransactionSummary>('/rentals/summary'),
+        api.get<RentalApiAdmin[]>('/rentals') // Ambil semua rental untuk admin
       ]);
       setSummary(summaryResponse.data);
-      setTransactions(transactionsResponse.data);
+
+      // Ubah data API ke format UI
+      const uiTransactions = transactionsResponse.data.flatMap(rental =>
+        rental.items.map(item => ({
+          id: `${rental.id}-${item.productId}`, // Gabungkan ID rental dan produk
+          nama: item.productName,
+          email: rental.userEmail, // Ambil email dari data rental
+          jumlah: item.unit,
+          // Logik status yang lebih baik: Prioritaskan status pengembalian jika bukan 'Belum_Dikembalikan'
+          status: rental.returnStatus !== 'Belum_Dikembalikan'
+                    ? rental.returnStatus.replace(/_/g, ' ') // Tampilkan status pengembalian
+                    : rental.orderStatus.replace(/_/g, ' '), // Jika belum dikembalikan, tampilkan status pesanan
+          waktu: `${item.duration} hari`
+        }))
+      );
+      setTransactions(uiTransactions);
+
     } catch (err: any) {
       console.error("Gagal fetch data log transaksi:", err);
       const errorMessage = err.response?.data?.message || err.message || 'Gagal memuat data.';
-      setError(errorMessage);
-      setSummary(null); // Reset data on error
-      setTransactions([]);
+      setError(errorMessage); setSummary(null); setTransactions([]);
     } finally {
-      setLoadingSummary(false);
-      setLoadingTransactions(false);
+      setLoadingSummary(false); setLoadingTransactions(false);
     }
   };
 
-  // 6. useEffect to fetch data on mount
-  React.useEffect(() => {
-    fetchData();
-  }, []); // Empty dependency array means run once on mount
+  // useEffect (Tetap sama)
+  useEffect(() => { fetchData(); }, []);
 
-  // Helper to format currency
-  const formatCurrency = (value: number | undefined | null) => {
-     if (value === undefined || value === null) return 'Rp 0';
-     // Pastikan value adalah angka sebelum toLocaleString
-     const numericValue = Number(value);
-     if (isNaN(numericValue)) return 'Rp ?';
-     return `Rp ${numericValue.toLocaleString('id-ID')}`;
+  // Helpers (Tetap sama)
+  const formatCurrency = (value: number | undefined | null): string => {
+     if (typeof value !== 'number' || isNaN(value)) return 'Rp 0';
+     return `Rp ${value.toLocaleString('id-ID')}`;
   };
-
-   // Helper to format count
-  const formatCount = (value: number | undefined | null) => {
-     if (value === undefined || value === null) return '0';
-      // Pastikan value adalah angka sebelum toLocaleString
-     const numericValue = Number(value);
-     if (isNaN(numericValue)) return '?';
-     return numericValue.toLocaleString('id-ID');
+  const formatCount = (value: number | undefined | null): string => {
+     if (typeof value !== 'number' || isNaN(value)) return '0';
+     return value.toLocaleString('id-ID');
   };
 
   return (
      <div className="space-y-6">
+      {/* Header Halaman (Tetap sama) */}
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-          <Icon icon="mdi:chart-bar" />
-          Log Transaksi
+          <Icon icon="mdi:chart-bar" className="w-6 h-6" /> Log Transaksi
         </h2>
-        {/* Make refresh button functional */}
         <button
-           onClick={fetchData} // Call fetchData on click
-           disabled={loadingSummary || loadingTransactions} // Disable while loading
+           onClick={fetchData} disabled={loadingSummary || loadingTransactions}
            className="flex items-center gap-2 px-4 py-2 bg-white rounded-lg shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
          >
-          {/* Ganti ikon saat loading */}
-          <Icon icon={loadingSummary || loadingTransactions ? "mdi:loading" : "mdi:refresh"} className={loadingSummary || loadingTransactions ? 'animate-spin' : ''} />
+          <Icon icon={loadingSummary || loadingTransactions ? "mdi:loading" : "mdi:refresh"} className={`w-5 h-5 ${loadingSummary || loadingTransactions ? 'animate-spin' : ''}`} />
           Refresh
         </button>
       </div>
 
-      {/* Tabs (remain the same for now) */}
-      <div className="flex border-b border-gray-300">
+      {/* Tabs (Tetap sama) */}
+       <div className="flex border-b border-gray-300">
         <button className="py-2 px-4 text-blue-600 border-b-2 border-blue-600 font-semibold">Pendapatan Perbulan</button>
-        {/* Add onClick handlers later if needed */}
         <button className="py-2 px-4 text-gray-500 hover:text-gray-800">Total penyewa Perbulan</button>
         <button className="py-2 px-4 text-gray-500 hover:text-gray-800">Barang Yang Tersewa Perbulan</button>
       </div>
 
-      {/* Ringkasan Statistik - Use data from state */}
-      {/* Tampilkan loading atau error jika data belum siap */}
+      {/* Ringkasan Statistik (Tetap sama) */}
       {loadingSummary && <p className="text-center text-gray-500 py-4">Memuat ringkasan...</p>}
-      {!loadingSummary && error && !summary && (
-         <p className="text-center text-red-500 bg-red-50 p-3 rounded-md">{error}</p>
-      )}
+      {!loadingSummary && error && !summary && <p className="text-center text-red-500 bg-red-50 p-3 rounded-md">{error}</p>}
       {!loadingSummary && summary && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <StatCard icon="mdi:currency-idr" title="Pendapatan Bulan Ini" value={formatCurrency(summary.monthlyIncome)} />
@@ -117,21 +112,19 @@ const LogTransaksi: React.FC = () => {
         </div>
       )}
 
-      {/* Tabel Output Penyewaan - Use data from state */}
+      {/* Tabel Output Penyewaan (Tetap sama) */}
       <div className="bg-white p-4 md:p-6 rounded-lg shadow-md">
         <h3 className="text-lg font-semibold mb-4 text-gray-700">Output Penyewaan Terbaru</h3>
-        {/* Tampilkan loading atau error jika data belum siap */}
         {loadingTransactions && <p className="text-center text-gray-500 py-4">Memuat transaksi...</p>}
-        {!loadingTransactions && error && transactions.length === 0 && (
-             <p className="text-center text-red-500 bg-red-50 p-3 rounded-md">{error}</p>
-        )}
+        {!loadingTransactions && error && transactions.length === 0 && <p className="text-center text-red-500 bg-red-50 p-3 rounded-md">{error}</p>}
         {!loadingTransactions && !error && (
             <div className="overflow-x-auto">
             <table className="w-full text-left">
                 <thead className="bg-gray-50">
                 <tr>
-                    {/* Sesuaikan header tabel jika perlu */}
-                    <th className="p-3 text-sm font-semibold text-gray-600 uppercase">ID Produk/Sewa</th>
+                    {/* Sesuaikan header */}
+                    <th className="p-3 text-sm font-semibold text-gray-600 uppercase">ID Sewa-Produk</th>
+                    <th className="p-3 text-sm font-semibold text-gray-600 uppercase">Email Penyewa</th>
                     <th className="p-3 text-sm font-semibold text-gray-600 uppercase">Nama Barang</th>
                     <th className="p-3 text-sm font-semibold text-gray-600 uppercase text-center">Jumlah</th>
                     <th className="p-3 text-sm font-semibold text-gray-600 uppercase">Status</th>
@@ -139,23 +132,28 @@ const LogTransaksi: React.FC = () => {
                 </tr>
                 </thead>
                 <tbody>
-                {/* Map over transactions state */}
+                {/* Tampilan jika kosong */}
                 {transactions.length === 0 && !loadingTransactions && (
-                    <tr><td colSpan={5} className="text-center p-6 text-gray-500">Belum ada data transaksi.</td></tr>
+                    <tr><td colSpan={6} className="text-center p-6 text-gray-500">Belum ada data transaksi.</td></tr>
                 )}
-                {transactions.map((item, index) => ( // Gunakan index sebagai bagian key untuk keamanan
-                    <tr key={`${item.id}-${index}`} className="border-b hover:bg-gray-50">
+                {/* Map data transaksi */}
+                {transactions.map((item) => (
+                    <tr key={item.id} className="border-b hover:bg-gray-50">
                     <td className="p-3 text-sm text-gray-700 font-mono">{item.id}</td>
+                    <td className="p-3 text-sm text-gray-700">{item.email}</td>
                     <td className="p-3 text-sm text-gray-800 font-medium">{item.nama}</td>
                     <td className="p-3 text-sm text-gray-700 text-center">{item.jumlah}</td>
                     <td className="p-3 text-sm">
-                        {/* Dynamic status styling */}
+                        {/* Styling status */}
                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                            // Sesuaikan class berdasarkan kemungkinan nilai status dari API
-                            item.status === 'Sedang Disewa' ? 'bg-yellow-100 text-yellow-800' :
-                            item.status === 'Selesai Dikembalikan' || item.status === 'Selesai' ? 'bg-green-100 text-green-800' :
+                            // Status Selesai / Dikembalikan
+                            item.status === 'Selesai' || item.status === 'Diterima' ? 'bg-green-100 text-green-800' :
+                            // Status Dibatalkan
                             item.status === 'Dibatalkan' ? 'bg-red-100 text-red-800' :
-                            'bg-blue-100 text-blue-800' // Default/pending/Menunggu
+                            // Status Aktif Dipinjam / Perlu Dikembalikan
+                            item.status === 'Anda pinjam' || item.status === 'Diajukan' ? 'bg-yellow-100 text-yellow-800' :
+                            // Status Pengiriman / Menunggu
+                            'bg-blue-100 text-blue-800'
                         }`}>
                         {item.status}
                         </span>
@@ -172,7 +170,7 @@ const LogTransaksi: React.FC = () => {
   );
 };
 
-// Komponen StatCard (helper - tidak berubah)
+// StatCard (Tetap sama)
 const StatCard = ({ icon, title, value }: { icon: string, title: string, value: string | number }) => (
   <div className="bg-white p-6 rounded-lg shadow-md flex items-center gap-4">
     <div className="p-3 bg-gray-100 rounded-full">
@@ -185,5 +183,5 @@ const StatCard = ({ icon, title, value }: { icon: string, title: string, value: 
   </div>
 );
 
-
 export default LogTransaksi;
+

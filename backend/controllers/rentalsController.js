@@ -2,6 +2,52 @@ import { createRentalTransaction, getRentalDetailsById, updateItemReturnDetails,
 
 
 
+import { 
+    createRentalTransaction, 
+    getRentalDetailsById, 
+    updateItemReturnDetails, 
+    updateOrderStatus, 
+    updateReturnStatus,
+    findRentalsByUserId,
+    findAllRentals, // <-- TAMBAHKAN INI
+    getAdminRentalSummary // <-- TAMBAHKAN INI
+} from "../repository/rentalsRepository.js";
+
+
+// ... (Controller customer tetap sama) ...
+export const createRental = async (req, res) => { /* ... */ };
+export const getRentalDetails = async (req, res) => { /* ... */ };
+export const getMyRentals = async (req, res) => { /* ... */ };
+export const submitReturnRequest = async (req, res) => { /* ... */ };
+
+
+// --- CONTROLLER BARU UNTUK ADMIN ---
+
+// GET /rentals (Admin)
+export const getAllRentals = async (req, res) => {
+    try {
+        const rentals = await findAllRentals();
+        if (!rentals || rentals.length === 0) {
+            return res.status(200).json([]);
+        }
+        return res.status(200).json(rentals);
+    } catch (error) {
+        console.error("Error getAllRentals (Admin):", error);
+        return res.status(500).json({ message: 'Gagal mengambil semua data rental.' });
+    }
+};
+
+// GET /rentals/summary (Admin)
+export const getRentalSummary = async (req, res) => {
+    try {
+        const summary = await getAdminRentalSummary();
+        return res.status(200).json(summary);
+    } catch (error) {
+        console.error("Error getRentalSummary (Admin):", error);
+        return res.status(500).json({ message: 'Gagal mengambil ringkasan data.' });
+    }
+};
+
 // POST /rentals/createRental 
 export const createRental = async (req, res) => {
     const userId = req.user.id;
