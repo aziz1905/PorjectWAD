@@ -191,7 +191,7 @@ export const updateBiodata = async (req, res) => {
 
     if (phone !== undefined) biodataToUpdate.phone = phone ?? '';
     if (address !== undefined) biodataToUpdate.address = address ?? '';
-    if (profileImageUrl !== undefined) biodataToUpdate.profileImageUrl = profilImageUrl ?? '';
+    if (profileImageUrl !== undefined) biodataToUpdate.profileImageUrl = profileImageUrl ?? '';
 
     try {
         let updatedBiodata = null;

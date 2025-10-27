@@ -81,7 +81,7 @@ export const findAllProducts = async (categoryId) => {
 };
 
 
-// Definisikan Subquery Rata-rata Rating di luar fungsi findProductById
+// Definisik Subquery Rata-rata Rating 
 const avgProductRating = db
     .select({
         productId: reviewsTable.productId,

@@ -48,7 +48,7 @@ export const findById = async (userId) => {
                 role: usersTable.role,
                 phone: usersBiodataTable.phone,
                 address: usersBiodataTable.address,
-                profilImageUrl: usersBiodataTable.profilImageUrl
+                profileImageUrl: usersBiodataTable.profileImageUrl
             })
             .from(usersTable)
             .leftJoin(usersBiodataTable, eq(usersBiodataTable.userId, usersTable.id))
@@ -104,7 +104,7 @@ export const createOrReplaceBiodata = async (userId, data) => {
 
     if (data.phone !== undefined) updatePayload.phone = data.phone ?? '';
     if (data.address !== undefined) updatePayload.address = data.address ?? '';
-    if (data.profilImageUrl !== undefined) updatePayload.profilImageUrl = data.profilImageUrl ?? '';
+    if (data.profileImageUrl !== undefined) updatePayload.profileImageUrl = data.profileImageUrl ?? '';
 
     try {
 
@@ -125,7 +125,7 @@ export const createOrReplaceBiodata = async (userId, data) => {
             userId,
             phone: data.phone ?? '',
             address: data.address ?? '',
-            profilImageUrl: data.profilImageUrl ?? '',
+            profileImageUrl: data.profileImageUrl ?? '',
         };
 
         console.log("Insert Payload:", createdPayload);
