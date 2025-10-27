@@ -14,18 +14,23 @@ import DetailPenyewaan from './Pages/DetailPenyewaan';
 import ProtectedRoute from './components/ProtectedRoute';
 import SettingAkun from './Pages/SettingAkun';
 import Wishlist from './Pages/Wishlist';
+import AdminRoutes from './Admin/AdminRoutes';
 
 
 function App() {
+
   const { user, logout } = useAuth();
 
   return (
     <BrowserRouter>
       <Routes>
+        {/* Rute User Biasa */}
         <Route 
           path="/" 
-          element={<Layout user={user} onLogout={logout} />}
-        >
+          // Anda bisa sederhanakan ini menjadi element={<Layout />}
+          // dan biarkan Layout memanggil useAuth()
+          element={<Layout user={user} onLogout={logout} />} 
+        > 
           <Route index element={<Navigate replace to="beranda" />} />
           <Route path="beranda" element={<Beranda />} />
           <Route path="tentang" element={<Tentang />} />
@@ -47,7 +52,7 @@ function App() {
           </Route> 
           
           <Route path="masuk" element={
-            user ? <Navigate to="/beranda" replace /> : <Masuk /> // Prop onLogin dihapus
+            user ? <Navigate to="/beranda" replace /> : <Masuk />
           } />
           <Route path="buat-akun" element={
             user ? <Navigate to="/masuk" replace /> : <BuatAkun />
@@ -56,12 +61,17 @@ function App() {
           <Route path="detail-produk/:id" element={<DetailProduk />}/>
           <Route path="detail-penyewaan" element={<DetailPenyewaan />} />
 
+          {/* Rute 404 (sudah benar) */}
           <Route path="*" element={
             <div className="flex items-center justify-center h-96">
               <h1 className="text-4xl font-bold text-blue-800">404: Halaman Tidak Ditemukan</h1>
             </div>
           } />
+
+
         </Route>
+         <Route path="/admin/*" element={<AdminRoutes />} />
+        
       </Routes>
     </BrowserRouter>
   );

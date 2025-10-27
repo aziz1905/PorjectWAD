@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useRef, ReactNode } from 'react';
 import { Icon } from '@iconify/react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 
 
 interface SearchContextType {
@@ -36,9 +36,18 @@ export const SearchProvider = ({ children }: SearchProviderProps) => {
 };
 
 
+
+
 const Search = () => {
   const { searchTerm, setSearchTerm } = useSearch();
   const inputRef = useRef<HTMLInputElement>(null);
+  const handleInputClick = () => {
+  const navigate = useNavigate();
+
+  navigate('/beranda#produk');
+  // Optionally focus the input again if needed
+  inputRef.current?.focus(); 
+};
 
 
   return (
@@ -49,9 +58,8 @@ const Search = () => {
         onClick={() => inputRef.current?.focus()}
         style={{ cursor: 'text' }}
       >
-        
         <input
-          onClick={<NavLink to="/beranda#produk" style={{ display: 'botom' }} />}
+          onClick={handleInputClick}
           ref={inputRef}
           type="text"
           placeholder="Cari kostum..."
@@ -59,6 +67,7 @@ const Search = () => {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
+        
         <button aria-label="search" className="search-button">
           <Icon icon="mdi:magnify" className="text-white text-2xl mx-2.5" />
         </button>

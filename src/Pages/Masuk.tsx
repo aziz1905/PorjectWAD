@@ -11,7 +11,6 @@ const Masuk = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  // Ambil fungsi 'login' dari context
   const { login } = useAuth(); 
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -19,29 +18,28 @@ const Masuk = () => {
     setError(''); 
     
     try {
-      // Panggil API login
       const response = await api.post('/users/login', { email, password });
-
-      // Ambil token DAN user dari respons DI DALAM try
       const { token, user } = response.data; 
 
-      // Cek apakah token dan user ada
-      if (token && user) {
-        // SIMPAN TOKEN ke localStorage DI SINI
+      // Cek apakah token, user, dan role ada
+      if (token && user && user.role) {
+        
+        // === PASTIKAN 2 BARIS INI ADA SEBELUM navigate ===
         localStorage.setItem('token', token); 
-        
-        // Panggil fungsi login dari context untuk menyimpan data user
-        login(user); 
-        
-        // Navigasi ke halaman beranda SETELAH semuanya berhasil
-        navigate('/beranda'); 
-      } else {
-        // Handle jika backend merespons OK tapi tidak ada token/user
-        setError('Respons tidak valid dari server.');
-      }
+        // ===
 
+        login(user); // Panggil context (meskipun mungkin telat)
+        
+        // Cek role untuk navigasi
+        if (user.role === 'admin') {
+          navigate('/admin');
+        } else {
+          navigate('/beranda'); 
+        }
+      } else {
+        setError('Respons tidak valid dari server (token/user/role tidak ada).');
+      }
     } catch (err) {
-      // Tangani error API
       const axiosError = err as AxiosError<{ message: string }>;
       const errorMessage = axiosError.response?.data?.message || 'Terjadi kesalahan. Coba lagi nanti.';
       setError(errorMessage); 

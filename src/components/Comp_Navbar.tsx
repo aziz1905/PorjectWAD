@@ -82,6 +82,7 @@ const DesktopAuthLinks = () => {
               onClick={() => {
                 logout();
                 setDropdownOpen(false);
+                window.location.reload();
               }} 
               className="flex items-center gap-1 text-left w-full px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
             >

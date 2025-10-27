@@ -1,11 +1,14 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-interface User {
-  id: number;
+
+// 1. PASTIKAN INTERFACE DI-EXPORT
+export interface User {
+  id: number; // Atau string, sesuaikan dengan backend
   fullName: string;
   email: string;
-  profileImageUrl?: string | null; 
+  profileImageUrl?: string | null;
   phone?: string | null; 
-  address?: string | null;
+  address?: string | null; 
+  role?: string; // <-- PASTIKAN INI ADA
 }
 
 interface AuthContextType {
@@ -30,16 +33,19 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
+  
+  // 2. PASTIKAN useState DIINISIALISASI DARI localStorage
   const [user, setUser] = useState<User | null>(() => {
     try {
-      const storedUser = localStorage.getItem('user');
+      const storedUser = localStorage.getItem('user'); // <-- BACA DARI SINI
       return storedUser ? JSON.parse(storedUser) : null;
     } catch (error) {
-      console.error("Gagal parse user dari localStorage", error);
+      localStorage.removeItem('user'); // Hapus data korup
       return null;
     }
   });
 
+  // useEffect untuk menyimpan perubahan state ke localStorage
   useEffect(() => {
     if (user) {
       localStorage.setItem('user', JSON.stringify(user));
@@ -56,7 +62,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setUser(null);
   };
 
-  const value: AuthContextType = { user, login, logout };
+  const value: AuthContextType = {
+    user,
+    isAuthenticated: !!user,
+    login,
+    logout
+  };
 
   return (
     <AuthContext.Provider value={value}>
