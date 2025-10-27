@@ -1,6 +1,6 @@
 import ProductCard from "./Comp_Product_Card";
 import { useState, useEffect } from 'react';
-import { Product } from "../type";
+import { Product } from '../types/Product';
 import { useSearch } from './Comp_Search';
 import { useCategory } from './Comp_Kategori';
 import api from '../api'; 
