@@ -7,6 +7,28 @@ const categoriesReturnAttribut = {
     name: categoriesTable.name
 };
 
+
+export const findCategoryByid = async (categoryId) => {
+    const id = parseInt(categoryId);
+    if (isNaN(id)) {
+        return undefined;
+    }
+    
+    try{
+        const result = await db
+        .select(categoriesReturnAttribut)
+        .from(categoriesTable)
+        .where(eq(categoriesTable.id, id))
+        .limit(1);
+
+        return result.length > 0 ? result[0] : undefined;
+
+    }catch(error){
+        console.error(`Error findCategoryById for category ${id}:`, error);
+        throw new Error('Gagal mencari category di database.');
+    }
+}
+
 export const insertCategory = async(categoryName) =>{
     try{
     const newCategory = await db

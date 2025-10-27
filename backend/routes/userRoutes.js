@@ -12,6 +12,6 @@ router.post('/login', loginAccount);
 router.post('/registrasi', createAccount);
 router.get('/:id', authenticateToken, getUserById);
 router.put('/password', authenticateToken, updateUserPassword);
-router.put('/biodata', authenticateToken,authorizerole('customer') , updateBiodata);  
+router.put('/biodata', authenticateToken,authorizerole('customer') , updateBiodata);  // mengambil imageUrl dari /upload/profile
 
 export default router;

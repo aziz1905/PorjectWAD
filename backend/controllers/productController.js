@@ -1,4 +1,5 @@
 import { findAllProducts, findProductById, insertProduct, removeFromProduct } from "../repository/productRepository.js";
+import { findReviewsByProductId } from "../repository/reviewsRepository.js";
 
 
 
@@ -40,6 +41,32 @@ export const getProductByid = async (req, res) =>{
     }
     
 };
+
+// bagian ke 2 untuk detail product
+export const getProductReviews = async (req, res) => {
+    const { productId } = req.params;
+    try{
+
+        const result = await findReviewsByProductId(productId);
+
+        if (result.totalCount === 0) {
+            return res.status(200).json({ 
+                message: result.message, 
+                data: []
+            });
+        }
+
+        return res.status(200).json({
+            message: result.message,
+            data: result.data,
+            totalCount: result.totalCount
+        });
+
+    }catch(error){
+        console.error("Error di getProductReviews :", error.message);
+        return res.status(500).json({ message: 'Gagal mengambil data review!' });
+    }
+}
 
 export const createProduct = async (req, res) => {
 

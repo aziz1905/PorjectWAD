@@ -121,7 +121,7 @@ export const loginAccount = async (req, res) => {
 
 
 export const updateUserPassword = async (req, res) => {
-    // 1. Ambil ID Pengguna dari token
+    // Ambil ID Pengguna dari token
     const userId = req.user?.id;
     const { oldPassword, newPassword } = req.body;
 

@@ -1,4 +1,4 @@
-import { findAllCategories } from "../repository/categoryRepository.js";
+import { findAllCategories, findCategoryByid } from "../repository/categoryRepository.js";
 import { insertCategory } from '../repository/categoryRepository.js';
 
 export const createCategory = async (req, res) => {
@@ -35,3 +35,24 @@ export const getAllCategories = async (req, res) => {
         return res.status(500).json({message : 'Gagal Memuat Daftar Kategori!'});
     }
 };
+
+export const getCategoryById = async (req, res) => {
+    const categoryId = parseInt(req.params.id);
+
+    if (isNaN(productId)) {
+        return res.status(400).json({message: 'ID Tidak Valid.'});
+        }
+
+    try{
+        const category = await findCategoryByid(categoryId)
+
+        if (!categoryId) {
+        return res.status(404).json({message: `Product dengan ID ${categoryId} Tidak Ditemukan.`});
+        } else {
+        res.status(200).json(category);
+        }
+    }catch(error){
+        console.log("Gagal Menampilkan kategori ini. ", error.message); 
+        return res.status(500).json({message : 'Gagal Memuat category!'});
+    }
+}
