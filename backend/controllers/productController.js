@@ -1,5 +1,4 @@
 import { findAllProducts, findProductById, insertProduct, removeFromProduct } from "../repository/productRepository.js";
-import { findReviewsByProductId } from "../repository/reviewsRepository.js";
 
 
 
@@ -20,9 +19,7 @@ export const getProduct = async (req, res) => {
     }
 };
 
-
-// bagian pertama untuk detail product
-export const getProductDetail = async (req, res) =>{
+export const getProductByid = async (req, res) =>{
     const productId = parseInt(req.params.id); 
 
     if (isNaN(productId)) {
@@ -32,7 +29,7 @@ export const getProductDetail = async (req, res) =>{
     try{
         const product = await findProductById(productId);
 
-        if (!productId) {
+        if (!product) {
         return res.status(404).json({message: `Product dengan ID ${productId} Tidak Ditemukan.`});
         } else {
         res.status(200).json(product);
@@ -41,36 +38,11 @@ export const getProductDetail = async (req, res) =>{
         console.log("Gagal Menampilkan Product ini. ", error.message); 
         return res.status(500).json({message : 'Gagal Memuat Product!'});
     }
+    
 };
 
-
-// bagian ke 2 untuk detail product
-export const getProductReviews = async (req, res) => {
-    const { productId } = req.params;
-    try{
-
-        const result = await findReviewsByProductId(productId);
-
-        if (result.totalCount === 0) {
-            return res.status(200).json({ 
-                message: result.message, 
-                data: []
-            });
-        }
-
-        return res.status(200).json({
-            message: result.message,
-            data: result.data,
-            totalCount: result.totalCount
-        });
-
-    }catch(error){
-        console.error("Error di getProductReviews :", error.message);
-        return res.status(500).json({ message: 'Gagal mengambil data review!' });
-    }
-}
-
 export const createProduct = async (req, res) => {
+
     const {categoryId, name, description, price, imageUrl, age, gender, sizes } = req.body;
 
     if (!categoryId || !name || !price || !imageUrl || !sizes || sizes.length === 0) {
@@ -100,19 +72,20 @@ export const createProduct = async (req, res) => {
         const errorMessage = error.message;
 
         if (errorMessage.includes('violates foreign key constraint')) {
+            // Error jika categoryId tidak ditemukan di tabel Categories
             return res.status(400).json({ message: 'Category ID tidak valid atau tidak ditemukan.' });
         }
         if (errorMessage.includes('violates not-null constraint')) {
+            // Error jika field seperti description atau imageUrl dikirim sebagai null/undefined
             return res.status(400).json({ message: 'Data produk tidak lengkap: Field wajib tidak boleh kosong.' });
         }
         
+        // Error default (misalnya, masalah koneksi atau error Drizzle internal)
         return res.status(500).json({ 
             message: 'Gagal menambahkan produk. Terjadi masalah database atau server yang tidak terduga.'
         });
     }
 }
-
-
 
 export const deleteProduct = async (req, res) => {
     const productId = parseInt(req.params.productId); 

@@ -1,15 +1,22 @@
 import { Navigate } from 'react-router-dom';
-import { User } from '../type';
+// 1. Import useAuth dan interface User dari AuthContext
+import { useAuth, User } from './AuthContext'; 
 
+// 2. Ubah props, hanya terima 'children'
 interface ProtectedRouteProps {
-  user: User | null;
   children: React.ReactNode;
 }
 
-const ProtectedRoute = ({ user, children }: ProtectedRouteProps) => {
+const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
+  // 3. Panggil useAuth() DI DALAM komponen
+  const { user } = useAuth(); 
+
   if (!user) {
+    // 4. Jika tidak ada user, tendang ke /masuk
     return <Navigate to="/masuk" replace />;
   }
+  
+  // Jika ada user, tampilkan halaman
   return <>{children}</>;
 };
 

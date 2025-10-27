@@ -3,7 +3,7 @@ import { Icon } from '@iconify/react';
 import { Link, useNavigate } from 'react-router-dom';
 import Button from '../components/Comp_Button';
 import { useAuth } from '../components/AuthContext';
-import api from '../api'; 
+import api from '../api';
 import { AxiosError } from 'axios';
 
 const Masuk = () => {
@@ -12,21 +12,33 @@ const Masuk = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const { login } = useAuth(); 
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(''); 
     
     try {
       const response = await api.post('/users/login', { email, password });
-      const { user } = response.data;
+      const { token, user } = response.data; 
 
-      if (user) {
-        login(user); 
-        navigate('/beranda');
+      // Cek apakah token, user, dan role ada
+      if (token && user && user.role) {
+        
+        // === PASTIKAN 2 BARIS INI ADA SEBELUM navigate ===
+        localStorage.setItem('token', token); 
+        // ===
+
+        login(user); // Panggil context (meskipun mungkin telat)
+        
+        // Cek role untuk navigasi
+        if (user.role === 'admin') {
+          navigate('/admin');
+        } else {
+          navigate('/beranda'); 
+        }
       } else {
-        setError('Gagal mendapatkan data pengguna.');
+        setError('Respons tidak valid dari server (token/user/role tidak ada).');
       }
-
     } catch (err) {
       const axiosError = err as AxiosError<{ message: string }>;
       const errorMessage = axiosError.response?.data?.message || 'Terjadi kesalahan. Coba lagi nanti.';
@@ -60,7 +72,6 @@ const Masuk = () => {
                  />
                </div>
              </div>
-
              <div className="form-group">
                <label htmlFor="password" className="form-label">Kata Sandi</label>
                <div className="relative">
@@ -77,22 +88,22 @@ const Masuk = () => {
                    onChange={(e) => setPassword(e.target.value)}
                  />
                </div>
-             </div>
-             
-             <div className="flex items-center justify-end">
-               <Link to="#" className="form-link">
-                 Lupa kata sandi?
-               </Link>
-             </div>
+             </div>            
+            <div className="flex items-center justify-end">
+              <Link to="#" className="form-link">
+                Lupa kata sandi?
+              </Link>
+            </div>
 
-             {error && (
-               <p className="text-red-500 text-sm text-center">{error}</p>
-             )}
+            {error && (
+              <p className="text-red-500 text-sm text-center">{error}</p>
+            )}
+
             <Button 
-                buttonType="p_masuk" 
-                logoChild={<Icon icon="mdi:login" className="text-white text-2xl" />}
-                fontChild="Masuk"
-                type="submit" 
+              buttonType="p_masuk" 
+              logoChild={<Icon icon="mdi:login" className="text-white text-2xl" />}
+              fontChild="Masuk"
+              type="submit" 
             />
           </form>
 

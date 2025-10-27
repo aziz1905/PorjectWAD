@@ -123,7 +123,7 @@ const ProductCard = ({
       <div className="product-info p-5">
         {/* Rating Bintang */}
           <div className="flex items-center my-2">
-          {renderStars()}
+          {renderStars()} {<span className="text-gray-600">({rating})</span>}
         </div>
         <h3 className="product-name text-lg font-semibold group-hover:text-blue-600">{name}</h3>
         <p className="product-description text-sm text-gray-600 mb-2">{description}</p>

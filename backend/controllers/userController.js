@@ -46,26 +46,21 @@ export const getUserById = async (req, res) => {
     const userId = req.user?.id; 
 
     if (!userId) {
-        // fallback jika middleware gagal, tapi user terotentikasi.
         return res.status(401).json({ message: "Otentikasi gagal: User ID tidak ditemukan." });
     }
 
     try {
-        // Ambil data user lengkap dari database
-        const user = await findById(userId); 
+        const userAndBiodata = await findById(userId); 
 
-        if (!user) {
+        if (!userAndBiodata) {
             return res.status(404).json({ message: "Profil pengguna tidak ditemukan." });
         }
 
-        // hapus password sebelum dikirim ke client
-        // mengekstrak 'password' dan menempatkan sisanya ke 'safeUser'
-        const { password, ...safeUser } = user;
+        const { password, ...safeUser } = userAndBiodata;
         
-        // Kirim data profil yang aman
         return res.status(200).json({ 
             message: "Data profil berhasil diambil.",
-            user: safeUser
+            user: safeUser 
         });
 
     } catch (error) {
@@ -75,11 +70,9 @@ export const getUserById = async (req, res) => {
 };
 
 
-
 export const loginAccount = async (req, res) => {
     const { email, password } = req.body;
     
-    // Log incoming data
     console.log("Login attempt for email:", email); 
     if (!password) {
         console.error("Password missing from request body!");
