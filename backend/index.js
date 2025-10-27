@@ -15,7 +15,9 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 
-app.use(express.json());
+app.use(express.json({ limit: '5mb' })); // Menaikkan batas untuk JSON payload
+app.use(express.urlencoded({ extended: true, limit: '5mb' })); // Menaikkan batas untuk URL-encoded payload
+app.use(express.static('public'));
 app.use(cors());
 app.use('/products', productRoutes);
 app.use('/categories', categoryRoutes);

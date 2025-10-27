@@ -120,7 +120,6 @@ export const createOrReplaceBiodata = async (userId, data) => {
             .returning();
 
         if (updated.length > 0) {
-            console.log("Biodata updated:", updated[0]);
             return updated[0]; // Baris ditemukan dan diupdate
         }
 

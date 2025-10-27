@@ -1,15 +1,13 @@
 export const uploadToGetUrl = async (file) => {
-    if (!file) {
-        throw new Error("File objek tidak ditemukan.");
+    if (!file || !file.filename) {
+        // Memastikan file dan data binernya (buffer) ada
+        throw new Error("Data file tidak valid dari Multer.");
     }
     
-    // Pastikan nama file selalu ada, jika Multer tidak menyediakannya (kasus ekstrem)
-    const originalName = file.originalname || 'temp_file.bin';
-    const cleanFileName = originalName.replace(/\s/g, '_');// Bersihkan Nama File (Hapus spasi dan karakter bermasalah)
-    const uniqueFileName = `${Date.now()}_${cleanFileName}`; // Buat Nama File yang Unik dengan Timestamp
+    const uniqueFileName = file.filename;
     
-    // Kembalikan URL publik tiruan.
-    const simulatedUrl = `https://cdn.kostumkita.com/products/${uniqueFileName}`;
+    // URL Lokal yang dapat diakses:
+    const localUrl = `http://localhost:5000/uploads/${uniqueFileName}`;
     
-    return simulatedUrl;
+    return localUrl;
 };

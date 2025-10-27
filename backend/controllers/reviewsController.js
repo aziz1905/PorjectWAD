@@ -29,9 +29,10 @@ export const createReviews = async (req, res) => {
 }
 
 export const getRecentReviews = async (req, res) => {
+    const limit = req.query.limit ? parseInt(req.query.limit) : 3;
     try {
         // Panggil repository untuk mendapatkan 3 ulasan terbaru
-        const reviews = await findRecentReviews(3);
+        const reviews = await findRecentReviews(limit);
         
         return res.status(200).json(reviews);
 

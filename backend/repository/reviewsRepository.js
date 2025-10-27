@@ -1,5 +1,5 @@
 import db from '../db/db.js';
-import { eq, sql,desc} from 'drizzle-orm';
+import { eq, sql, desc } from 'drizzle-orm';
 import { reviewsTable } from '../db/schema/reviewsSchema.js';
 import { productsTable } from '../db/schema/productsSchema.js';
 import { usersTable } from '../db/schema/usersSchema.js';
@@ -60,8 +60,8 @@ export const findAllReviews = async () => {
             createdAt: reviewsTable.createdAt, 
         })
         .from(reviewsTable)
-        .innerJoin(productsTable, eq(productsTable.productId, reviewsTable.id)) 
-        .innerJoin(usersTable, eq(usersTable.userId, reviewsTable.id)) 
+        .innerJoin(productsTable, eq(productsTable.id, reviewsTable.productId)) 
+        .innerJoin(usersTable, eq(usersTable.id, reviewsTable.userId)) 
         
         return result;
     }catch(error){

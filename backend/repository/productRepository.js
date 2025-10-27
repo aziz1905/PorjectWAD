@@ -212,6 +212,8 @@ export const insertProduct = async (productData, sizes) => {
     }
 }
 
+
+
 export const updateProductRating = async (productId) => {
     try{
     // Hitung Rata-rata Rating yang baru
