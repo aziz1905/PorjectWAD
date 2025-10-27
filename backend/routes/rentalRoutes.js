@@ -1,6 +1,5 @@
 import express from 'express';
-import { createRental, getRentalDetails, updateRentalOrderStatus, updateRentalReturnStatus } from '../controllers/rentalsController.js';
-import { updateItemReturnDetails } from '../repository/rentalsRepository.js';
+import { createRental, getRentalDetails, updateRentalItemDetailsController, updateRentalOrderStatus, updateRentalReturnStatus } from '../controllers/rentalsController.js';
 import { authenticateToken } from '../middleware/authenticateToken.js';
 import { authorizerole } from '../middleware/authorizeRole.js';
 
@@ -10,7 +9,7 @@ router.post('/createRental', authenticateToken, authorizerole('customer'), creat
 router.get('/:id', authenticateToken, getRentalDetails);
 router.put('/:id/order', authenticateToken, authorizerole('admin'), updateRentalOrderStatus);
 router.put('/:id/return', authenticateToken, authorizerole('admin') , updateRentalReturnStatus);
-router.put('/:rentalId/items/:productId',  authenticateToken, authorizerole('admin') , updateItemReturnDetails);
+router.put('/:rentalId/items/:productId',  authenticateToken, authorizerole('admin') , updateRentalItemDetailsController);
 
 
 
