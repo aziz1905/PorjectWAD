@@ -4,7 +4,6 @@ import { useAuth } from './AuthContext';
 import Search, { useSearch } from './Comp_Search';
 import {Icon} from '@iconify/react';
 
-// Komponen ini tidak perlu diubah
 const DesktopAuthLinks = () => {
   const { user, logout } = useAuth();
   const [isDropdownOpen, setDropdownOpen] = useState(false);

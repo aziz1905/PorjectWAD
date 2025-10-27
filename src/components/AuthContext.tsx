@@ -1,14 +1,13 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
-// 1. PASTIKAN INTERFACE DI-EXPORT dan LENGKAP
 export interface User {
-  id: number; // Atau string, sesuaikan dengan backend
+  id: number; 
   fullName: string;
   email: string;
   profileImageUrl?: string | null;
   phone?: string | null; 
   address?: string | null; 
-  role?: string; // <-- PASTIKAN INI ADA
+  role?: string; 
 }
 
 interface AuthContextType {
@@ -34,18 +33,16 @@ interface AuthProviderProps {
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   
-  // 2. PASTIKAN useState DIINISIALISASI DARI localStorage
   const [user, setUser] = useState<User | null>(() => {
     try {
-      const storedUser = localStorage.getItem('user'); // <-- BACA DARI SINI
+      const storedUser = localStorage.getItem('user'); 
       return storedUser ? JSON.parse(storedUser) : null;
     } catch (error) {
-      localStorage.removeItem('user'); // Hapus data korup
+      localStorage.removeItem('user'); 
       return null;
     }
   });
 
-  // useEffect untuk menyimpan perubahan state ke localStorage
   useEffect(() => {
     if (user) {
       localStorage.setItem('user', JSON.stringify(user));

@@ -15,9 +15,11 @@ type CartItem = Product & {
 // Ambil 4 produk pertama sebagai data dummy untuk keranjang
 const initialCartItems: CartItem[] = Products.slice(0, 4).map(product => ({
   ...product,
+  // Pastikan ID di-convert ke string jika tipe di Produk.ts adalah angka
+  id: String(product.id),
   quantity: 1,
   selected: true,
-  duration: 3, 
+  duration: 3,
 }));
 
 // Fungsi untuk memformat angka menjadi format Rupiah
@@ -36,8 +38,12 @@ const Keranjang = () => {
   useEffect(() => {
     const newTotal = cartItems.reduce((sum, item) => {
       if (item.selected) {
-        const dur=0.5;
-        return sum + (item.price * item.quantity * (item.duration*dur));
+        // Logika perhitungan harga Anda sebelumnya
+        // const dur=0.5;
+        // return sum + (item.price * item.quantity * (item.duration*dur));
+      
+        // Logika yang lebih standar (harga * jumlah * durasi)
+        return sum + (item.price * item.quantity * item.duration);
       }
       return sum;
     }, 0);
@@ -72,14 +78,33 @@ const Keranjang = () => {
     );
   };
 
+  // Fungsi untuk Hapus Item (Versi Dummy)
+  const handleRemoveItem = (id: string) => {
+    setCartItems(currentItems => currentItems.filter(item => item.id !== id));
+  };
+
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { checked } = event.target;
     setCartItems(currentItems =>
       currentItems.map(item => ({ ...item, selected: checked }))
     );
   };
-  
+ 
   const allSelected = cartItems.length > 0 && cartItems.every(item => item.selected);
+
+  // Tampilkan pesan jika keranjang kosong
+  if (cartItems.length === 0) {
+    return (
+      <div className="text-center py-20 text-gray-500">
+        <Icon icon="mdi:cart-off" className="text-6xl mx-auto mb-4" />
+        <h2 className="text-2xl font-semibold mb-2">Keranjang Anda Kosong</h2>
+        <p className="mb-6">Ayo cari kostum favoritmu!</p>
+        <Link to="/beranda" className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+          Mulai Belanja
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -91,7 +116,7 @@ const Keranjang = () => {
             checked={allSelected}
             onChange={handleSelectAll}
           />
-          <label>Pilih Semua</label>
+          <label>Pilih Semua ({cartItems.length} item)</label>
         </div>
         <span>Produk</span>
         <span>Harga Sewa / Hari</span>
@@ -104,42 +129,54 @@ const Keranjang = () => {
         {cartItems.map(item => (
           <div key={item.id} className="pesanan-item">
             <div className="flex items-center gap-5">
-              <input 
-                type="checkbox" 
-                className="pesanan-checkbox" 
+              <input
+                type="checkbox"
+                className="pesanan-checkbox"
                 checked={item.selected}
                 onChange={() => handleSelectChange(item.id)}
               />
-              <img src={item.imageUrl} alt="{item.name}" className="bg-gray-200 rounded-lg h-16 w-30 flex items-center justify-center" />
-              <p className="pesanan-item-name">{item.name}</p>
+              <img src={item.imageUrl} alt={item.name} className="bg-gray-200 rounded-lg h-16 w-16 object-cover" />
+              <div>
+                <p className="pesanan-item-name">{item.name}</p>
+                <p className="text-sm text-gray-500">Ukuran: {Array.isArray(item.sizes) ? item.sizes[0] : 'All Size'}</p>
+              </div>
             </div>
             <p>{formatRupiah(item.price)}</p>
             <div className="quantity-control">
               <button className='button-quantity-duration-l'onClick={() => handleQuantityChange(item.id, -1)}>-</button>
-              <input 
-                type="text" 
-                value={item.quantity} 
-                readOnly 
-                className="w-12 text-center" 
+              <input
+                type="text"
+                value={item.quantity}
+                readOnly
+                className="w-12 text-center"
               />
               <button className="button-quantity-duration-r"onClick={() => handleQuantityChange(item.id, 1)}>+</button>
             </div>
             <div className="quantity-control">
-              <button className='button-quantity-duration-l' onClick={() => handleDurationChange(item.id, -1)}>-</button>
-              <input 
-                type="text" 
-                value={`${item.duration} Hari`} 
-                readOnly 
-                className="w-20 text-center" 
+             <button className='button-quantity-duration-l' onClick={() => handleDurationChange(item.id, -1)}>-</button>
+              <input
+                type="text"
+                value={`${item.duration} Hari`}
+                readOnly
+                className="w-20 text-center"
               />
               <button className="button-quantity-duration-r" onClick={() => handleDurationChange(item.id, 1)}>+</button>
             </div>
             {/* Total harga per item */}
-            <p className="font-bold text-blue-600">{formatRupiah(item.price * item.quantity * item.duration)}</p>
+            <div className="flex items-center justify-between">
+              <p className="font-bold text-blue-600">{formatRupiah(item.price * item.quantity * item.duration)}</p>
+              <button
+                onClick={() => handleRemoveItem(item.id)}
+                className="text-gray-400 hover:text-red-500 p-1"
+                title="Hapus item"
+              >
+                  <Icon icon="mdi:trash-can-outline" className="w-5 h-5" />
+              </button>
+            </div>
           </div>
         ))}
       </div>
-      
+     
       <div className="pesanan-summary">
         <div className="summary-content">
           <h3 className="text-xl font-bold">Ringkasan Sewa</h3>
@@ -147,11 +184,12 @@ const Keranjang = () => {
             <span>Total</span>
             <span className="text-2xl font-bold text-blue-600">{formatRupiah(totalPrice)}</span>
           </div>
-          <Link to="/detail-penyewaan">
+          <Link to="/detail-penyewaan" state={{ itemsToCheckout: cartItems.filter(item => item.selected) }}>
           <PesananButton
             buttonType="p_pesanSekarang"
             logoChild={<Icon icon="mdi:login" className="text-white text-2xl" />}
-            fontChild={`Sewa Sekarang (${cartItems.filter(item => item.selected).length})`}
+           fontChild={`Sewa Sekarang (${cartItems.filter(item => item.selected).length})`}
+            disabled={cartItems.filter(item => item.selected).length === 0}
           />
           </Link>
         </div>

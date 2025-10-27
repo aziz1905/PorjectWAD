@@ -57,7 +57,7 @@ const ProductCard = ({
     try {
       if (!originalWishlistedStatus) {
         // Panggil API untuk MENAMBAHKAN
-        await api.post(`/wishlist/${id}`); 
+        await api.post(`/wishlist/${id}/addWishlist`); 
         console.log(`Produk ${id} ditambahkan ke wishlist`);
       } else {
         // Panggil API untuk MENGHAPUS

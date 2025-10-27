@@ -5,7 +5,7 @@ import { addProductToWishlist, deleteProductFromWishlist, getWishlist } from '..
 const router = express.Router();
 
 router.get('/', authenticateToken, getWishlist);
-router.post('/addWishlist', authenticateToken, addProductToWishlist);
+router.post('/:productId/addWishlist', authenticateToken, addProductToWishlist);
 router.delete('/:productId', authenticateToken, deleteProductFromWishlist);
 
 export default router;

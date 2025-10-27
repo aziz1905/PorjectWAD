@@ -1,21 +1,18 @@
 import React from 'react';
-import { useAuth } from '../../components/AuthContext'; // Sesuaikan path
+import { useAuth } from '../../components/AuthContext'; 
 import { Icon } from '@iconify/react';
 
 const AdminHeader: React.FC = () => {
-  // Asumsi useAuth memiliki fungsi logout dan data user
   const { user, logout } = useAuth(); 
 
   const handleLogout = () => {
     if (logout) {
       logout();
     }
-    // Navigasi akan ditangani oleh ProtectedRoute
   };
 
   return (
     <header className="flex justify-between items-center p-4 bg-white border-b shadow-sm">
-      {/* Judul Halaman (bisa dibuat dinamis dengan context jika perlu) */}
       <h1 className="text-xl font-semibold text-gray-800">
         <span className="hidden md:inline">Dashboard</span> Admin
       </h1>
@@ -25,9 +22,7 @@ const AdminHeader: React.FC = () => {
           {user?.email || 'admin@kostumkita.com'}
         </span>
         
-        {/* Avatar Placeholder */}
         <div className="w-10 h-10 rounded-full bg-gray-300 border-2 border-gray-400">
-          {/* <img src={user?.avatarUrl} alt="Admin" /> */}
         </div>
 
         <button 

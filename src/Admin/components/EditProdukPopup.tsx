@@ -1,17 +1,15 @@
-// Admin/components/EditProdukPopup.tsx
-import React, { useState, useEffect, useRef } from 'react'; // Tambahkan useRef
+import React, { useState, useEffect, useRef } from 'react'; 
 import { Icon } from '@iconify/react';
 import { useForm, useFieldArray, Controller } from 'react-hook-form';
-// Gunakan tipe ProductFormData, Category, Product, ProductSize
 import { Category, Product, ProductSize, ProductFormData } from '../types';
 import api from '../../api';
 
-// Tipe data ENUM
+
 type PossibleSizeName = 'S' | 'M' | 'L' | 'XL' | 'XXL';
 const sizeOptions: PossibleSizeName[] = ['S', 'M', 'L', 'XL', 'XXL'];
 
 interface Props {
-  productToEdit: Product; // Terima data produk yang akan diedit
+  productToEdit: Product; 
   onClose: () => void;
   onSuccess: () => void;
 }
@@ -22,28 +20,25 @@ type EditProductFormValues = ProductFormData;
 
 const EditProdukPopup: React.FC<Props> = ({ productToEdit, onClose, onSuccess }) => {
   const [categories, setCategories] = useState<Category[]>([]);
-  // Hapus state isUploading, gunakan isSubmitting saja
-  const [isSubmitting, setIsSubmitting] = useState(false); // Loading untuk submit dan upload
+  const [isSubmitting, setIsSubmitting] = useState(false); 
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(productToEdit.imageUrl || null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null); // Ref untuk input file
+  const fileInputRef = useRef<HTMLInputElement>(null); 
 
   const { register, handleSubmit, control, reset, setValue, formState: { errors } } = useForm<EditProductFormValues>({
-    // Default values diisi dari productToEdit
     defaultValues: {
       id: productToEdit.id,
       name: productToEdit.name || '',
       description: productToEdit.description || '',
       price: productToEdit.price ? parseFloat(productToEdit.price) : '',
-      imageUrl: productToEdit.imageUrl || '', // Simpan URL awal di form state
+      imageUrl: productToEdit.imageUrl || '', 
       age: productToEdit.age || 'Dewasa',
       gender: productToEdit.gender || 'Unisex',
       categoryId: productToEdit.categoryId || '',
-      // Isi sizes dari productToEdit
        sizes: (Array.isArray(productToEdit.sizes) && productToEdit.sizes.length > 0 && typeof productToEdit.sizes[0] === 'object')
              ? (productToEdit.sizes as ProductSize[]).map(s => ({ sizeName: s.sizeName, stock: s.stock ?? '' })) // Stock bisa ''
-             : [{ sizeName: 'M', stock: '' }] // Fallback
+             : [{ sizeName: 'M', stock: '' }]
     },
   });
 
@@ -52,17 +47,14 @@ const EditProdukPopup: React.FC<Props> = ({ productToEdit, onClose, onSuccess })
     name: 'sizes',
   });
 
-  // Fetch kategori (tetap sama)
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const response = await api.get<Category[]>('/categories');
         setCategories(response.data);
-         // Set categoryId default jika belum ada dan kategori sudah terload
          if (!control._defaultValues.categoryId && response.data.length > 0) {
             setValue('categoryId', response.data[0].id);
          } else if (control._defaultValues.categoryId){
-             // Pastikan categoryId yang ada valid
              setValue('categoryId', control._defaultValues.categoryId);
          }
 
@@ -71,24 +63,19 @@ const EditProdukPopup: React.FC<Props> = ({ productToEdit, onClose, onSuccess })
       }
     };
     fetchCategories();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [setValue]); // Hanya perlu setValue
+  }, [setValue]); 
 
-  // Fetch detail produk jika diperlukan (misal API /products tidak lengkap)
    useEffect(() => {
      const fetchProductDetailsIfNeeded = async () => {
-         // Cek apakah data sizes awal punya informasi stok yang valid
          const needsDetails = !Array.isArray(productToEdit.sizes) || typeof productToEdit.sizes[0] === 'string';
 
          if(productToEdit?.id && needsDetails) {
             console.log("Fetching detailed sizes for product:", productToEdit.id);
-             setIsSubmitting(true); // Tampilkan loading saat fetch detail
+             setIsSubmitting(true); 
             try {
-                // TEMAN ANDA HARUS BUAT ENDPOINT INI: GET /products/:id/details
                 const response = await api.get<Product>(`/products/${productToEdit.id}/details`);
                 const detailedProduct = response.data;
 
-                // Update HANYA bagian sizes di form setelah fetch detail
                 if (Array.isArray(detailedProduct.sizes) && typeof detailedProduct.sizes[0] !== 'string') {
                     setValue('sizes', (detailedProduct.sizes as ProductSize[]).map(s => ({ sizeName: s.sizeName, stock: s.stock ?? '' })));
                 }
@@ -97,7 +84,7 @@ const EditProdukPopup: React.FC<Props> = ({ productToEdit, onClose, onSuccess })
                 console.error("Gagal fetch detail produk untuk edit:", error);
                 setSubmitError("Gagal memuat detail stok produk.");
             } finally {
-                setIsSubmitting(false); // Selesai loading detail
+                setIsSubmitting(false); 
             }
          }
      };
@@ -105,20 +92,18 @@ const EditProdukPopup: React.FC<Props> = ({ productToEdit, onClose, onSuccess })
   }, [productToEdit, setValue]);
 
 
-  // Handle perubahan gambar
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      setSelectedFile(file); // Simpan file baru
+      setSelectedFile(file); 
       const reader = new FileReader();
       reader.onloadend = () => {
-        setPreviewImage(reader.result as string); // Update preview
+        setPreviewImage(reader.result as string); 
       };
       reader.readAsDataURL(file);
     }
   };
 
-   // Trigger klik input file
     const triggerFileInput = () => {
         fileInputRef.current?.click();
     };
@@ -126,9 +111,8 @@ const EditProdukPopup: React.FC<Props> = ({ productToEdit, onClose, onSuccess })
 
   // Handle submit form UPDATE
   const onSubmit = async (data: EditProductFormValues) => {
-    if (!productToEdit?.id) return; // Guard clause
+    if (!productToEdit?.id) return; 
 
-    // Validasi tambahan
     if (data.sizes.some(s => s.stock === '' || Number(s.stock) < 0)) {
         setSubmitError('Stok untuk setiap ukuran wajib diisi dan tidak boleh negatif.');
         return;

@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Icon } from '@iconify/react';
-// 1. Impor tipe yang benar: Product, ProductSize
-import { Product, ProductSize } from '../types'; // Sesuaikan path jika perlu
-import api from '../../api'; // Sesuaikan path jika perlu
-import TambahProdukPopup from '../components/TambahProdukPopup'; // Sesuaikan path
-import EditProdukPopup from '../components/EditProdukPopup'; // Sesuaikan path
+import { Product, ProductSize } from '../types'; 
+import api from '../../api'; 
+import TambahProdukPopup from '../components/TambahProdukPopup'; 
+import EditProdukPopup from '../components/EditProdukPopup'; 
 
-// Tipe untuk data produk yang ditampilkan di tabel
 type ProductDisplay = Product & {
   stockTotal: number;
 };

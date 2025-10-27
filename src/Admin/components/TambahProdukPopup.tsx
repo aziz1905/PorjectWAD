@@ -250,23 +250,19 @@ const TambahProdukPopup: React.FC<Props> = ({ onClose, onSuccess }) => {
                     <p className="text-xs text-gray-500">PNG, JPG, JPEG (Maks 5MB)</p>
                   </div>
                 </div>
-                {/* Hidden input untuk validasi react-hook-form */}
                 <input type="hidden" {...register('imageUrl', { required: 'Foto wajib di-upload' })} />
                 {errors.imageUrl && <p className="error-message">{errors.imageUrl.message}</p>}
               </div>
 
-              {/* Ukuran & Stok */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Ukuran & Stok *</label>
                 <div className="space-y-3 max-h-48 overflow-y-auto pr-2 border rounded-md p-2">
                   {fields.map((field, index) => (
                     <div key={field.id} className="flex items-center gap-2">
-                      {/* Dropdown Ukuran */}
                       <Controller
                         name={`sizes.${index}.sizeName`}
                         control={control}
-                        rules={{ required: 'Ukuran wajib' }} // Tambah validasi
-                        // 7. Akses defaultValue dari field, bukan langsung
+                        rules={{ required: 'Ukuran wajib' }} 
                         render={({ field: controllerField }) => (
                           <select {...controllerField} className={`w-1/3 input-field ${errors.sizes?.[index]?.sizeName ? 'border-red-500' : ''}`}>
                             <option value="" disabled>Pilih</option>
@@ -274,28 +270,21 @@ const TambahProdukPopup: React.FC<Props> = ({ onClose, onSuccess }) => {
                           </select>
                         )}
                       />
-                      {/* Input Stok */}
                       <input
                         type="number"
-                        // 8. Register dengan benar
                         {...register(`sizes.${index}.stock`, {
-                            required: 'Stok wajib', // Tambah validasi
+                            required: 'Stok wajib',
                             valueAsNumber: true,
                             min: { value: 0, message: 'Min 0' }
                          })}
-                        // 7. Akses defaultValue dari field
                         className={`w-1/3 input-field text-center ${errors.sizes?.[index]?.stock ? 'border-red-500' : ''}`}
                         placeholder="Stok"
                       />
-                      {/* Tombol Hapus */}
                       <button type="button" onClick={() => remove(index)} className="text-red-500 hover:text-red-700 p-2 rounded-full hover:bg-red-100" disabled={fields.length <= 1}>
-                        {/* 6. Ganti ikon LuTrash2 */}
                         <Icon icon="mdi:trash-can-outline" className="w-5 h-5" />
                       </button>
                     </div>
                   ))}
-                   {/* Tampilkan error validasi array */}
-                   {/* Ini mungkin perlu penyesuaian tergantung versi react-hook-form */}
                    {errors.sizes && typeof errors.sizes === 'object' && !Array.isArray(errors.sizes) && errors.sizes.root?.message && (
                       <p className="error-message">{errors.sizes.root.message}</p>
                    )}
@@ -306,9 +295,7 @@ const TambahProdukPopup: React.FC<Props> = ({ onClose, onSuccess }) => {
                       </div>
                    ))}
                 </div>
-                {/* Tombol Tambah Ukuran */}
                 <button type="button" onClick={() => append({ sizeName: 'M', stock: '' })} className="mt-2 flex items-center text-sm text-blue-600 hover:text-blue-800">
-                   {/* 6. Ganti ikon LuPlus */}
                   <Icon icon="mdi:plus" className="w-4 h-4 mr-1" /> Tambah Ukuran
                 </button>
               </div>
@@ -316,21 +303,18 @@ const TambahProdukPopup: React.FC<Props> = ({ onClose, onSuccess }) => {
           </div>
         </form>
 
-        {/* Footer Popup */}
         <div className="flex justify-end items-center p-5 border-t bg-gray-50 rounded-b-lg">
           <button onClick={onClose} type="button" className="px-5 py-2 text-sm font-medium text-gray-700 bg-white border rounded-lg hover:bg-gray-100 mr-3" disabled={isSubmitting}>
             Batal
           </button>
           <button type="submit" onClick={handleSubmit(onSubmit)} className="px-5 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 shadow-sm disabled:opacity-50 flex items-center" disabled={isUploading || isSubmitting}>
             {(isUploading || isSubmitting) && (
-              // 6. Ganti ikon LuLoader2
               <Icon icon="mdi:loading" className="w-4 h-4 animate-spin mr-2" />
             )}
             Tambahkan ke Etalase
           </button>
         </div>
       </div>
-       {/* Helper CSS */}
        <style jsx>{`
           .input-field { @apply px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-sm; }
           .error-message { @apply text-red-600 text-xs mt-1; }
