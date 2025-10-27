@@ -6,6 +6,9 @@ import { usersTable } from "./usersSchema.js";
 import { usersBiodataTable } from "./usersBiodataSchema.js";
 import { wishlistsTable } from "./wishlistSchema.js";
 import { reviewsTable } from "./reviewsSchema.js";
+import { rentalsTable } from "./rentalsSchema.js";
+import { rentalsDetailTable } from "./RentalsDetailSchema.js";
+import { paymentsTable } from "./paymentSchema.js";
 
 
 // Relasi Product memiliki banyak ProductSize
@@ -79,5 +82,41 @@ export const reviewRelations = relations(reviewsTable, ({ one }) => ({
     product: one(productsTable, {
         fields: [reviewsTable.productId],
         references: [productsTable.id],
+    }),
+}));
+
+export const rentalRelations = relations(rentalsTable, ({ many, one }) => ({
+    // Relasi One-to-Many: Satu Rental memiliki banyak detail item
+    details: many(rentalsDetailTable),
+
+    // Relasi One-to-Many: Satu Rental dapat memiliki banyak pembayaran (untuk cicilan/gagal bayar)
+    payments: many(paymentsTable),
+    
+    // Relasi One-to-One: Satu Rental dimiliki oleh satu User
+    user: one(usersTable, {
+        fields: [rentalsTable.userId],
+        references: [usersTable.id],
+    }),
+}));
+
+export const rentalDetailRelations = relations(rentalsDetailTable, ({ one }) => ({
+    // Relasi Many-to-One: Detail Item dimiliki oleh satu Rental
+    rental: one(rentalsTable, {
+        fields: [rentalsDetailTable.rentalId],
+        references: [rentalsTable.id],
+    }),
+
+    // Relasi Many-to-One: Detail Item terhubung ke satu Product
+    product: one(productsTable, {
+        fields: [rentalsDetailTable.productId],
+        references: [productsTable.id],
+    }),
+}));
+
+export const paymentsRelations = relations(paymentsTable, ({ one }) => ({
+    // Relasi Many-to-One: Pembayaran ini terhubung ke satu Rental
+    rental: one(rentalsTable, {
+        fields: [paymentsTable.rentalId],
+        references: [rentalsTable.id],
     }),
 }));

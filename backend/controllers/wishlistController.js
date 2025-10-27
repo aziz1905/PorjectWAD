@@ -14,7 +14,7 @@ export const getWishlist = async (req, res) => {
 
 export const addProductToWishlist = async (req, res) => {
     const userId = req.user.id;
-    const productId = req.body.productId; 
+    const productId = req.params.productId; 
 
     if (!productId) {
         return res.status(400).json({ message: 'Product ID wajib diisi.' });

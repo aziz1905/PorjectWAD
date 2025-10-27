@@ -1,4 +1,4 @@
-import { findAllProducts, findProductById, insertProduct, removeFromProduct } from "../repository/productRepository.js";
+import { findAllProducts, findProductById, insertProduct, removeFromProduct, updateProduct } from "../repository/productRepository.js";
 import { findReviewsByProductId } from "../repository/reviewsRepository.js";
 
 
@@ -19,6 +19,10 @@ export const getProduct = async (req, res) => {
         return res.status(500).json({message : 'Gagal Memuat Daftar Product!'});
     }
 };
+
+
+
+
 
 export const getProductByid = async (req, res) =>{
     const productId = parseInt(req.params.id); 
@@ -41,6 +45,8 @@ export const getProductByid = async (req, res) =>{
     }
     
 };
+
+
 
 // bagian ke 2 untuk detail product
 export const getProductReviews = async (req, res) => {
@@ -67,6 +73,10 @@ export const getProductReviews = async (req, res) => {
         return res.status(500).json({ message: 'Gagal mengambil data review!' });
     }
 }
+
+
+
+
 
 export const createProduct = async (req, res) => {
 
@@ -113,6 +123,57 @@ export const createProduct = async (req, res) => {
         });
     }
 }
+
+
+
+
+
+export const updateProductAndSizes = async (req, res) => {
+    const productId = parseInt(req.params.productId); 
+    const { name, description, price, imageUrl, age, gender, categoryId, sizes } = req.body;
+    
+    if (isNaN(productId)) {
+        return res.status(400).json({ message: 'Product ID tidak valid.' });
+    }
+
+    // Hanya buat payload untuk productsTable
+    const productData = { 
+        categoryId,
+        name, 
+        description, 
+        price, 
+        imageUrl, 
+        age, 
+        gender
+    };
+
+    // Validasi minimum untuk update
+    if (!sizes || sizes.length === 0) {
+        return res.status(400).json({ message: 'Ukuran (sizes) dan stok wajib disertakan untuk update.' });
+    }
+
+    try {
+        const updatedData = await updateProduct(productId, productData, sizes);
+
+        if (updatedData === null) {
+            return res.status(404).json({ message: `Produk dengan ID ${productId} tidak ditemukan.` });
+        }
+
+        return res.status(200).json({
+            message: 'Produk dan stok berhasil diperbarui!',
+            product: updatedData,
+        });
+
+    } catch (error) {
+        console.error("Error updateProduct:", error.message);
+        // Tangani error yang dilempar dari repository
+        return res.status(500).json({ message: error.message || 'Gagal memperbarui produk.' });
+    }
+};
+
+
+
+
 
 export const deleteProduct = async (req, res) => {
     const productId = parseInt(req.params.productId); 

@@ -7,6 +7,7 @@ import categoryRoutes from './routes/categoryRoutes.js';
 import wishlistRouter from './routes/wishlistRoutes.js';
 import reviewsRouter from './routes/reviewsRoutes.js';
 import uploadRouter from './routes/uploadRoutes.js';
+import rentalsRoutes from './routes/rentalRoutes.js';
 import { connectDB } from './db/dbSetup.js';
 
 
@@ -25,6 +26,7 @@ app.use('/users', userRoutes);
 app.use('/upload', uploadRouter);
 app.use('/wishlist', wishlistRouter);
 app.use('/reviews', reviewsRouter);
+app.use('/rentals', rentalsRoutes);
 
 connectDB().then(() => {
     app.listen(PORT, () => {

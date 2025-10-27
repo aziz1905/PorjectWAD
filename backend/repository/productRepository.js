@@ -212,7 +212,54 @@ export const insertProduct = async (productData, sizes) => {
     }
 }
 
+export const updateProduct = async (productId, productData, sizes) => {
+    const id = parseInt(productId);
+    if (isNaN(id)) {
+        throw new Error("ID Produk tidak valid.");
+    }
 
+    try{
+        return await db.transaction(async (tx) => {
+        const update = await tx
+        .update(productsTable)
+        .set(productData)
+        .where(eq(productsTable.id, id))
+        .returning();
+
+        
+        if (!update) {
+                return null;
+            }
+            
+            // HAPUS semua size lama produk
+            await tx
+                .delete(productsSizesTable)
+                .where(eq(productsSizesTable.productId, id));
+
+            // data untuk size baru
+            const sizeInsertData = sizes.map(size => ({
+                productId: id,
+                sizeName: size.sizeName,
+                stock: size.stock,
+            }));
+
+            // 4. INSERT semua size baru
+            if (sizeInsertData.length > 0) {
+                await tx
+                    .insert(productsSizesTable)
+                    .values(sizeInsertData);
+            }
+            const updatedProduct = update[0];
+            return {
+                ...updatedProduct,
+                sizes: sizeInsertData,
+            };
+        });
+    }catch(error){
+        console.error("Error updateProduct:", error);
+        throw new Error('Gagal memperbarui produk dan stok di database.');
+    }
+}
 
 export const updateProductRating = async (productId) => {
     try{
