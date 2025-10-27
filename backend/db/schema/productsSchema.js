@@ -9,7 +9,7 @@ export const productsTable = pgTable("products", {
     categoryId: integer("category_id").references(() => categoriesTable.id, { onDelete: 'set null' }),
     name: varchar("name", { length: 255 }).notNull(),
     description: text("description").notNull(),
-    price: decimal("price", { precision: 10, scale: 2 }).notNull(),
+    price: integer("price").notNull(),
     imageUrl: varchar("image_url").notNull(),
     age: productAgeEnum('age').notNull().default('Dewasa'),
     gender: productGenderEnum('gender').notNull().default('Unisex'),

@@ -10,7 +10,6 @@ export const uploadImage = async (req, res) => {
     try {
         const imageUrl = await uploadToGetUrl(file);
 
-        console.log("Generated public URL:", imageUrl); // Log URL yang benar
 
         // Mengembalikan URL publik ke frontend
         return res.status(200).json({ 
