@@ -154,5 +154,5 @@ export const findRecentReviews = async (limit = 3) => {
     } catch (error) {
         console.error("Error in findRecentReviews:", error);
         throw new Error("Gagal mengambil data ulasan.");
-    }
+}
 };

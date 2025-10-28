@@ -1,13 +1,45 @@
+import React, { useState, useEffect } from 'react'; // Import React hooks
 import { Icon } from "@iconify/react";
 import { Link } from "react-router-dom";
 import { User } from "../type";
+import api from '../api'; // Import instance API Anda
+// Asumsi path ke KategoriProvider, sesuaikan jika perlu
+import { useCategory } from './Comp_Kategori'; 
 
+// Tipe data untuk kategori dari API
+type Category = {
+  id: number;
+  name: string;
+};
 
+// Perbarui props untuk menerima fungsi logout
 interface FooterProps{
   user: User | null;
+  logout: () => void; // Tambahkan fungsi logout
 }
 
-const CompFooter = ({user}:FooterProps) => {
+const CompFooter = ({ user, logout }: FooterProps) => {
+  // State untuk menyimpan kategori
+  const [categories, setCategories] = useState<Category[]>([]);
+  
+  // Ambil setter dari Kategori Context
+  // Kita akan gunakan ini untuk MENGUBAH kategori saat link diklik
+  const { setSelectCategoryId } = useCategory();
+
+  // Ambil kategori dari API saat komponen dimuat
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await api.get('/categories'); // [cite: backend/routes/categoryRoutes.js]
+        setCategories(response.data || []);
+      } catch (error) {
+        console.error("Gagal mengambil kategori:", error);
+      }
+    };
+
+    fetchCategories();
+  }, []); // [] berarti hanya dijalankan sekali saat mount
+
   return (
     <footer className="bg-gray-800 text-gray-300">
       <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
@@ -21,50 +53,69 @@ const CompFooter = ({user}:FooterProps) => {
             </p>
           </div>
 
-          {/* Kolom 2: Link Cepat */}
+          {/* Kolom 2: Link Halaman (DIPERBAIKI) */}
           <div>
             <h3 className="text-sm font-semibold text-gray-400 tracking-wider uppercase">Halaman</h3>
             <ul className="mt-4 space-y-2">
-              <Link>Beranda</Link>              
-              <li><a href="#" className="text-base text-gray-300 hover:text-white">Tentang</a></li>
-              <li><a href="#" className="text-base text-gray-300 hover:text-white">Pesanan</a></li>
+              {/* Ganti <a> dengan <Link> untuk navigasi internal */}
+              <li><Link to="/beranda" className="text-base text-gray-300 hover:text-white">Beranda</Link></li>              
+              <li><Link to="/tentang" className="text-base text-gray-300 hover:text-white">Tentang</Link></li>
+              <li><Link to="/pesanan" className="text-base text-gray-300 hover:text-white">Pesanan</Link></li>
               <>
                 {!user && (
                  <>
-                    <li><a href="#" className="text-base text-gray-300 hover:text-white">Masuk</a></li>
-                  <div className="mt-2 space-y-2">
-                    <li><a href="#" className="text-base text-gray-300 hover:text-white">Buat Akun</a></li>
-                  </div>
+                    <li><Link to="/masuk" className="text-base text-gray-300 hover:text-white">Masuk</Link></li>
+                    <li><Link to="/buat-akun" className="text-base text-gray-300 hover:text-white">Buat Akun</Link></li>
                  </>
-                   
                 )}
 
                 {user && (
-                  <li><a href="#" className="text-base text-gray-300 hover:text-white">Keluar Akun</a></li>
+                  // Ganti <a> dengan <button> untuk aksi
+                  <li>
+                      <button 
+                        onClick={logout} 
+                        className="text-base text-gray-300 hover:text-white text-left"
+                      >
+                        Keluar Akun
+                      </button>
+                    </li>
                 )}
               </>
             </ul>
           </div>
 
-           {/* Kolom 3: Link Cepat */}
+           {/* Kolom 3: Link Cepat (DIPERBAIKI DARI API) */}
           <div>
-            <h3 className="text-sm font-semibold text-gray-400 tracking-wider uppercase">Link Cepat</h3>
+            <h3 className="text-sm font-semibold text-gray-400 tracking-wider uppercase">Kategori</h3>
             <ul className="mt-4 space-y-2">
-              <li><a href="#" className="text-base text-gray-300 hover:text-white">Pesta</a></li>
-              <li><a href="#" className="text-base text-gray-300 hover:text-white">Acara Kantor</a></li>
-              <li><a href="#" className="text-base text-gray-300 hover:text-white">Wisuda</a></li>
-              <li><a href="#" className="text-base text-gray-300 hover:text-white">Lainnya</a></li>
-              
+              {/* Ambil 4 kategori pertama dari state */}
+              {categories.slice(0, 4).map((category) => (
+                <li key={category.id}>
+                  {/* Link ini akan:
+                    1. Pindah ke halaman /beranda
+                    2. Mengatur ID kategori yang dipilih di Context
+                  */}
+                  <Link 
+                    to="/beranda#produk"
+                    onClick={() => setSelectCategoryId(category.id)}
+                    className="text-base text-gray-300 hover:text-white duration-300"
+                  >
+                    {category.name}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Kolom 4: Link Dukungan */}
+          {/* Kolom 4: Link Dukungan (DIPERBAIKI) */}
           <div>
             <h3 className="text-sm font-semibold text-gray-400 tracking-wider uppercase">Layanan</h3>
             <ul className="mt-4 space-y-2">
-              <li><a href="#" className="text-base text-gray-300 hover:text-white">FAQ</a></li>
-              <li><a href="#" className="text-base text-gray-300 hover:text-white">Hubungi Kami</a></li>
-              <li><a href="#" className="text-base text-gray-300 hover:text-white">Cara Pesan</a></li>
+              {/* Kita gunakan link #kontak-kami (lihat Layout.tsx) */}
+              <li><a href="#kontak-kami" className="text-base text-gray-300 hover:text-white">Hubungi Kami</a></li>
+            	{/* Tautkan ke halaman yang relevan jika ada */}
+              <li><Link to="/tentang" className="text-base text-gray-300 hover:text-white">FAQ</Link></li>
+              <li><Link to="/pesanan" className="text-base text-gray-300 hover:text-white">Cara Pesan</Link></li>
             </ul>
           </div>
 

@@ -1,45 +1,67 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../components/AuthContext';
+import { useAuth } from '../components/AuthContext'; // Pastikan path ini benar
 import { Icon } from '@iconify/react';
 import api from '../api'; 
-import { Product } from '../type'; 
+import { Product } from '../type'; // Pastikan path ini benar
 import ProductCard from '../components/Comp_Product_Card';
+import ProductGrid from '../components/Comp_Product_Grid'; 
 
-const Wishlist = () => {
-  const { user } = useAuth(); 
+export default function WishlistPage() {
+  // State ini sudah benar
   const [wishlistItems, setWishlistItems] = useState<Product[]>([]); 
+  const [wishlistProductIds, setWishlistProductIds] = useState(new Set<number>());
   const [loading, setLoading] = useState(true); 
   const [error, setError] = useState<string | null>(null);
+  const { token, isAuthenticated, user } = useAuth(); // Ambil 'user' juga
 
   useEffect(() => {
-    const fetchAndFilterWishlist = async () => {
-      if (!user) {
+    const fetchWishlist = async () => {
+      if (!isAuthenticated) {
+        setError('Anda harus login untuk melihat wishlist.');
         setLoading(false); 
         return; 
       }
+      
       setLoading(true);
       setError(null);
-      try {
-        const response = await api.get('/products'); 
-        const allProducts: Product[] = response.data;
 
-        // 2. Filter produk yang properti wishlisted-nya true
-        const filteredItems = allProducts.filter(product => product.wishlisted === true);
+      // Hapus pembuatan 'ids' yang error dari sini
+
+      try {
+        const response = await api.get('/wishlist'); 
         
-        setWishlistItems(filteredItems); // Simpan hasil filter ke state
+        // 1. Simpan data produk yang di-wishlist
+        const items: Product[] = response.data || [];
+        setWishlistItems(items); 
+
+        // 2. BUAT SET ID DARI DATA YANG BARU DATANG (response.data)
+        // Pindahkan logikanya ke sini
+        const ids = items.map((item: Product) => item.id);
+        setWishlistProductIds(new Set(ids));
 
       } catch (err) {
-        setError('Gagal memuat data produk.'); // Ubah pesan error jika perlu
-        console.error("Error fetching products for wishlist:", err);
+        setError('Gagal memuat wishlist Anda.');
+        console.error("Error fetching wishlist:", err);
       } finally {
         setLoading(false);
       }
     };
-    fetchAndFilterWishlist();
-  }, [user]); // Jalankan ulang jika user berubah
+    
+    fetchWishlist();
+  }, [isAuthenticated]); // Dependensi sudah benar
 
+  // Pengecekan 'user' ini sudah benar
   if (!user) {
-    return <div className="container mx-auto p-8 text-center">Harap login untuk melihat wishlist Anda.</div>;
+     return <div className="container mx-auto p-8 text-center">Harap login untuk melihat wishlist Anda.</div>;
+  }
+ 
+  // Pengecekan loading dan error sudah benar
+  if (loading) {
+     return <div className="text-center py-12 text-gray-600">Memuat wishlist...</div>
+  }
+
+  if (error && !wishlistItems.length) {
+     return <div className="text-center py-12 text-red-600">Error: {error}</div>
   }
 
   return (
@@ -49,47 +71,41 @@ const Wishlist = () => {
         <h1 className="text-3xl font-bold text-gray-800">Wishlist Saya</h1>
       </div>
       
+      {/* --- BAGIAN 1: HASIL WISHLIST --- */}
+      <div className="bg-white p-6 rounded-lg shadow-md mb-12">
+        {wishlistItems.length === 0 ? (
+          <div className="text-center text-gray-500 py-10">
+            <Icon icon="mdi:hanger-empty" className="w-16 h-16 mx-auto mb-4 text-gray-400" />
+            <p className="text-lg">Wishlist Anda masih kosong.</p>
+            <p className="text-sm">Tambahkan kostum favorit Anda ke sini!</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {wishlistItems.map((item) => (
+              <ProductCard
+                key={item.id}
+                {...item} 
+                age={item.age as any} 
+                gender={item.gender as any}
+                wishlisted={true} // Ini sudah benar
+              />
+            ))}
+          </div>
+        )}
+      </div>
+      
+      {/* --- BAGIAN 2: PRODUK GRID (REKOMENDASI) --- */}
+      <>
+        <hr className="my-8 border-gray-200" />
+        <h2 className="text-2xl font-bold mb-6 text-gray-800 px-4">Mungkin Anda Suka</h2>
+        
+        {/* *** PERBAIKAN TYPO DI SINI ***
+          'wishlisteProductIds' (SALAH) diubah menjadi 'wishlistProductIds' (BENAR)
+        */}
+        <ProductGrid wishlistProductIds={wishlistProductIds} />
+      </>
 
-      {loading && (
-        <div className="text-center py-12 text-gray-600">Memuat wishlist...</div>
-      )}
-
-      {error && (
-        <div className="text-center py-12 text-red-600">Error: {error}</div>
-      )}
-
-      {!loading && !error && (
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          {wishlistItems.length === 0 ? (
-            <div className="text-center text-gray-500 py-10">
-              <Icon icon="mdi:hanger-empty" className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-              <p className="text-lg">Wishlist Anda masih kosong.</p>
-              <p className="text-sm">Tambahkan kostum favorit Anda ke sini!</p>
-            </div>
-          ) : (
-            // Render hasil filter menggunakan ProductCard
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {wishlistItems.map((item) => (
-                <ProductCard
-                  key={item.id}
-                  id={item.id}
-                  name={item.name}
-                  description={item.description}
-                  price={item.price}
-                  imageUrl={item.imageUrl}
-                  sizes={item.sizes}
-                  specification={item.specification}
-                  categoryId={item.categoryId}
-                  wishlisted={true} // Karena ini halaman wishlist, kita tahu statusnya true
-                  // Anda mungkin perlu tombol "Hapus" di sini
-                />
-              ))}
-            </div>
-          )}
-        </div>
-      )}
     </div>
   );
 };
 
-export default Wishlist;

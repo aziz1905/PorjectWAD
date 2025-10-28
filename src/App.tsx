@@ -15,6 +15,9 @@ import ProtectedRoute from './components/ProtectedRoute'; // Import ProtectedRou
 import SettingAkun from './Pages/SettingAkun'; 
 import Wishlist from './Pages/Wishlist';
 import AdminRoutes from './Admin/AdminRoutes';
+import DetailPengembalian from './Pages/Detailpengembalian';
+
+
 
 function App() {
   // HAPUS useAuth(), user, dan logout dari sini
@@ -45,13 +48,12 @@ function App() {
           <Route path="histori" element={<Histori />} />
         </Route> 
         
-        {/* Rute Masuk & BuatAkun (disederhanakan) */}
-        {/* Logika redirect akan ditangani oleh ProtectedRoute/Layout */}
         <Route path="masuk" element={<Masuk />} />
         <Route path="buat-akun" element={<BuatAkun />} />
 
         <Route path="detail-produk/:id" element={<DetailProduk />}/>
         <Route path="detail-penyewaan" element={<DetailPenyewaan />} />
+        <Route path="detail-pengembalian" element={<DetailPengembalian />} />
 
         {/* Rute 404 */}
         <Route path="*" element={

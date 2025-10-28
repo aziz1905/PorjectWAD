@@ -24,6 +24,7 @@ export const useCategory = () => {
 
 // Buat Provider untuk membungkus bagian aplikasi yang relevan (atau seluruh App)
 interface CategoryProviderProps {
+  
   children: ReactNode;
 }
 

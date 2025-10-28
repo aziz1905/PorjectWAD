@@ -517,12 +517,30 @@
   @apply flex-1 text-center py-3 px-4 font-semibold text-gray-100
 }
 .pengiriman-header {
-  @apply hidden md:grid items-center gap-4 px-4 pb-2 border-b-2 border-gray-200 font-bold text-gray-600;
-  grid-template-columns: 3fr 2.2fr 1fr;
+  @apply hidden md:grid items-center gap-4 px-4 pb-2 border-b-2 border-gray-200 font-bold text-gray-600 text-center; /* Tambah text-center */
+  /* Sesuaikan fraksi untuk 4 kolom */
+  grid-template-columns: 2fr 1.5fr 1fr 1fr ; 
 }
 
 .pengiriman-item {
-  @apply grid md:grid-cols-[2.5fr_4.5fr_2.5fr] items-center text-center gap-4 bg-white p-4 shadow rounded-lg;
+  /* Gunakan 4 kolom untuk mobile dan layar besar */
+  @apply grid grid-cols-1 md:grid-cols-[2fr_1.5fr_1fr_1fr] items-center gap-4 bg-white p-4 shadow rounded-lg text-center md:text-left; /* text-left untuk layar besar */
+}
+
+/* Penyesuaian agar kolom pertama rata kiri di layar besar */
+.pengiriman-item > div:first-child {
+  @apply md:text-left;
+}
+
+/* Penyesuaian agar kolom terakhir rata kanan di layar besar */
+.pengiriman-item > div:last-child {
+  @apply md:text-right;
+}
+
+/* Penyesuaian agar kolom status & durasi rata tengah */
+.pengiriman-item > div:nth-child(2),
+.pengiriman-item > div:nth-child(3) {
+  @apply md:text-center;
 }
 
 /* ------------------------------------------------------------------------------------------------------------------------------ */

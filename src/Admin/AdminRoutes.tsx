@@ -1,39 +1,41 @@
-  import React from 'react';
-  import { Routes, Route, Navigate } from 'react-router-dom';
-  import { useAuth } from '../components/AuthContext';
-  import AdminLayout from './components/AdminLayout';
-  import LogTransaksi from './pages/LogTransaksi';
-  import StatusProduk from './pages/StatusProduk';
+import React from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { useAuth } from '../components/AuthContext'; // Path ke AuthContext mungkin perlu disesuaikan
 
-  // Komponen Pelindung Rute (Versi Sederhana)
-  const ProtectedAdminRoute = () => {
-    // Ambil user HANYA dari context. Context sudah membaca localStorage saat inisialisasi.
-    const { user } = useAuth();
+// Import komponen Layout dan Halaman dari folder Admin
+// Pastikan path ke AdminLayout benar
+import AdminLayout from './AdminLayout';
+import LogTransaksi from './pages/LogTransaksi';
+import StatusProduk from './pages/StatusProduk';
+import EditProduk from './pages/EditProduk'; // Halaman list produk
 
-    console.log("ProtectedAdminRoute checking user:", user); 
+// Komponen ProtectedAdminRoute tetap sama
+const ProtectedAdminRoute = () => {
+  const { user } = useAuth();
+  if (user && user.role === 'admin') {
+    return <AdminLayout />;
+  }
+  return <Navigate to="/" replace />;
+};
 
-    // Lakukan pengecekan role
-    if (user && user.role === 'admin') {
-      console.log("Admin access GRANTED.");
-      return <AdminLayout />; // Tampilkan layout admin
-    }
-  
-    // Jika tidak, tendang ke halaman utama
-    console.log("Admin access DENIED. Redirecting to /");
-    return <Navigate to="/" replace />;
-  };
+const AdminRoutes = () => {
+  return (
+    <Routes>
+      <Route element={<ProtectedAdminRoute />}>
+        {/* Rute index default -> Log Transaksi */}
+        <Route index element={<Navigate to="log-transaksi" replace />} />
 
-  const AdminRoutes = () => {
-    return (
-      <Routes>
-        <Route element={<ProtectedAdminRoute />}>
-          {/* Arahkan rute index admin ke log-transaksi */}
-          <Route index element={<Navigate to="log-transaksi" replace />} /> 
-          <Route path="log-transaksi" element={<LogTransaksi />} />
-          <Route path="status-produk" element={<StatusProduk />} />
-        </Route>
-      </Routes>
-    );
-  };
+        {/* Halaman-halaman admin */}
+        {/* /admin/edit-produk akan menampilkan list produk (EditProduk.tsx) */}
+        <Route path="edit-produk" element={<EditProduk />} />
+        <Route path="log-transaksi" element={<LogTransaksi />} />
+        <Route path="status-produk" element={<StatusProduk />} />
 
-  export default AdminRoutes;
+        {/* Rute fallback jika path admin tidak cocok */}
+        <Route path="*" element={<Navigate to="log-transaksi" replace />} />
+      </Route>
+    </Routes>
+  );
+};
+
+export default AdminRoutes;
