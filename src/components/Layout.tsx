@@ -5,7 +5,7 @@ import { useAuth } from './AuthContext'; // Import useAuth
 
 const Layout = () => {
   // Panggil useAuth di sini
-  const { user } = useAuth();
+  const { user, logout } = useAuth(); // <-- Ambil 'logout'
 
   // Jika user login sebagai admin, tendang dari layout customer
   if (user && user.role === 'admin') {
@@ -22,8 +22,10 @@ const Layout = () => {
         <Outlet />
       </main>
 
-      <footer>
-        <CompFooter />
+      {/* Tambahkan ID di sini agar link #kontak-kami berfungsi */}
+      <footer id="kontak-kami">
+        {/* Teruskan 'user' dan 'logout' ke Footer */}
+        <CompFooter user={user} logout={logout} />
       </footer>
     </div>
   );

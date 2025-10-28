@@ -1,4 +1,12 @@
 import backgroundImage from '../assets/Props1.png';
+import { NavLink } from 'react-router-dom';
+
+const scrollToBottom = () => {
+  window.scrollTo({
+    top: document.documentElement.scrollHeight, // Ini berarti "scroll ke tinggi maksimum halaman"
+    behavior: 'smooth' // Ini akan memberi efek scroll mulus
+  });
+};
 
 export default function HeroProduct() {
   return (
@@ -30,18 +38,16 @@ export default function HeroProduct() {
           </p>
 
           <div className="mt-8 flex flex-wrap justify-center gap-4 lg:justify-start">
-            <a
-              href="#"
+            <NavLink to="/beranda#produk"
               className="block w-full rounded border border-blue-600 bg-blue-600 px-12 py-3 text-sm font-medium text-white hover:bg-transparent hover:text-white focus:outline-none focus:ring active:text-opacity-75 sm:w-auto"
             >
               Lihat Katalog
-            </a>
-            <a
-              href="#"
+            </NavLink>
+            <button onClick={scrollToBottom}
               className="block w-full rounded border border-white px-12 py-3 text-sm font-medium text-white hover:bg-white hover:text-blue-800 focus:outline-none focus:ring active:bg-blue-500 sm:w-auto"
             >
               Hubungi Kami
-            </a>
+            </button>
           </div>
         </div>
       </div>

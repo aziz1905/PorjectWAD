@@ -1,22 +1,21 @@
 // src/components/Comp_Review.tsx
 
 import React, { useState, useEffect } from 'react';
-import api from '../api'; // Import instance axios
+import api from '../api'; 
 import { Icon } from '@iconify/react';
-import NonPict from '../assets/NonPict.png'; // Fallback jika user tidak punya foto
+import NonPict from '../assets/NonPict.png'; 
 
-// Tentukan interface untuk data yang akan diterima dari API
 interface ApiReview {
   id: number;
-  rating: string; // Rating dari 'reviewsTable'
-  comment: string; // Komentar dari 'reviewsTable'
+  rating: string; 
+  comment: string; 
   user: {
-    name: string; // Nama dari 'usersTable'
-    avatarUrl: string | null; // imageUrl dari 'usersBiodataTable'
+    name: string; 
+    avatarUrl: string | null; 
   };
   product: {
-    name: string; // Nama dari 'productsTable'
-    imageUrl: string; // imageUrl dari 'productsTable'
+    name: string; 
+    imageUrl: string; 
   };
 }
 

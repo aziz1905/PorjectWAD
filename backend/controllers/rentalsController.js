@@ -1,38 +1,64 @@
-import { createRentalTransaction, getRentalDetailsById, updateItemReturnDetails, updateOrderStatus, updateReturnStatus } from "../repository/rentalsRepository.js";
+import {
+    createRentalTransaction,
+    getRentalDetailsById,
+    updateItemReturnDetails,
+    updateOrderStatus,
+    updateReturnStatus,
+    findAllRentals,
+    getAdminRentalSummary
+} from "../repository/rentalsRepository.js";
 
 
-
-// POST /rentals/createRental 
 export const createRental = async (req, res) => {
-    const userId = req.user.id;
-    const { totalProduct, shippingCost, totalPayment, shippingAddress, paymentMethod, details } = req.body;
-
-    // Tambahkan Pengecekan Duplikasi di Controller
-    const productIds = details.map(item => item.productId);
-    const uniqueIds = new Set(productIds);
-    
-    if (uniqueIds.size !== productIds.length) {
-        return res.status(400).json({ message: 'Product ID dalam daftar pesanan tidak boleh ada duplikasi.' });
-    }
-
-    // Menggunakan nama field yang sama dengan repository untuk kejelasan
-    const rentalData = { totalProduct, shippingCost, totalPayment, shippingAddress, paymentMethod };
-    
     try {
-        const newTransaction = await createRentalTransaction(userId, rentalData, details);
-        
-        // ambil elemen pertama
-        const newRental = newTransaction.rental[0];
-        
-        return res.status(201).json({
-            message: 'Pesanan sewa berhasil dibuat. Stok produk dikurangi.',
-            rentalId: newRental.id,
-            totalPayment: newRental.totalPayment,
-            status: newRental.orderStatus
-        });
+        const result = await createRentalTransaction(req.body);
+        return res.status(201).json(result);
     } catch (error) {
         console.error("Error createRental:", error);
-        return res.status(500).json({ message: 'Gagal membuat pesanan.' });
+        return res.status(500).json({ message: 'Gagal membuat rental.' });
+    }
+};
+
+export const getMyRentals = async (req, res) => {
+    try {
+        return res.status(501).json({ message: 'Not implemented.' });
+    } catch (error) {
+        console.error("Error getMyRentals:", error);
+        return res.status(500).json({ message: 'Gagal mengambil rentals pengguna.' });
+    }
+};
+
+export const submitReturnRequest = async (req, res) => {
+    try {
+        return res.status(501).json({ message: 'Not implemented.' });
+    } catch (error) {
+        console.error("Error submitReturnRequest:", error);
+        return res.status(500).json({ message: 'Gagal mengajukan permintaan pengembalian.' });
+    }
+};
+
+
+
+export const getAllRentals = async (req, res) => {
+    try {
+        const rentals = await findAllRentals();
+        if (!rentals || rentals.length === 0) {
+            return res.status(200).json([]);
+        }
+        return res.status(200).json(rentals);
+    } catch (error) {
+        console.error("Error getAllRentals (Admin):", error);
+        return res.status(500).json({ message: 'Gagal mengambil semua data rental.' });
+    }
+};
+
+export const getRentalSummary = async (req, res) => {
+    try {
+        const summary = await getAdminRentalSummary();
+        return res.status(200).json(summary);
+    } catch (error) {
+        console.error("Error getRentalSummary (Admin):", error);
+        return res.status(500).json({ message: 'Gagal mengambil ringkasan data.' });
     }
 };
 

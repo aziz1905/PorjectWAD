@@ -9,6 +9,14 @@ import reviewsRouter from './routes/reviewsRoutes.js';
 import uploadRouter from './routes/uploadRoutes.js';
 import rentalsRoutes from './routes/rentalRoutes.js';
 import { connectDB } from './db/dbSetup.js';
+import { drizzle } from 'drizzle-orm/node-postgres';
+import { Pool } from 'pg';
+
+export const pool = new Pool({ // <--- TAMBAHKAN 'export' DI SINI
+  connectionString: process.env.DATABASE_URL,
+});
+
+export const db = drizzle(pool);
 
 
 

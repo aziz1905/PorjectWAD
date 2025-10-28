@@ -1,5 +1,5 @@
 import db from '../db/db.js';
-import { eq, sql,and } from 'drizzle-orm';
+import { eq, sql, and, desc, count, sum, gte } from 'drizzle-orm';
 import { rentalsTable } from '../db/schema/rentalsSchema.js';
 import { productsTable } from '../db/schema/productsSchema.js'; 
 import { rentalsDetailTable } from '../db/schema/RentalsDetailSchema.js';
@@ -129,6 +129,94 @@ export const getRentalDetailsById = async (rentalId) => {
         if (error.code === '23502' || error.code === '23503') { 
             throw new Error(`Kesalahan Data: Periksa ID produk/ukuran atau field yang wajib diisi.`);
         }
+    }
+};
+
+
+export const findAllRentals = async () => {
+    try {
+        const results = await db
+            .select({
+                rental: rentalsTable,
+                detail: rentalsDetailTable,
+                product: productsTable,
+                payment: paymentsTable,
+                user: { email: usersTable.email } // Ambil email user
+            })
+            .from(rentalsTable)
+            .leftJoin(rentalsDetailTable, eq(rentalsTable.id, rentalsDetailTable.rentalId))
+            .leftJoin(productsTable, eq(rentalsDetailTable.productId, productsTable.id))
+            .innerJoin(paymentsTable, eq(rentalsTable.id, paymentsTable.rentalId))
+            .innerJoin(usersTable, eq(rentalsTable.userId, usersTable.id)) // Join ke user
+            .orderBy(desc(rentalsTable.orderDate)); 
+
+        if (results.length === 0) return [];
+
+        // Kelompokkan hasil (sama seperti findRentalsByUserId)
+        const groupedRentals = results.reduce((acc, row) => {
+            const rentalId = row.rental.id;
+            if (!acc[rentalId]) {
+                acc[rentalId] = {
+                    ...row.rental,
+                    userEmail: row.user.email, // Tambahkan email
+                    paymentStatus: row.payment.payStatus,
+                    items: [] 
+                };
+            }
+            
+            if (row.product && row.detail) {
+                acc[rentalId].items.push({
+                    ...row.detail,
+                    productName: row.product.name,
+                    productImageUrl: row.product.imageUrl
+                });
+            }
+            return acc;
+        }, {});
+
+        return Object.values(groupedRentals);
+
+    } catch (error) {
+        console.error("Error findAllRentals (Admin):", error);
+        throw new Error('Gagal mengambil semua data rental dari database.');
+    }
+};
+
+// GET /rentals/summary (Admin)
+export const getAdminRentalSummary = async () => {
+    try {
+        // Dapatkan tanggal awal bulan ini
+        const now = new Date();
+        const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+        // Query untuk summary
+        const summaryResult = await db
+            .select({
+                monthlyIncome: sum(rentalsTable.totalPayment),
+                monthlyRenters: count(rentalsTable.userId), // Ini akan menghitung total row, bukan user unik
+                monthlyItemsRented: sum(rentalsTable.totalProduct)
+            })
+            .from(rentalsTable)
+            .where(
+                // Filter hanya untuk rental bulan ini dan yang statusnya tidak 'Dibatalkan'
+                and(
+                    gte(rentalsTable.orderDate, firstDayOfMonth),
+                    sql`${rentalsTable.orderStatus} != 'Dibatalkan'`
+                )
+            );
+        
+        // Drizzle mengembalikan array, ambil [0]
+        const summary = summaryResult[0];
+
+        return {
+            monthlyIncome: parseFloat(summary.monthlyIncome) || 0,
+            monthlyRenters: parseInt(summary.monthlyRenters) || 0,
+            monthlyItemsRented: parseInt(summary.monthlyItemsRented) || 0,
+        };
+
+    } catch (error) {
+        console.error("Error getAdminRentalSummary:", error);
+        throw new Error('Gagal menghitung summary rental.');
     }
 };
 
