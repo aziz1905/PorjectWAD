@@ -3,7 +3,7 @@ import 'dotenv/config'
 
 const JWT_SECRET = process.env.JWT_SECRET || 'secret_jwt';
 
-const JWT_EXPIRES_IN = '1d';
+const JWT_EXPIRES_IN = '365d';
 
 export const generateAuthToken = (userId, role) => {
     // Definisikan Payload (data yang akan dimasukkan ke dalam token)
