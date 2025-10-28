@@ -1,28 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { useCart } from '../../components/CartContext';
 import PesananButton from '../../components/Comp_Button.tsx';
 import { Icon } from '@iconify/react';
-import Products from '../../data/Produk.ts';
-import { Product } from '../../type.ts';
 import { Link } from 'react-router-dom';
 
-// Tipe data untuk item di keranjang
-type CartItem = Product & {
-  quantity: number;
-  selected: boolean;
-  duration: number; // Durasi sewa dalam hari
-};
-
-// Ambil 4 produk pertama sebagai data dummy untuk keranjang
-const initialCartItems: CartItem[] = Products.slice(0, 4).map(product => ({
-  ...product,
-  // Pastikan ID di-convert ke string jika tipe di Produk.ts adalah angka
-  id: String(product.id),
-  quantity: 1,
-  selected: true,
-  duration: 3,
-}));
-
-// Fungsi untuk memformat angka menjadi format Rupiah
+// Fungsi format Rupiah (kekal sama)
 const formatRupiah = (amount: number) => {
   return new Intl.NumberFormat('id-ID', {
     style: 'currency',
@@ -31,72 +13,84 @@ const formatRupiah = (amount: number) => {
   }).format(amount);
 };
 
+// Komponen Keranjang
 const Keranjang = () => {
-  const [cartItems, setCartItems] = useState<CartItem[]>(initialCartItems);
+  // 5. Guna state dari context
+  const { cartItems, removeFromCart, updateCartItem } = useCart();
+
+  // 6. State lokal untuk item yang dipilih UNTUK checkout
+  const [selectedItems, setSelectedItems] = useState<{ [key: string]: boolean }>({});
+
+  // 7. State lokal untuk harga total item yang DIPILIH
   const [totalPrice, setTotalPrice] = useState(0);
 
+  // Inisialisasi item terpilih semasa muat (pilih semua secara lalai)
+   useEffect(() => {
+     const initialSelected: { [key: string]: boolean } = {};
+     cartItems.forEach(item => {
+       initialSelected[item.cartItemId] = true; // Pilih semua secara lalai
+     });
+     setSelectedItems(initialSelected);
+   }, [cartItems]); // Jalankan semula jika cartItems berubah
+
+  // Kesan perubahan pada cartItems ATAU selectedItems untuk mengira semula harga total
   useEffect(() => {
     const newTotal = cartItems.reduce((sum, item) => {
-      if (item.selected) {
-        // Logika perhitungan harga Anda sebelumnya
-        // const dur=0.5;
-        // return sum + (item.price * item.quantity * (item.duration*dur));
-      
-        // Logika yang lebih standar (harga * jumlah * durasi)
+      // Hanya kira jika item ada dalam state cart DAN dipilih dalam state lokal
+      if (selectedItems[item.cartItemId]) {
+        // Guna harga dari item context
         return sum + (item.price * item.quantity * item.duration);
       }
       return sum;
     }, 0);
     setTotalPrice(newTotal);
-  }, [cartItems]);
+  }, [cartItems, selectedItems]); // Bergantung pada kedua-dua state
 
-  const handleQuantityChange = (id: string, amount: number) => {
-    setCartItems(currentItems =>
-      currentItems.map(item =>
-        item.id === id
-          ? { ...item, quantity: Math.max(1, item.quantity + amount) }
-          : item
-      )
-    );
+  // 8. Handler guna fungsi dari context
+  const handleQuantityChange = (cartItemId: string, amount: number) => {
+    const item = cartItems.find(i => i.cartItemId === cartItemId);
+    if (item) {
+      updateCartItem(cartItemId, { quantity: item.quantity + amount });
+    }
   };
 
-  const handleDurationChange = (id: string, amount: number) => {
-    setCartItems(currentItems =>
-      currentItems.map(item =>
-        item.id === id
-          ? { ...item, duration: Math.max(1, item.duration + amount) }
-          : item
-      )
-    );
+  const handleDurationChange = (cartItemId: string, amount: number) => {
+    const item = cartItems.find(i => i.cartItemId === cartItemId);
+    if (item) {
+      updateCartItem(cartItemId, { duration: item.duration + amount });
+    }
   };
 
-  const handleSelectChange = (id: string) => {
-    setCartItems(currentItems =>
-      currentItems.map(item =>
-        item.id === id ? { ...item, selected: !item.selected } : item
-      )
-    );
+  // Handler untuk checkbox item individu (state lokal)
+  const handleSelectChange = (cartItemId: string) => {
+    setSelectedItems(prevSelected => ({
+      ...prevSelected,
+      [cartItemId]: !prevSelected[cartItemId],
+    }));
   };
 
-  // Fungsi untuk Hapus Item (Versi Dummy)
-  const handleRemoveItem = (id: string) => {
-    setCartItems(currentItems => currentItems.filter(item => item.id !== id));
-  };
-
+  // Handler untuk checkbox "Pilih Semua" (state lokal)
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { checked } = event.target;
-    setCartItems(currentItems =>
-      currentItems.map(item => ({ ...item, selected: checked }))
-    );
+    const newSelectedItems: { [key: string]: boolean } = {};
+    cartItems.forEach(item => {
+      newSelectedItems[item.cartItemId] = checked;
+    });
+    setSelectedItems(newSelectedItems);
   };
- 
-  const allSelected = cartItems.length > 0 && cartItems.every(item => item.selected);
 
-  // Tampilkan pesan jika keranjang kosong
+  // Kira sama ada semua item DIPILIH (berdasarkan state lokal)
+   const allSelected = cartItems.length > 0 && cartItems.every(item => selectedItems[item.cartItemId]);
+   // Kira jumlah item yang DIPILIH
+   const selectedCount = Object.values(selectedItems).filter(isSelected => isSelected).length;
+
+  // Tampilkan pesan jika keranjang kosong (guna cartItems dari context)
   if (cartItems.length === 0) {
     return (
       <div className="text-center py-20 text-gray-500">
-        <Icon icon="mdi:cart-off" className="text-6xl mx-auto mb-4" />
+        {/* Guna emoji jika Iconify bermasalah */}
+        <span className="text-6xl mx-auto mb-4" role="img" aria-label="empty cart">🛒💨</span>
+        {/* <Icon icon="mdi:cart-off" className="text-6xl mx-auto mb-4" /> */}
         <h2 className="text-2xl font-semibold mb-2">Keranjang Anda Kosong</h2>
         <p className="mb-6">Ayo cari kostum favoritmu!</p>
         <Link to="/beranda" className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
@@ -106,8 +100,13 @@ const Keranjang = () => {
     );
   }
 
+  // Siapkan data untuk dihantar ke checkout (hanya item yang dipilih)
+   const itemsToCheckout = cartItems.filter(item => selectedItems[item.cartItemId]);
+
+
   return (
     <>
+      {/* Header (kekal sama, tapi guna cartItems.length) */}
       <div className="pesanan-header">
         <div className="flex items-center gap-4">
           <input
@@ -115,7 +114,9 @@ const Keranjang = () => {
             className="pesanan-checkbox"
             checked={allSelected}
             onChange={handleSelectAll}
+            disabled={cartItems.length === 0} // Nonaktifkan jika tiada item
           />
+          {/* Tunjuk jumlah item dalam keranjang */}
           <label>Pilih Semua ({cartItems.length} item)</label>
         </div>
         <span>Produk</span>
@@ -125,72 +126,77 @@ const Keranjang = () => {
         <span>Total Harga</span>
       </div>
 
+      {/* Senarai Item (map dari cartItems context) */}
       <div className="pesanan-items-list">
         {cartItems.map(item => (
-          <div key={item.id} className="pesanan-item">
+          <div key={item.cartItemId} className="pesanan-item"> {/* Guna cartItemId */}
             <div className="flex items-center gap-5">
               <input
                 type="checkbox"
                 className="pesanan-checkbox"
-                checked={item.selected}
-                onChange={() => handleSelectChange(item.id)}
+                // Checked berdasarkan state lokal selectedItems
+                checked={!!selectedItems[item.cartItemId]}
+                onChange={() => handleSelectChange(item.cartItemId)}
               />
               <img src={item.imageUrl} alt={item.name} className="bg-gray-200 rounded-lg h-16 w-16 object-cover" />
               <div>
                 <p className="pesanan-item-name">{item.name}</p>
-                <p className="text-sm text-gray-500">Ukuran: {Array.isArray(item.sizes) ? item.sizes[0] : 'All Size'}</p>
+                 {/* Tunjuk ukuran yang dipilih */}
+                <p className="text-sm text-gray-500">Ukuran: {item.selectedSize}</p>
               </div>
             </div>
             <p>{formatRupiah(item.price)}</p>
+            {/* Butang kuantiti guna cartItemId */}
             <div className="quantity-control">
-              <button className='button-quantity-duration-l'onClick={() => handleQuantityChange(item.id, -1)}>-</button>
-              <input
-                type="text"
-                value={item.quantity}
-                readOnly
-                className="w-12 text-center"
-              />
-              <button className="button-quantity-duration-r"onClick={() => handleQuantityChange(item.id, 1)}>+</button>
+              <button className='button-quantity-duration-l' onClick={() => handleQuantityChange(item.cartItemId, -1)}>-</button>
+              <input type="text" value={item.quantity} readOnly className="w-12 text-center" />
+              <button className="button-quantity-duration-r" onClick={() => handleQuantityChange(item.cartItemId, 1)}>+</button>
             </div>
+             {/* Butang durasi guna cartItemId */}
             <div className="quantity-control">
-             <button className='button-quantity-duration-l' onClick={() => handleDurationChange(item.id, -1)}>-</button>
-              <input
-                type="text"
-                value={`${item.duration} Hari`}
-                readOnly
-                className="w-20 text-center"
-              />
-              <button className="button-quantity-duration-r" onClick={() => handleDurationChange(item.id, 1)}>+</button>
+              <button className='button-quantity-duration-l' onClick={() => handleDurationChange(item.cartItemId, -1)}>-</button>
+              <input type="text" value={`${item.duration} Hari`} readOnly className="w-20 text-center" />
+              <button className="button-quantity-duration-r" onClick={() => handleDurationChange(item.cartItemId, 1)}>+</button>
             </div>
-            {/* Total harga per item */}
+            {/* Total harga dan butang hapus */}
             <div className="flex items-center justify-between">
               <p className="font-bold text-blue-600">{formatRupiah(item.price * item.quantity * item.duration)}</p>
               <button
-                onClick={() => handleRemoveItem(item.id)}
+                // Guna removeFromCart dari context
+                onClick={() => removeFromCart(item.cartItemId)}
                 className="text-gray-400 hover:text-red-500 p-1"
                 title="Hapus item"
               >
-                  <Icon icon="mdi:trash-can-outline" className="w-5 h-5" />
+                {/* Guna emoji jika Iconify bermasalah */}
+                <span role="img" aria-label="delete">🗑️</span>
+                {/* <Icon icon="mdi:trash-can-outline" className="w-5 h-5" /> */}
               </button>
             </div>
           </div>
         ))}
       </div>
-     
+
+      {/* Ringkasan (guna totalPrice dari state lokal dan selectedCount) */}
       <div className="pesanan-summary">
         <div className="summary-content">
           <h3 className="text-xl font-bold">Ringkasan Sewa</h3>
           <div className="summary-total">
             <span>Total</span>
+            {/* Guna totalPrice dari state lokal */}
             <span className="text-2xl font-bold text-blue-600">{formatRupiah(totalPrice)}</span>
           </div>
-          <Link to="/detail-penyewaan" state={{ itemsToCheckout: cartItems.filter(item => item.selected) }}>
-          <PesananButton
-            buttonType="p_pesanSekarang"
-            logoChild={<Icon icon="mdi:login" className="text-white text-2xl" />}
-           fontChild={`Sewa Sekarang (${cartItems.filter(item => item.selected).length})`}
-            disabled={cartItems.filter(item => item.selected).length === 0}
-          />
+          {/* Hantar itemsToCheckout (yang sudah ditapis) ke halaman seterusnya */}
+          <Link to="/detail-penyewaan" state={{ itemsToCheckout: itemsToCheckout }}>
+            <PesananButton
+              buttonType="p_pesanSekarang"
+              // Guna emoji jika Iconify bermasalah
+              logoChild={<span role="img" aria-label="checkout" className="text-white text-2xl">➡️</span>}
+              // logoChild={<Icon icon="mdi:arrow-right-bold-box-outline" className="text-white text-2xl" />}
+              // Tunjuk jumlah item yang DIPILIH
+              fontChild={`Sewa Sekarang (${selectedCount})`}
+              // Nonaktifkan jika tiada item dipilih
+              disabled={selectedCount === 0}
+            />
           </Link>
         </div>
       </div>

@@ -8,7 +8,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "db:generate": "npx drizzle-kit generate",
-    "db:migrate": "node -r dotenv/config ./backend/db/migrate.js",
+    "db:migrate": "node --env-file=.env backend/db/migrate.js",
     "lint": "eslint .",
     "preview": "vite preview",
     "tailwind:init": "tailwindcss init"
